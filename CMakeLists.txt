@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.18)
 project(culibprofiler LANGUAGES CXX CUDA)
 
-find_package(CUDA 11.0 REQUIRED)
+find_package(CUDA 10.0 REQUIRED)
 find_package(CUDAToolkit REQUIRED)
 
 # CUDA/CXX
@@ -18,16 +18,21 @@ SET(CMAKE_CUDA_ARCHITECTURES 70 75 80 86)
 set(INCDIR include)
 set(SRCDIR src)
 
-file(GLOB HEADERS "${INCDIR}/culibprofiler/*.hpp")
+file(GLOB HEADERS "${INCDIR}/culip/*.hpp")
 
 foreach(library cublas)
 	SET(lib_name clp_${library})
 	add_library(${lib_name} SHARED
 		${SRCDIR}/${library}.cu
+		${SRCDIR}/utils.cpp
+		${SRCDIR}/utils.hpp
 		${HEADERS}
 		)
 
 	target_include_directories(${lib_name} PUBLIC ${INCDIR})
+	target_link_libraries(${lib_name} PRIVATE
+		cuda
+		)
 
 	set_target_properties(${lib_name} PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
 endforeach()
