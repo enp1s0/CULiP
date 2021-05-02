@@ -24,6 +24,14 @@ cublasStatus_t gemm<double>(cublasHandle_t handle, cublasOperation_t transa,
                            int ldc) {
 	return cublasDgemm(handle, transa, transb, m, n, k, alpha, A, lda, B, ldb, beta, C, ldc);
 }
+template <>
+cublasStatus_t gemm<half  >(cublasHandle_t handle, cublasOperation_t transa,
+                           cublasOperation_t transb, int m, int n, int k,
+                           const half *alpha, const half *A, int lda,
+                           const half *B, int ldb, const half *beta, half *C,
+                           int ldc) {
+	return cublasHgemm(handle, transa, transb, m, n, k, alpha, A, lda, B, ldb, beta, C, ldc);
+}
 
 template <class T>
 void gemm_test() {
@@ -62,4 +70,5 @@ void gemm_test() {
 int main(){
 	gemm_test<double>();
 	gemm_test<float >();
+	gemm_test<half  >();
 }
