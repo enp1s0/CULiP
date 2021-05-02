@@ -1,0 +1,50 @@
+cmake_minimum_required(VERSION 3.18)
+project(culibprofiler LANGUAGES CXX CUDA)
+
+find_package(CUDA 11.0 REQUIRED)
+find_package(CUDAToolkit REQUIRED)
+
+# CUDA/CXX
+foreach(lang CXX CUDA)
+    set(CMAKE_${lang}_STANDARD          14)
+    set(CMAKE_${lang}_STANDARD_REQUIRED ON)
+    set(CMAKE_${lang}_EXTENSIONS        OFF)
+endforeach()
+
+# CUDA (1/2)
+SET(CMAKE_CUDA_ARCHITECTURES 70 75 80 86)
+
+# Directories
+set(INCDIR include)
+set(SRCDIR src)
+
+file(GLOB HEADERS "${INCDIR}/culibprofiler/*.hpp")
+
+foreach(library cublas)
+	SET(lib_name clp_${library})
+	add_library(${lib_name} SHARED
+		${SRCDIR}/${library}.cu
+		${HEADERS}
+		)
+
+	target_include_directories(${lib_name} PUBLIC ${INCDIR})
+
+	set_target_properties(${lib_name} PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
+endforeach()
+
+##########################################################################
+# Tests
+##########################################################################
+
+# Directory
+set(TESTSRCDIR tests)
+
+foreach(test cublas)
+	set(test_out ${test}.test)
+	add_executable(${test_out} ${TESTSRCDIR}/${test}_test.cu)
+	target_include_directories(${test_out} PRIVATE ${INCDIR})
+	target_link_libraries(${test_out} PRIVATE clp_${test})
+	target_link_libraries(${test_out} PRIVATE
+		CUDA::${test}
+		)
+endforeach()
