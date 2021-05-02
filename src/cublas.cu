@@ -7,7 +7,7 @@
 #include "utils.hpp"
 
 extern "C" {
-cublasStatus_t cublasSgemm_v2(cublasHandle_t handle, cublasOperation_t transa,
+cublasStatus_t cublasSgemm(cublasHandle_t handle, cublasOperation_t transa,
                            cublasOperation_t transb, int m, int n, int k,
                            const float *alpha, const float *A, int lda,
                            const float *B, int ldb, const float *beta, float *C,
@@ -41,7 +41,7 @@ cublasStatus_t cublasSgemm_v2(cublasHandle_t handle, cublasOperation_t transa,
 	return result;
 }
 
-cublasStatus_t cublasDgemm_v2(cublasHandle_t handle, cublasOperation_t transa,
+cublasStatus_t cublasDgemm(cublasHandle_t handle, cublasOperation_t transa,
                            cublasOperation_t transb, int m, int n, int k,
                            const double *alpha, const double *A, int lda,
                            const double *B, int ldb, const double *beta, double *C,
