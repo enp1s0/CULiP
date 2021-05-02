@@ -23,9 +23,9 @@ cublasStatus_t cublasSgemm_v2(cublasHandle_t handle, cublasOperation_t transa,
 	CULIBPROFILER_DEBUG_PRINT(printf("[CULiP Debug][%s] start\n", __func__));
 
 	// Get the real library path
-	const char* cublas_lib_path = getenv("CLP_CUBLAS_LIB_PATH");
+	const char* cublas_lib_path = getenv("CULIP_CUBLAS_LIB_PATH");
 	if (cublas_lib_path == NULL) {
-		fprintf(stderr, "[CULiP ERROR] CLP_CUBLAS_LIB_PATH is not set\n");
+		fprintf(stderr, "[CULiP ERROR] CULIP_CUBLAS_LIB_PATH is not set\n");
 		exit(1);
 	}
 	CULIBPROFILER_DEBUG_PRINT(printf("[CULiP Debug][%s] %s is loaded\n", __func__, cublas_lib_path));
