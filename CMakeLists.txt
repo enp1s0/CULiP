@@ -21,10 +21,10 @@ set(SRCDIR src)
 file(GLOB HEADERS "${INCDIR}/culip/*.hpp")
 
 foreach(library cublas)
-	SET(lib_name clp_${library})
+	SET(lib_name culip_${library})
 	add_library(${lib_name} SHARED
 		${SRCDIR}/${library}.cu
-		${SRCDIR}/utils.cpp
+		${SRCDIR}/utils.cu
 		${SRCDIR}/utils.hpp
 		${HEADERS}
 		)
@@ -38,6 +38,11 @@ foreach(library cublas)
 endforeach()
 
 ##########################################################################
+# Installing
+##########################################################################
+install(TARGETS culip_cublas DESTINATION lib)
+
+##########################################################################
 # Tests
 ##########################################################################
 
@@ -48,7 +53,7 @@ foreach(test cublas)
 	set(test_out ${test}.test)
 	add_executable(${test_out} ${TESTSRCDIR}/${test}_test.cu)
 	target_include_directories(${test_out} PRIVATE ${INCDIR})
-	target_link_libraries(${test_out} PRIVATE clp_${test})
+	target_link_libraries(${test_out} PRIVATE culip_${test})
 	target_link_libraries(${test_out} PRIVATE
 		CUDA::${test}
 		)
