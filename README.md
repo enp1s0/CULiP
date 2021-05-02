@@ -32,6 +32,11 @@ export CULIP_CUBLAS_LIB_PATH=/nfs/shared/packages/x86_64/cuda/cuda-11.3/lib64/li
 ./foo.bar
 ```
 
+The execution time is printed on stdout.
+```
+[CULiP Result][cublasSgemm_v2-m1024-n1024-k1024] 155182ns
+```
+
 ## How it works
 
 <img alt='culip_how_it_works' src='./docs/CULiP.svg'>
