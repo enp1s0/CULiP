@@ -21,7 +21,7 @@ extern "C" void CULiP_print_profile_result(void *profile_result_ptr) {
 }
 
 // TODO: Make this function non-blocking using `cuLauchHostFunc`
-extern "C" void CULip_launch_function(cudaStream_t cuda_stream, void (*fn)(void*), void* const arg) {
+extern "C" void CULiP_launch_function(cudaStream_t cuda_stream, void (*fn)(void*), void* const arg) {
 	cudaStreamSynchronize(cuda_stream);
 	fn(arg);
 	cudaStreamSynchronize(cuda_stream);

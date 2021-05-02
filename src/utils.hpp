@@ -19,5 +19,5 @@ struct CULiP_profile_result {
 extern "C" void CULiP_print_profile_result(void* profile_result_ptr);
 
 // Call a given function on a given stream
-extern "C" void CULip_launch_function(cudaStream_t cuda_stream, void (*fn)(void*), void* const arg);
+extern "C" void CULiP_launch_function(cudaStream_t cuda_stream, void (*fn)(void*), void* const arg);
 #endif

@@ -54,17 +54,17 @@ cublasStatus_t cublasSgemm_v2(cublasHandle_t handle, cublasOperation_t transa,
 	snprintf(profile_result.function_name, profile_result.function_name_length - 1, "%s-m%d-n%d-k%d", __func__, m, n ,k);
 
 	// Record start rimestamp
-	CULip_launch_function(cuda_stream, &CULiP_record_timestamp, (void*)&profile_result.start_timestamp);
+	CULiP_launch_function(cuda_stream, &CULiP_record_timestamp, (void*)&profile_result.start_timestamp);
 
 	// Call the function
 	const cublasStatus_t result = (*cublas_lib_func)(handle, transa, transb, m, n, k, alpha, A, lda, B, ldb, beta, C, ldc);
 	CULIBPROFILER_DEBUG_PRINT(printf("[CULiP Debug][%s] executed\n", __func__));
 
 	// Record end rimestamp
-	CULip_launch_function(cuda_stream, &CULiP_record_timestamp, (void*)&profile_result.end_timestamp);
+	CULiP_launch_function(cuda_stream, &CULiP_record_timestamp, (void*)&profile_result.end_timestamp);
 
 	// Print result
-	CULip_launch_function(cuda_stream, &CULiP_print_profile_result, (void*)&profile_result);
+	CULiP_launch_function(cuda_stream, &CULiP_print_profile_result, (void*)&profile_result);
 
 	return result;
 }
