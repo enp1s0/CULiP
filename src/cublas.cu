@@ -51,7 +51,7 @@ cublasStatus_t cublasSgemm_v2(cublasHandle_t handle, cublasOperation_t transa,
 
 	// Profile result structure
 	struct CULiP_profile_result profile_result;
-	snprintf(profile_result.function_name, profile_result.function_name_length - 1, "%s-m%d-n%d-l%d", __func__, m, n ,k);
+	snprintf(profile_result.function_name, profile_result.function_name_length - 1, "%s-m%d-n%d-k%d", __func__, m, n ,k);
 
 	// Record start rimestamp
 	CULip_launch_function(cuda_stream, &CULiP_record_timestamp, (void*)&profile_result.start_timestamp);
