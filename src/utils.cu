@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <cuda.h>
+#include <unistd.h>
+#include <dlfcn.h>
 #include "utils.hpp"
 
 extern "C" void CULiP_record_timestamp(void *tm_timestamp) {
@@ -25,4 +27,31 @@ extern "C" void CULiP_launch_function(cudaStream_t cuda_stream, void (*fn)(void*
 	cudaStreamSynchronize(cuda_stream);
 	fn(arg);
 	cudaStreamSynchronize(cuda_stream);
+}
+
+// Function loader
+void* CULiP_get_function_pointer(const char* const env_name, const char* const function_name) {
+	CULIBPROFILER_DEBUG_PRINT(printf("[CULiP Debug][%s] start\n", function_name));
+
+	// Get the real library path
+	const char* library_path = getenv(env_name);
+	if (library_path == NULL) {
+		fprintf(stderr, "[CULiP ERROR] CULIP_CUBLAS_LIB_PATH is not set\n");
+		exit(1);
+	}
+	CULIBPROFILER_DEBUG_PRINT(printf("[CULiP Debug][%s] %s is loaded\n", function_name, library_path));
+
+	// Open the library
+	void* library_handle = dlopen(library_path, RTLD_NOW);
+	if (library_handle == NULL) {
+		fprintf(stderr, "[CULiP ERROR] Failed to load the real library %s\n", library_path);
+		exit(1);
+	}
+	void* function_ptr = dlsym(library_handle, function_name);
+	if (function_ptr == NULL) {
+		fprintf(stderr, "[CULiP ERROR] Failed to load the function %s\n", __func__);
+		exit(1);
+	}
+
+	return function_ptr;
 }
