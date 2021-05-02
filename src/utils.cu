@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <cuda.h>
 #include "utils.hpp"
 
 extern "C" void CULiP_record_timestamp(void *tm_timestamp) {
@@ -16,5 +17,12 @@ extern "C" void CULiP_print_profile_result(void *profile_result_ptr) {
 	        (long)1000000000 +
 	    ((long)profile_result.end_timestamp.tv_nsec -
 	     (long)profile_result.start_timestamp.tv_nsec);
-	printf("[CULiP Result][%s] %lu\n", profile_result.function_name, elapsed_time_us);
+	printf("[CULiP Result][%s] %luns\n", profile_result.function_name, elapsed_time_us);
+}
+
+// TODO: Make this function non-blocking using `cuLauchHostFunc`
+extern "C" void CULip_launch_function(cudaStream_t cuda_stream, void (*fn)(void*), void* const arg) {
+	cudaStreamSynchronize(cuda_stream);
+	fn(arg);
+	cudaStreamSynchronize(cuda_stream);
 }
