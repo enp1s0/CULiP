@@ -2,23 +2,47 @@
 #include <cublas.h>
 #include <cublas_v2.h>
 
-void sgemm_test() {
+template <class T>
+cublasStatus_t gemm(cublasHandle_t handle, cublasOperation_t transa,
+                           cublasOperation_t transb, int m, int n, int k,
+                           const T *alpha, const T *A, int lda,
+                           const T *B, int ldb, const T *beta, T *C,
+                           int ldc);
+template <>
+cublasStatus_t gemm<float >(cublasHandle_t handle, cublasOperation_t transa,
+                           cublasOperation_t transb, int m, int n, int k,
+                           const float *alpha, const float *A, int lda,
+                           const float *B, int ldb, const float *beta, float *C,
+                           int ldc) {
+	return cublasSgemm(handle, transa, transb, m, n, k, alpha, A, lda, B, ldb, beta, C, ldc);
+}
+template <>
+cublasStatus_t gemm<double>(cublasHandle_t handle, cublasOperation_t transa,
+                           cublasOperation_t transb, int m, int n, int k,
+                           const double *alpha, const double *A, int lda,
+                           const double *B, int ldb, const double *beta, double *C,
+                           int ldc) {
+	return cublasDgemm(handle, transa, transb, m, n, k, alpha, A, lda, B, ldb, beta, C, ldc);
+}
+
+template <class T>
+void gemm_test() {
 	const std::size_t n = 1lu << 10;
-	const auto alpha = 1.f;
-	const auto beta  = 0.f;
+	const auto alpha = static_cast<T>(1);
+	const auto beta  = static_cast<T>(0);
 
-	float* mat_a;
-	float* mat_b;
-	float* mat_c;
+	T* mat_a;
+	T* mat_b;
+	T* mat_c;
 
-	cudaMalloc(&mat_a, sizeof(float) * n * n);
-	cudaMalloc(&mat_b, sizeof(float) * n * n);
-	cudaMalloc(&mat_c, sizeof(float) * n * n);
+	cudaMalloc(&mat_a, sizeof(T) * n * n);
+	cudaMalloc(&mat_b, sizeof(T) * n * n);
+	cudaMalloc(&mat_c, sizeof(T) * n * n);
 
 	cublasHandle_t cublas_handle;
 	cublasCreate(&cublas_handle);
 
-	cublasSgemm(
+	gemm<T>(
 			cublas_handle,
 			CUBLAS_OP_N, CUBLAS_OP_N,
 			n, n, n,
@@ -36,5 +60,6 @@ void sgemm_test() {
 }
 
 int main(){
-	sgemm_test();
+	gemm_test<double>();
+	gemm_test<float >();
 }
