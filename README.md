@@ -7,6 +7,11 @@ CULiP is a library for profiling the execution time of CUDA official library fun
 - cuBLAS
   - `cublasSgemm`
 
+## Dependencies
+- CUDA >= 10.0
+- CMake >= 3.18
+- C++ >= 14
+
 ## Usage
 
 1. Clone CULiP
