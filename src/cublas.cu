@@ -7,6 +7,9 @@
 #include <CULiP/cublas.hpp>
 #include "utils.hpp"
 
+#define CULIP_CUBLAS_LIBRARY_NAME 	"libcublas.so"
+#define CULIP_CUBLAS_ENV_NAME 		"CULIP_CUBLAS_LIB_PATH"
+
 extern "C" {
 // dlopen cache
 void* CULiP_cublas_lib_handle_cache = NULL;
@@ -84,7 +87,7 @@ cublasStatus_t cublasSgemm(cublasHandle_t handle, cublasOperation_t transa,
 
 	// Get the function pointer
 	cublasStatus_t (*cublas_lib_func)(cublasHandle_t, cublasOperation_t, cublasOperation_t, int, int, int, const float*, const float*, int, const float*, int, const float*, float*, int);
-	*(void**)(&cublas_lib_func) = CULiP_get_function_pointer("CULIP_CUBLAS_LIB_PATH", __func__, &CULiP_cublas_lib_handle_cache);
+	*(void**)(&cublas_lib_func) = CULiP_get_function_pointer(CULIP_CUBLAS_LIBRARY_NAME, CULIP_CUBLAS_ENV_NAME, __func__, &CULiP_cublas_lib_handle_cache);
 
 	cudaStream_t cuda_stream;
 	struct CULiP_profile_result profile_result;
@@ -123,7 +126,7 @@ cublasStatus_t cublasDgemm(cublasHandle_t handle, cublasOperation_t transa,
 
 	// Get the function pointer
 	cublasStatus_t (*cublas_lib_func)(cublasHandle_t, cublasOperation_t, cublasOperation_t, int, int, int, const double*, const double*, int, const double*, int, const double*, double*, int);
-	*(void**)(&cublas_lib_func) = CULiP_get_function_pointer("CULIP_CUBLAS_LIB_PATH", __func__, &CULiP_cublas_lib_handle_cache);
+	*(void**)(&cublas_lib_func) = CULiP_get_function_pointer(CULIP_CUBLAS_LIBRARY_NAME, CULIP_CUBLAS_ENV_NAME, __func__, &CULiP_cublas_lib_handle_cache);
 
 	cudaStream_t cuda_stream;
 	struct CULiP_profile_result profile_result;
@@ -162,7 +165,7 @@ cublasStatus_t cublasHgemm(cublasHandle_t handle, cublasOperation_t transa,
 
 	// Get the function pointer
 	cublasStatus_t (*cublas_lib_func)(cublasHandle_t, cublasOperation_t, cublasOperation_t, int, int, int, const half*, const half*, int, const half*, int, const half*, half*, int);
-	*(void**)(&cublas_lib_func) = CULiP_get_function_pointer("CULIP_CUBLAS_LIB_PATH", __func__, &CULiP_cublas_lib_handle_cache);
+	*(void**)(&cublas_lib_func) = CULiP_get_function_pointer(CULIP_CUBLAS_LIBRARY_NAME, CULIP_CUBLAS_ENV_NAME, __func__, &CULiP_cublas_lib_handle_cache);
 
 	cudaStream_t cuda_stream;
 	struct CULiP_profile_result profile_result;
@@ -203,7 +206,7 @@ cublasStatus_t cublasGemmEx(cublasHandle_t handle, cublasOperation_t transa,
                             cublasGemmAlgo_t algo) {
 	// Get the function pointer
 	cublasStatus_t (*cublas_lib_func)(cublasHandle_t, cublasOperation_t, cublasOperation_t, int, int, int, const void*, const void*, cudaDataType_t, int, const void*, cudaDataType_t, int, const void*, void*, cudaDataType_t, int, cublasComputeType_t, cublasGemmAlgo_t);
-	*(void**)(&cublas_lib_func) = CULiP_get_function_pointer("CULIP_CUBLAS_LIB_PATH", __func__, &CULiP_cublas_lib_handle_cache);
+	*(void**)(&cublas_lib_func) = CULiP_get_function_pointer(CULIP_CUBLAS_LIBRARY_NAME, CULIP_CUBLAS_ENV_NAME, __func__, &CULiP_cublas_lib_handle_cache);
 
 	cudaStream_t cuda_stream;
 	struct CULiP_profile_result profile_result;
