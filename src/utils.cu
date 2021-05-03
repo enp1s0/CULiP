@@ -2,6 +2,7 @@
 #include <cuda.h>
 #include <unistd.h>
 #include <dlfcn.h>
+#include <string.h>
 #include "utils.hpp"
 
 extern "C" void CULiP_record_timestamp(void *tm_timestamp) {
@@ -57,4 +58,16 @@ extern "C" void* CULiP_get_function_pointer(const char* const library_name, cons
 	}
 
 	return function_ptr;
+}
+
+// Profiling status
+extern "C" int CULiP_is_profiling_enabled(const char* env_name) {
+	const char* value = getenv(env_name);
+	if (value == NULL) {
+		return 1;
+	}
+	if (strcmp(value, "0") == 0) {
+		return 0;
+	}
+	return 1;
 }

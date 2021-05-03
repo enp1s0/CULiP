@@ -85,7 +85,7 @@ cublasStatus_t cublasSgemm(cublasHandle_t handle, cublasOperation_t transa,
                            const float *alpha, const float *A, int lda,
                            const float *B, int ldb, const float *beta, float *C,
                            int ldc) {
-	const int profiling_flag = (CULiP_profiling_control_array[CULiP_cublasSgemm] == 0) && (getenv(CULIP_CUBLAS_DISABLE_ENV_NAME) == NULL);
+	const int profiling_flag = (CULiP_profiling_control_array[CULiP_cublasSgemm] == 0) && CULiP_is_profiling_enabled(CULIP_CUBLAS_DISABLE_ENV_NAME);
 
 	// Get the function pointer
 	cublasStatus_t (*cublas_lib_func)(cublasHandle_t, cublasOperation_t, cublasOperation_t, int, int, int, const float*, const float*, int, const float*, int, const float*, float*, int);
@@ -125,7 +125,7 @@ cublasStatus_t cublasDgemm(cublasHandle_t handle, cublasOperation_t transa,
                            const double *alpha, const double *A, int lda,
                            const double *B, int ldb, const double *beta, double *C,
                            int ldc) {
-	const int profiling_flag = (CULiP_profiling_control_array[CULiP_cublasDgemm] == 0) && (getenv(CULIP_CUBLAS_DISABLE_ENV_NAME) == NULL);
+	const int profiling_flag = (CULiP_profiling_control_array[CULiP_cublasDgemm] == 0) && CULiP_is_profiling_enabled(CULIP_CUBLAS_DISABLE_ENV_NAME);
 
 	// Get the function pointer
 	cublasStatus_t (*cublas_lib_func)(cublasHandle_t, cublasOperation_t, cublasOperation_t, int, int, int, const double*, const double*, int, const double*, int, const double*, double*, int);
@@ -165,7 +165,7 @@ cublasStatus_t cublasHgemm(cublasHandle_t handle, cublasOperation_t transa,
                            const half *alpha, const half *A, int lda,
                            const half *B, int ldb, const half *beta, half *C,
                            int ldc) {
-	const int profiling_flag = (CULiP_profiling_control_array[CULiP_cublasHgemm] == 0) && (getenv(CULIP_CUBLAS_DISABLE_ENV_NAME) == NULL);
+	const int profiling_flag = (CULiP_profiling_control_array[CULiP_cublasHgemm] == 0) && CULiP_is_profiling_enabled(CULIP_CUBLAS_DISABLE_ENV_NAME);
 
 	// Get the function pointer
 	cublasStatus_t (*cublas_lib_func)(cublasHandle_t, cublasOperation_t, cublasOperation_t, int, int, int, const half*, const half*, int, const half*, int, const half*, half*, int);
@@ -208,7 +208,7 @@ cublasStatus_t cublasGemmEx(cublasHandle_t handle, cublasOperation_t transa,
                             void *C, cudaDataType_t Ctype, int ldc,
                             cublasComputeType_t computeType,
                             cublasGemmAlgo_t algo) {
-	const int profiling_flag = (CULiP_profiling_control_array[CULiP_cublasGemmEx] == 0) && (getenv(CULIP_CUBLAS_DISABLE_ENV_NAME) == NULL);
+	const int profiling_flag = (CULiP_profiling_control_array[CULiP_cublasGemmEx] == 0) && CULiP_is_profiling_enabled(CULIP_CUBLAS_DISABLE_ENV_NAME);
 
 	// Get the function pointer
 	cublasStatus_t (*cublas_lib_func)(cublasHandle_t, cublasOperation_t, cublasOperation_t, int, int, int, const void*, const void*, cudaDataType_t, int, const void*, cudaDataType_t, int, const void*, void*, cudaDataType_t, int, cublasComputeType_t, cublasGemmAlgo_t);
