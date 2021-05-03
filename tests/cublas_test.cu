@@ -3,14 +3,20 @@
 #include <cublas_v2.h>
 #include <CULiP/cublas.hpp>
 
-template <class T>
+struct op_gemm;
+struct op_gemmEx;
+
+template <class T, class Op>
 cublasStatus_t gemm(cublasHandle_t handle, cublasOperation_t transa,
                            cublasOperation_t transb, int m, int n, int k,
                            const T *alpha, const T *A, int lda,
                            const T *B, int ldb, const T *beta, T *C,
                            int ldc);
+// -----------------------------------------------------
+// op_gemm
+// -----------------------------------------------------
 template <>
-cublasStatus_t gemm<float >(cublasHandle_t handle, cublasOperation_t transa,
+cublasStatus_t gemm<float , op_gemm>(cublasHandle_t handle, cublasOperation_t transa,
                            cublasOperation_t transb, int m, int n, int k,
                            const float *alpha, const float *A, int lda,
                            const float *B, int ldb, const float *beta, float *C,
@@ -18,7 +24,7 @@ cublasStatus_t gemm<float >(cublasHandle_t handle, cublasOperation_t transa,
 	return cublasSgemm(handle, transa, transb, m, n, k, alpha, A, lda, B, ldb, beta, C, ldc);
 }
 template <>
-cublasStatus_t gemm<double>(cublasHandle_t handle, cublasOperation_t transa,
+cublasStatus_t gemm<double, op_gemm>(cublasHandle_t handle, cublasOperation_t transa,
                            cublasOperation_t transb, int m, int n, int k,
                            const double *alpha, const double *A, int lda,
                            const double *B, int ldb, const double *beta, double *C,
@@ -26,15 +32,42 @@ cublasStatus_t gemm<double>(cublasHandle_t handle, cublasOperation_t transa,
 	return cublasDgemm(handle, transa, transb, m, n, k, alpha, A, lda, B, ldb, beta, C, ldc);
 }
 template <>
-cublasStatus_t gemm<half  >(cublasHandle_t handle, cublasOperation_t transa,
+cublasStatus_t gemm<half  , op_gemm>(cublasHandle_t handle, cublasOperation_t transa,
                            cublasOperation_t transb, int m, int n, int k,
                            const half *alpha, const half *A, int lda,
                            const half *B, int ldb, const half *beta, half *C,
                            int ldc) {
 	return cublasHgemm(handle, transa, transb, m, n, k, alpha, A, lda, B, ldb, beta, C, ldc);
 }
+// -----------------------------------------------------
+// op_gemmEx
+// -----------------------------------------------------
+template <>
+cublasStatus_t gemm<float , op_gemmEx>(cublasHandle_t handle, cublasOperation_t transa,
+                           cublasOperation_t transb, int m, int n, int k,
+                           const float *alpha, const float *A, int lda,
+                           const float *B, int ldb, const float *beta, float *C,
+                           int ldc) {
+	return cublasGemmEx(handle, transa, transb, m, n, k, alpha, A, CUDA_R_32F, lda, B, CUDA_R_32F, ldb, beta, C, CUDA_R_32F, ldc, CUDA_R_32F, CUBLAS_GEMM_DEFAULT);
+}
+template <>
+cublasStatus_t gemm<double, op_gemmEx>(cublasHandle_t handle, cublasOperation_t transa,
+                           cublasOperation_t transb, int m, int n, int k,
+                           const double *alpha, const double *A, int lda,
+                           const double *B, int ldb, const double *beta, double *C,
+                           int ldc) {
+	return cublasGemmEx(handle, transa, transb, m, n, k, alpha, A, CUDA_R_64F, lda, B, CUDA_R_64F, ldb, beta, C, CUDA_R_64F, ldc, CUDA_R_64F, CUBLAS_GEMM_DEFAULT);
+}
+template <>
+cublasStatus_t gemm<half  , op_gemmEx>(cublasHandle_t handle, cublasOperation_t transa,
+                           cublasOperation_t transb, int m, int n, int k,
+                           const half *alpha, const half *A, int lda,
+                           const half *B, int ldb, const half *beta, half *C,
+                           int ldc) {
+	return cublasGemmEx(handle, transa, transb, m, n, k, alpha, A, CUDA_R_16F, lda, B, CUDA_R_16F, ldb, beta, C, CUDA_R_16F, ldc, CUDA_R_16F, CUBLAS_GEMM_DEFAULT);
+}
 
-template <class T>
+template <class T, class Op>
 void gemm_test() {
 	const std::size_t n = 1lu << 10;
 	const auto alpha = static_cast<T>(1);
@@ -51,7 +84,7 @@ void gemm_test() {
 	cublasHandle_t cublas_handle;
 	cublasCreate(&cublas_handle);
 
-	gemm<T>(
+	gemm<T, Op>(
 			cublas_handle,
 			CUBLAS_OP_N, CUBLAS_OP_N,
 			n, n, n,
@@ -69,9 +102,12 @@ void gemm_test() {
 }
 
 void test_all() {
-	gemm_test<double>();
-	gemm_test<float >();
-	gemm_test<half  >();
+	gemm_test<double, op_gemm  >();
+	gemm_test<float , op_gemm  >();
+	gemm_test<half  , op_gemm  >();
+	gemm_test<double, op_gemmEx>();
+	gemm_test<float , op_gemmEx>();
+	gemm_test<half  , op_gemmEx>();
 }
 
 int main(){
