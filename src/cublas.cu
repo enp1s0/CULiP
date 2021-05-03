@@ -192,4 +192,45 @@ cublasStatus_t cublasHgemm(cublasHandle_t handle, cublasOperation_t transa,
 
 	return result;
 }
+
+cublasStatus_t cublasGemmEx(cublasHandle_t handle, cublasOperation_t transa,
+                            cublasOperation_t transb, int m, int n, int k,
+                            const void *alpha, const void *A,
+                            cudaDataType_t Atype, int lda, const void *B,
+                            cudaDataType_t Btype, int ldb, const void *beta,
+                            void *C, cudaDataType_t Ctype, int ldc,
+                            cublasComputeType_t computeType,
+                            cublasGemmAlgo_t algo) {
+	// Get the function pointer
+	cublasStatus_t (*cublas_lib_func)(cublasHandle_t, cublasOperation_t, cublasOperation_t, int, int, int, const void*, const void*, cudaDataType_t, int, const void*, cudaDataType_t, int, const void*, void*, cudaDataType_t, int, cublasComputeType_t, cublasGemmAlgo_t);
+	*(void**)(&cublas_lib_func) = CULiP_get_function_pointer("CULIP_CUBLAS_LIB_PATH", __func__, &CULiP_cublas_lib_handle_cache);
+
+	cudaStream_t cuda_stream;
+	struct CULiP_profile_result profile_result;
+
+	if (CULiP_profiling_control_array[CULiP_cublasGemmEx] == 0) {
+		// Get current cuda stream
+		cublasGetStream(handle, &cuda_stream);
+
+		// Profile result structure
+		snprintf(profile_result.function_name, profile_result.function_name_length - 1, "%s-%s-m%d-n%d-k%d", __func__, CULiP_get_cublasComputeType_t_string(computeType), m, n , k);
+
+		// Record start rimestamp
+		CULiP_launch_function(cuda_stream, &CULiP_record_timestamp, (void*)&profile_result.start_timestamp);
+	}
+
+	// Call the function
+	const cublasStatus_t result = (*cublas_lib_func)(handle, transa, transb, m, n, k, alpha, A, Atype, lda, B, Btype, ldb, beta, C, Ctype, ldc, computeType, algo);
+	CULIBPROFILER_DEBUG_PRINT(printf("[CULiP Debug][%s] executed\n", __func__));
+
+	if (CULiP_profiling_control_array[CULiP_cublasGemmEx] == 0) {
+		// Record end rimestamp
+		CULiP_launch_function(cuda_stream, &CULiP_record_timestamp, (void*)&profile_result.end_timestamp);
+
+		// Print result
+		CULiP_launch_function(cuda_stream, &CULiP_print_profile_result, (void*)&profile_result);
+	}
+
+	return result;
+}
 } // extern "C"
