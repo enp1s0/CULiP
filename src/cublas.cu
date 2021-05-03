@@ -7,8 +7,9 @@
 #include <CULiP/cublas.hpp>
 #include "utils.hpp"
 
-#define CULIP_CUBLAS_LIBRARY_NAME 	"libcublas.so"
-#define CULIP_CUBLAS_ENV_NAME 		"CULIP_CUBLAS_LIB_PATH"
+#define CULIP_CUBLAS_LIBRARY_NAME       "libcublas.so"
+#define CULIP_CUBLAS_ENV_NAME           "CULIP_CUBLAS_LIB_PATH"
+#define CULIP_CUBLAS_DISABLE_ENV_NAME   "CULIP_PROFILING_CUBLAS_DISABLE"
 
 extern "C" {
 // dlopen cache
@@ -84,6 +85,7 @@ cublasStatus_t cublasSgemm(cublasHandle_t handle, cublasOperation_t transa,
                            const float *alpha, const float *A, int lda,
                            const float *B, int ldb, const float *beta, float *C,
                            int ldc) {
+	const int profiling_flag = (CULiP_profiling_control_array[CULiP_cublasSgemm] == 0) && CULiP_is_profiling_enabled(CULIP_CUBLAS_DISABLE_ENV_NAME);
 
 	// Get the function pointer
 	cublasStatus_t (*cublas_lib_func)(cublasHandle_t, cublasOperation_t, cublasOperation_t, int, int, int, const float*, const float*, int, const float*, int, const float*, float*, int);
@@ -92,7 +94,7 @@ cublasStatus_t cublasSgemm(cublasHandle_t handle, cublasOperation_t transa,
 	cudaStream_t cuda_stream;
 	struct CULiP_profile_result profile_result;
 
-	if (CULiP_profiling_control_array[CULiP_cublasSgemm] == 0) {
+	if (profiling_flag) {
 		// Get current cuda stream
 		cublasGetStream(handle, &cuda_stream);
 
@@ -107,7 +109,7 @@ cublasStatus_t cublasSgemm(cublasHandle_t handle, cublasOperation_t transa,
 	const cublasStatus_t result = (*cublas_lib_func)(handle, transa, transb, m, n, k, alpha, A, lda, B, ldb, beta, C, ldc);
 	CULIBPROFILER_DEBUG_PRINT(printf("[CULiP Debug][%s] executed\n", __func__));
 
-	if (CULiP_profiling_control_array[CULiP_cublasSgemm] == 0) {
+	if (profiling_flag) {
 		// Record end rimestamp
 		CULiP_launch_function(cuda_stream, &CULiP_record_timestamp, (void*)&profile_result.end_timestamp);
 
@@ -123,6 +125,7 @@ cublasStatus_t cublasDgemm(cublasHandle_t handle, cublasOperation_t transa,
                            const double *alpha, const double *A, int lda,
                            const double *B, int ldb, const double *beta, double *C,
                            int ldc) {
+	const int profiling_flag = (CULiP_profiling_control_array[CULiP_cublasDgemm] == 0) && CULiP_is_profiling_enabled(CULIP_CUBLAS_DISABLE_ENV_NAME);
 
 	// Get the function pointer
 	cublasStatus_t (*cublas_lib_func)(cublasHandle_t, cublasOperation_t, cublasOperation_t, int, int, int, const double*, const double*, int, const double*, int, const double*, double*, int);
@@ -131,7 +134,7 @@ cublasStatus_t cublasDgemm(cublasHandle_t handle, cublasOperation_t transa,
 	cudaStream_t cuda_stream;
 	struct CULiP_profile_result profile_result;
 
-	if (CULiP_profiling_control_array[CULiP_cublasDgemm] == 0) {
+	if (profiling_flag) {
 		// Get current cuda stream
 		cublasGetStream(handle, &cuda_stream);
 
@@ -146,7 +149,7 @@ cublasStatus_t cublasDgemm(cublasHandle_t handle, cublasOperation_t transa,
 	const cublasStatus_t result = (*cublas_lib_func)(handle, transa, transb, m, n, k, alpha, A, lda, B, ldb, beta, C, ldc);
 	CULIBPROFILER_DEBUG_PRINT(printf("[CULiP Debug][%s] executed\n", __func__));
 
-	if (CULiP_profiling_control_array[CULiP_cublasDgemm] == 0) {
+	if (profiling_flag) {
 		// Record end rimestamp
 		CULiP_launch_function(cuda_stream, &CULiP_record_timestamp, (void*)&profile_result.end_timestamp);
 
@@ -162,6 +165,7 @@ cublasStatus_t cublasHgemm(cublasHandle_t handle, cublasOperation_t transa,
                            const half *alpha, const half *A, int lda,
                            const half *B, int ldb, const half *beta, half *C,
                            int ldc) {
+	const int profiling_flag = (CULiP_profiling_control_array[CULiP_cublasHgemm] == 0) && CULiP_is_profiling_enabled(CULIP_CUBLAS_DISABLE_ENV_NAME);
 
 	// Get the function pointer
 	cublasStatus_t (*cublas_lib_func)(cublasHandle_t, cublasOperation_t, cublasOperation_t, int, int, int, const half*, const half*, int, const half*, int, const half*, half*, int);
@@ -170,7 +174,7 @@ cublasStatus_t cublasHgemm(cublasHandle_t handle, cublasOperation_t transa,
 	cudaStream_t cuda_stream;
 	struct CULiP_profile_result profile_result;
 
-	if (CULiP_profiling_control_array[CULiP_cublasHgemm] == 0) {
+	if (profiling_flag) {
 		// Get current cuda stream
 		cublasGetStream(handle, &cuda_stream);
 
@@ -185,7 +189,7 @@ cublasStatus_t cublasHgemm(cublasHandle_t handle, cublasOperation_t transa,
 	const cublasStatus_t result = (*cublas_lib_func)(handle, transa, transb, m, n, k, alpha, A, lda, B, ldb, beta, C, ldc);
 	CULIBPROFILER_DEBUG_PRINT(printf("[CULiP Debug][%s] executed\n", __func__));
 
-	if (CULiP_profiling_control_array[CULiP_cublasHgemm] == 0) {
+	if (profiling_flag) {
 		// Record end rimestamp
 		CULiP_launch_function(cuda_stream, &CULiP_record_timestamp, (void*)&profile_result.end_timestamp);
 
@@ -204,6 +208,8 @@ cublasStatus_t cublasGemmEx(cublasHandle_t handle, cublasOperation_t transa,
                             void *C, cudaDataType_t Ctype, int ldc,
                             cublasComputeType_t computeType,
                             cublasGemmAlgo_t algo) {
+	const int profiling_flag = (CULiP_profiling_control_array[CULiP_cublasGemmEx] == 0) && CULiP_is_profiling_enabled(CULIP_CUBLAS_DISABLE_ENV_NAME);
+
 	// Get the function pointer
 	cublasStatus_t (*cublas_lib_func)(cublasHandle_t, cublasOperation_t, cublasOperation_t, int, int, int, const void*, const void*, cudaDataType_t, int, const void*, cudaDataType_t, int, const void*, void*, cudaDataType_t, int, cublasComputeType_t, cublasGemmAlgo_t);
 	*(void**)(&cublas_lib_func) = CULiP_get_function_pointer(CULIP_CUBLAS_LIBRARY_NAME, CULIP_CUBLAS_ENV_NAME, __func__, &CULiP_cublas_lib_handle_cache);
@@ -211,7 +217,7 @@ cublasStatus_t cublasGemmEx(cublasHandle_t handle, cublasOperation_t transa,
 	cudaStream_t cuda_stream;
 	struct CULiP_profile_result profile_result;
 
-	if (CULiP_profiling_control_array[CULiP_cublasGemmEx] == 0) {
+	if (profiling_flag) {
 		// Get current cuda stream
 		cublasGetStream(handle, &cuda_stream);
 
@@ -226,7 +232,7 @@ cublasStatus_t cublasGemmEx(cublasHandle_t handle, cublasOperation_t transa,
 	const cublasStatus_t result = (*cublas_lib_func)(handle, transa, transb, m, n, k, alpha, A, Atype, lda, B, Btype, ldb, beta, C, Ctype, ldc, computeType, algo);
 	CULIBPROFILER_DEBUG_PRINT(printf("[CULiP Debug][%s] executed\n", __func__));
 
-	if (CULiP_profiling_control_array[CULiP_cublasGemmEx] == 0) {
+	if (profiling_flag) {
 		// Record end rimestamp
 		CULiP_launch_function(cuda_stream, &CULiP_record_timestamp, (void*)&profile_result.end_timestamp);
 

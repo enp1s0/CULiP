@@ -46,6 +46,17 @@ Then the execution time is printed on stdout.
 [CULiP Result][cublasSgemm_v2-m1024-n1024-k1024] 155182ns
 ```
 
+To disable profiling at runtime, define an environment variable `CULIP_PROFILING_CUBLAS_DISABLE`.
+```bash
+# Disable cuBLAS profiling
+export CULIP_PROFILING_CUBLAS_DISABLE=1
+
+# Enable cuBLAS profiling
+export CULIP_PROFILING_CUBLAS_DISABLE=0
+# or
+unset CULIP_PROFILING_CUBLAS_DISABLE
+```
+
 ## Profiling control API
 
 CULiP provides profiling control API.
