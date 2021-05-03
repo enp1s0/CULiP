@@ -36,9 +36,8 @@ make install
 nvcc main.cu -L/path/to/install/CULiP/lib -lculip_cublas -lcublas -o foo.bar
 ```
 
-4. Set an environment variable `CULIP_CUBLAS_LIB_PATH` before executing the application
+4. Execute the application
 ```bash
-export CULIP_CUBLAS_LIB_PATH=/nfs/shared/packages/x86_64/cuda/cuda-11.3/lib64/libcublas.so.11
 ./foo.bar
 ```
 
