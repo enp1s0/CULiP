@@ -28,7 +28,7 @@ mkdir build
 cmake .. -DCMAKE_INSTALL_PREFIX=/path/to/install/CULiP
 ```
 
-3. Link CULiP libraries **before linking to libcublas and so on**
+3. Link the CULiP libraries **before linking libcublas and so on**
 ```
 nvcc main.cu -L/path/to/install/CULiP/lib -lculip_cublas -lcublas -o foo.bar
 ```
