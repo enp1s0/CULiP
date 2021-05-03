@@ -2,12 +2,13 @@
 
 CULiP is a library for profiling the execution time of CUDA official library functions
 
-## Supported Libraries and functions
+## Supported libraries and functions
 
 - cuBLAS
   - `cublasDgemm`
   - `cublasSgemm`
   - `cublasHgemm`
+  - `cublasGemmEx`
 
 ## Dependencies
 - CUDA >= 10.0
@@ -27,6 +28,7 @@ cd CULiP
 mkdir build
 cmake .. -DCMAKE_INSTALL_PREFIX=/path/to/install/CULiP
 make
+make install
 ```
 
 3. Link the CULiP libraries **before linking libcublas and so on**

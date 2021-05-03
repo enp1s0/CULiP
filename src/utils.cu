@@ -30,7 +30,7 @@ extern "C" void CULiP_launch_function(cudaStream_t cuda_stream, void (*fn)(void*
 }
 
 // Function loader
-void* CULiP_get_function_pointer(const char* const env_name, const char* const function_name, void** CULiP_haldle_cache) {
+extern "C" void* CULiP_get_function_pointer(const char* const env_name, const char* const function_name, void** CULiP_haldle_cache) {
 	CULIBPROFILER_DEBUG_PRINT(printf("[CULiP Debug][%s] start\n", function_name));
 
 	// Get the real library path

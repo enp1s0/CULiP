@@ -28,5 +28,5 @@ extern "C" void CULiP_print_profile_result(void* profile_result_ptr);
 extern "C" void CULiP_launch_function(cudaStream_t cuda_stream, void (*fn)(void*), void* const arg);
 
 // Function loader
-void* CULiP_get_function_pointer(const char* const env_name, const char* const function_name, void** CULiP_haldle_cache);
+extern "C" void* CULiP_get_function_pointer(const char* const env_name, const char* const function_name, void** CULiP_haldle_cache);
 #endif
