@@ -18,7 +18,7 @@ SET(CMAKE_CUDA_ARCHITECTURES 70 75 80 86)
 set(INCDIR include)
 set(SRCDIR src)
 
-file(GLOB HEADERS "${INCDIR}/culip/*.hpp")
+file(GLOB HEADERS "${INCDIR}/CULiP/*.hpp")
 
 foreach(library cublas)
 	SET(lib_name culip_${library})
@@ -51,7 +51,7 @@ set(TESTSRCDIR tests)
 
 foreach(test cublas)
 	set(test_out ${test}.test)
-	add_executable(${test_out} ${TESTSRCDIR}/${test}_test.cu)
+	add_executable(${test_out} ${TESTSRCDIR}/${test}_test.cu ${HEADERS})
 	target_include_directories(${test_out} PRIVATE ${INCDIR})
 	target_link_libraries(${test_out} PRIVATE culip_${test})
 	target_link_libraries(${test_out} PRIVATE

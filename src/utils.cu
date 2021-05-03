@@ -30,24 +30,28 @@ extern "C" void CULiP_launch_function(cudaStream_t cuda_stream, void (*fn)(void*
 }
 
 // Function loader
-void* CULiP_get_function_pointer(const char* const env_name, const char* const function_name) {
+void* CULiP_get_function_pointer(const char* const env_name, const char* const function_name, void** CULiP_haldle_cache) {
 	CULIBPROFILER_DEBUG_PRINT(printf("[CULiP Debug][%s] start\n", function_name));
 
 	// Get the real library path
 	const char* library_path = getenv(env_name);
 	if (library_path == NULL) {
-		fprintf(stderr, "[CULiP ERROR] CULIP_CUBLAS_LIB_PATH is not set\n");
+		fprintf(stderr, "[CULiP ERROR] %s is not set\n", env_name);
 		exit(1);
 	}
-	CULIBPROFILER_DEBUG_PRINT(printf("[CULiP Debug][%s] %s is loaded\n", function_name, library_path));
 
 	// Open the library
-	void* library_handle = dlopen(library_path, RTLD_NOW);
-	if (library_handle == NULL) {
-		fprintf(stderr, "[CULiP ERROR] Failed to load the real library %s\n", library_path);
-		exit(1);
+	if (*CULiP_haldle_cache == NULL) {
+		*CULiP_haldle_cache = dlopen(library_path, RTLD_NOW);
+		if (*CULiP_haldle_cache == NULL) {
+			fprintf(stderr, "[CULiP ERROR] Failed to load the real library %s\n", library_path);
+			exit(1);
+		}
+		CULIBPROFILER_DEBUG_PRINT(printf("[CULiP Debug][%s] %s is loaded\n", function_name, library_path));
 	}
-	void* function_ptr = dlsym(library_handle, function_name);
+
+	// Get function pointer
+	void* function_ptr = dlsym(*CULiP_haldle_cache, function_name);
 	if (function_ptr == NULL) {
 		fprintf(stderr, "[CULiP ERROR] Failed to load the function %s\n", __func__);
 		exit(1);

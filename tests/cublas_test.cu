@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cublas.h>
 #include <cublas_v2.h>
+#include <CULiP/cublas.hpp>
 
 template <class T>
 cublasStatus_t gemm(cublasHandle_t handle, cublasOperation_t transa,
@@ -67,8 +68,20 @@ void gemm_test() {
 	cudaFree(mat_c);
 }
 
-int main(){
+void test_all() {
 	gemm_test<double>();
 	gemm_test<float >();
 	gemm_test<half  >();
+}
+
+int main(){
+	std::printf("Without profiling\n");
+	CULiP_profile_cublas_disable_all();
+	test_all();
+	std::printf("-------\n");
+
+	std::printf("With profiling\n");
+	CULiP_profile_cublas_enable_all();
+	test_all();
+	std::printf("-------\n");
 }

@@ -44,6 +44,27 @@ The execution time is printed on stdout.
 [CULiP Result][cublasSgemm_v2-m1024-n1024-k1024] 155182ns
 ```
 
+## Profiling control API
+
+CULiP provides profiling control API.
+By default, all profiling is enabled.
+
+```cpp
+#include <CULiP/cublas.hpp>
+
+// Disable profiling of all functions
+CULiP_profiling_cublas_enable_all();
+
+// Enable profiling of all functions
+CULiP_profiling_cublas_disable_all();
+
+// Disable profiling of a function (e.g. `cublasSgemm`)
+CULiP_profiling_cublas_disable(CULiP_cublasSgemm);
+
+// Enable profiling of a function (e.g. `cublasSgemm`)
+CULiP_profiling_cublas_enable(CULiP_cublasSgemm);
+```
+
 ## How it works
 
 <img alt='culip_how_it_works' src='./docs/CULiP.svg'>
