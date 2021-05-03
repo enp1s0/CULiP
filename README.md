@@ -50,7 +50,7 @@ CULiP provides profiling control API.
 By default, all profiling is enabled.
 
 ```cpp
-// nvcc -I/path/to/install/include ...
+// nvcc -I/path/to/install/CULiP/include ...
 #include <CULiP/cublas.hpp>
 
 // Disable profiling of all functions
