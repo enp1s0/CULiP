@@ -30,7 +30,7 @@ cmake .. -DCMAKE_INSTALL_PREFIX=/path/to/install/CULiP
 
 3. Link
 ```
-nvcc main.cu -L/path/to/install/CULiP -lculip_cublas -lcublas -o foo.bar
+nvcc main.cu -L/path/to/install/CULiP/lib -lculip_cublas -lcublas -o foo.bar
 ```
 
 4. Set an environment variable `CULIP_CUBLAS_LIB_PATH` before executing the application
@@ -50,6 +50,7 @@ CULiP provides profiling control API.
 By default, all profiling is enabled.
 
 ```cpp
+// nvcc -I/path/to/install/CULiP/include ...
 #include <CULiP/cublas.hpp>
 
 // Disable profiling of all functions
