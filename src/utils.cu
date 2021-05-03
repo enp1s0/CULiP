@@ -36,7 +36,7 @@ void* CULiP_get_function_pointer(const char* const env_name, const char* const f
 	// Get the real library path
 	const char* library_path = getenv(env_name);
 	if (library_path == NULL) {
-		fprintf(stderr, "[CULiP ERROR] CULIP_CUBLAS_LIB_PATH is not set\n");
+		fprintf(stderr, "[CULiP ERROR] %s is not set\n", env_name);
 		exit(1);
 	}
 
