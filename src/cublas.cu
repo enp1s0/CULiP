@@ -34,6 +34,48 @@ void CULiP_profile_cublas_disable_all() {
 	}
 }
 
+// cudaDataType yo string
+#define CULiP_CUBLAS_COMPUTE_T_CASE_STRING(compute_type) case compute_type: return #compute_type
+extern "C" const char* CULiP_get_cublasComputeType_t_string(const cublasComputeType_t compute_type) {
+	switch(compute_type) {
+		CULiP_CUBLAS_COMPUTE_T_CASE_STRING(CUBLAS_COMPUTE_16F);
+		CULiP_CUBLAS_COMPUTE_T_CASE_STRING(CUBLAS_COMPUTE_16F_PEDANTIC);
+		CULiP_CUBLAS_COMPUTE_T_CASE_STRING(CUBLAS_COMPUTE_32F);
+		CULiP_CUBLAS_COMPUTE_T_CASE_STRING(CUBLAS_COMPUTE_32F_FAST_16BF);
+		CULiP_CUBLAS_COMPUTE_T_CASE_STRING(CUBLAS_COMPUTE_32F_FAST_16F);
+		CULiP_CUBLAS_COMPUTE_T_CASE_STRING(CUBLAS_COMPUTE_32F_FAST_TF32);
+		CULiP_CUBLAS_COMPUTE_T_CASE_STRING(CUBLAS_COMPUTE_32F_PEDANTIC);
+		CULiP_CUBLAS_COMPUTE_T_CASE_STRING(CUBLAS_COMPUTE_32I);
+		CULiP_CUBLAS_COMPUTE_T_CASE_STRING(CUBLAS_COMPUTE_32I_PEDANTIC);
+		CULiP_CUBLAS_COMPUTE_T_CASE_STRING(CUBLAS_COMPUTE_64F);
+		CULiP_CUBLAS_COMPUTE_T_CASE_STRING(CUBLAS_COMPUTE_64F_PEDANTIC);
+	default:
+		break;
+	}
+	switch((cudaDataType_t)compute_type) {
+		CULiP_CUBLAS_COMPUTE_T_CASE_STRING(CUDA_C_16BF);
+		CULiP_CUBLAS_COMPUTE_T_CASE_STRING(CUDA_C_16F );
+		CULiP_CUBLAS_COMPUTE_T_CASE_STRING(CUDA_C_32F );
+		CULiP_CUBLAS_COMPUTE_T_CASE_STRING(CUDA_C_32I );
+		CULiP_CUBLAS_COMPUTE_T_CASE_STRING(CUDA_C_64F );
+		CULiP_CUBLAS_COMPUTE_T_CASE_STRING(CUDA_C_8I  );
+		CULiP_CUBLAS_COMPUTE_T_CASE_STRING(CUDA_C_8U  );
+		CULiP_CUBLAS_COMPUTE_T_CASE_STRING(CUDA_R_16BF);
+		CULiP_CUBLAS_COMPUTE_T_CASE_STRING(CUDA_R_16F );
+		CULiP_CUBLAS_COMPUTE_T_CASE_STRING(CUDA_R_32F );
+		CULiP_CUBLAS_COMPUTE_T_CASE_STRING(CUDA_R_32I );
+		CULiP_CUBLAS_COMPUTE_T_CASE_STRING(CUDA_R_64F );
+		CULiP_CUBLAS_COMPUTE_T_CASE_STRING(CUDA_R_8I  );
+		CULiP_CUBLAS_COMPUTE_T_CASE_STRING(CUDA_R_8U  );
+	default:
+		return "Unknown";
+	}
+}
+
+// -------------------------------------------------
+// cuBLAS functions
+// -------------------------------------------------
+
 cublasStatus_t cublasSgemm(cublasHandle_t handle, cublasOperation_t transa,
                            cublasOperation_t transb, int m, int n, int k,
                            const float *alpha, const float *A, int lda,
