@@ -35,12 +35,16 @@ foreach(library cublas)
 		)
 
 	set_target_properties(${lib_name} PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
+	set_target_properties(${lib_name} PROPERTIES PUBLIC_HEADER ${INCDIR}/CULiP/${library}.hpp)
 endforeach()
 
 ##########################################################################
 # Installing
 ##########################################################################
-install(TARGETS culip_cublas DESTINATION lib)
+install(TARGETS culip_cublas
+	LIBRARY DESTINATION lib
+	PUBLIC_HEADER DESTINATION include/CULiP
+	)
 
 ##########################################################################
 # Tests
