@@ -28,7 +28,7 @@ mkdir build
 cmake .. -DCMAKE_INSTALL_PREFIX=/path/to/install/CULiP
 ```
 
-3. Link
+3. Link CULiP libraries **before linking to libcublas and so on**
 ```
 nvcc main.cu -L/path/to/install/CULiP/lib -lculip_cublas -lcublas -o foo.bar
 ```
@@ -54,10 +54,10 @@ By default, all profiling is enabled.
 #include <CULiP/cublas.hpp>
 
 // Disable profiling of all functions
-CULiP_profiling_cublas_enable_all();
+CULiP_profiling_cublas_disable_all();
 
 // Enable profiling of all functions
-CULiP_profiling_cublas_disable_all();
+CULiP_profiling_cublas_enable_all();
 
 // Disable profiling of a function (e.g. `cublasSgemm`)
 CULiP_profiling_cublas_disable(CULiP_cublasSgemm);
