@@ -6,6 +6,8 @@
 #include <string.h>
 #include "utils.hpp"
 
+void* CULiP_cublas_lib_handle_cache = NULL;
+
 extern "C" {
 cublasStatus_t cublasSgemm(cublasHandle_t handle, cublasOperation_t transa,
                            cublasOperation_t transb, int m, int n, int k,
@@ -15,7 +17,7 @@ cublasStatus_t cublasSgemm(cublasHandle_t handle, cublasOperation_t transa,
 
 	// Get the function pointer
 	cublasStatus_t (*cublas_lib_func)(cublasHandle_t, cublasOperation_t, cublasOperation_t, int, int, int, const float*, const float*, int, const float*, int, const float*, float*, int);
-	*(void**)(&cublas_lib_func) = CULiP_get_function_pointer("CULIP_CUBLAS_LIB_PATH", __func__);
+	*(void**)(&cublas_lib_func) = CULiP_get_function_pointer("CULIP_CUBLAS_LIB_PATH", __func__, &CULiP_cublas_lib_handle_cache);
 
 	// Get current cuda stream
 	cudaStream_t cuda_stream;
@@ -49,7 +51,7 @@ cublasStatus_t cublasDgemm(cublasHandle_t handle, cublasOperation_t transa,
 
 	// Get the function pointer
 	cublasStatus_t (*cublas_lib_func)(cublasHandle_t, cublasOperation_t, cublasOperation_t, int, int, int, const double*, const double*, int, const double*, int, const double*, double*, int);
-	*(void**)(&cublas_lib_func) = CULiP_get_function_pointer("CULIP_CUBLAS_LIB_PATH", __func__);
+	*(void**)(&cublas_lib_func) = CULiP_get_function_pointer("CULIP_CUBLAS_LIB_PATH", __func__, &CULiP_cublas_lib_handle_cache);
 
 	// Get current cuda stream
 	cudaStream_t cuda_stream;
@@ -83,7 +85,7 @@ cublasStatus_t cublasHgemm(cublasHandle_t handle, cublasOperation_t transa,
 
 	// Get the function pointer
 	cublasStatus_t (*cublas_lib_func)(cublasHandle_t, cublasOperation_t, cublasOperation_t, int, int, int, const half*, const half*, int, const half*, int, const half*, half*, int);
-	*(void**)(&cublas_lib_func) = CULiP_get_function_pointer("CULIP_CUBLAS_LIB_PATH", __func__);
+	*(void**)(&cublas_lib_func) = CULiP_get_function_pointer("CULIP_CUBLAS_LIB_PATH", __func__, &CULiP_cublas_lib_handle_cache);
 
 	// Get current cuda stream
 	cudaStream_t cuda_stream;
