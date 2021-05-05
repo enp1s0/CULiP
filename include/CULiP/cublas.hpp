@@ -6,7 +6,8 @@ enum CULiP_cublas_control_t {
 	CULiP_cublasSgemm = 1,
 	CULiP_cublasHgemm = 2,
 	CULiP_cublasCgemm = 3,
-	CULiP_cublasGemmEx = 4,
+	CULiP_cublasZgemm = 4,
+	CULiP_cublasGemmEx = 5,
 	CULiP_cublas_enum_length
 };
 
