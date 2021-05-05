@@ -47,6 +47,14 @@ cublasStatus_t gemm<cuComplex, op_gemm>(cublasHandle_t handle, cublasOperation_t
                            int ldc) {
 	return cublasCgemm(handle, transa, transb, m, n, k, alpha, A, lda, B, ldb, beta, C, ldc);
 }
+template <>
+cublasStatus_t gemm<cuDoubleComplex, op_gemm>(cublasHandle_t handle, cublasOperation_t transa,
+                           cublasOperation_t transb, int m, int n, int k,
+                           const cuDoubleComplex *alpha, const cuDoubleComplex *A, int lda,
+                           const cuDoubleComplex *B, int ldb, const cuDoubleComplex *beta, cuDoubleComplex *C,
+                           int ldc) {
+	return cublasZgemm(handle, transa, transb, m, n, k, alpha, A, lda, B, ldb, beta, C, ldc);
+}
 // -----------------------------------------------------
 // op_gemmEx
 // -----------------------------------------------------
@@ -119,6 +127,7 @@ void test_all() {
 	gemm_test<float , op_gemm  >();
 	gemm_test<half  , op_gemm  >();
 	gemm_test<cuComplex, op_gemm  >();
+	gemm_test<cuDoubleComplex, op_gemm  >();
 	gemm_test<double, op_gemmEx>();
 	gemm_test<float , op_gemmEx>();
 	gemm_test<half  , op_gemmEx>();
