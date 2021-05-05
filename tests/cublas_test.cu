@@ -82,6 +82,22 @@ cublasStatus_t gemm<half  , op_gemmEx>(cublasHandle_t handle, cublasOperation_t 
                            int ldc) {
 	return cublasGemmEx(handle, transa, transb, m, n, k, alpha, A, CUDA_R_16F, lda, B, CUDA_R_16F, ldb, beta, C, CUDA_R_16F, ldc, CUDA_R_16F, CUBLAS_GEMM_DEFAULT);
 }
+template <>
+cublasStatus_t gemm<cuComplex, op_gemmEx>(cublasHandle_t handle, cublasOperation_t transa,
+                           cublasOperation_t transb, int m, int n, int k,
+                           const cuComplex *alpha, const cuComplex *A, int lda,
+                           const cuComplex *B, int ldb, const cuComplex *beta, cuComplex *C,
+                           int ldc) {
+	return cublasGemmEx(handle, transa, transb, m, n, k, alpha, A, CUDA_C_32F, lda, B, CUDA_C_32F, ldb, beta, C, CUDA_C_32F, ldc, CUDA_C_32F, CUBLAS_GEMM_DEFAULT);
+}
+template <>
+cublasStatus_t gemm<cuDoubleComplex, op_gemmEx>(cublasHandle_t handle, cublasOperation_t transa,
+                           cublasOperation_t transb, int m, int n, int k,
+                           const cuDoubleComplex *alpha, const cuDoubleComplex *A, int lda,
+                           const cuDoubleComplex *B, int ldb, const cuDoubleComplex *beta, cuDoubleComplex *C,
+                           int ldc) {
+	return cublasGemmEx(handle, transa, transb, m, n, k, alpha, A, CUDA_C_64F, lda, B, CUDA_C_64F, ldb, beta, C, CUDA_C_64F, ldc, CUDA_C_64F, CUBLAS_GEMM_DEFAULT);
+}
 
 template <class T>
 T convert(const double a) {return static_cast<T>(a);}
@@ -123,14 +139,16 @@ void gemm_test() {
 }
 
 void test_all() {
-	gemm_test<double, op_gemm  >();
-	gemm_test<float , op_gemm  >();
-	gemm_test<half  , op_gemm  >();
-	gemm_test<cuComplex, op_gemm  >();
+	gemm_test<double         , op_gemm  >();
+	gemm_test<float          , op_gemm  >();
+	gemm_test<half           , op_gemm  >();
+	gemm_test<cuComplex      , op_gemm  >();
 	gemm_test<cuDoubleComplex, op_gemm  >();
-	gemm_test<double, op_gemmEx>();
-	gemm_test<float , op_gemmEx>();
-	gemm_test<half  , op_gemmEx>();
+	gemm_test<double         , op_gemmEx>();
+	gemm_test<float          , op_gemmEx>();
+	gemm_test<half           , op_gemmEx>();
+	gemm_test<cuComplex      , op_gemmEx>();
+	gemm_test<cuDoubleComplex, op_gemmEx>();
 }
 
 int main(){
