@@ -1,4 +1,4 @@
-<img alt='culip_icon' src='./docs/CULiP-icon.svg'>
+<img alt='culip_icon' src='./docs/CULiP-icon.svg' width=100>
 
 # CULiP - CUDA Library Profiler
 
