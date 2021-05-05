@@ -8,6 +8,8 @@ CULiP is a library for profiling the execution time of CUDA official library fun
   - `cublasDgemm`
   - `cublasSgemm`
   - `cublasHgemm`
+  - `cublasCgemm`
+  - `cublasZgemm`
   - `cublasGemmEx`
 
 ## Dependencies
