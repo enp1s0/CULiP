@@ -1,3 +1,5 @@
+<img alt='culip_icon' src='./docs/CULiP-icon.svg'>
+
 # CULiP - CUDA Library Profiler
 
 CULiP is a library for profiling the execution time of CUDA official library functions
