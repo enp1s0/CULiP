@@ -20,7 +20,7 @@ extern "C" void CULiP_print_profile_result(void *profile_result_ptr) {
 	        (long)1000000000 +
 	    ((long)profile_result.end_timestamp.tv_nsec -
 	     (long)profile_result.start_timestamp.tv_nsec);
-	printf("[CULiP Result][%s] %luns\n", profile_result.function_name, elapsed_time_us);
+	printf("[%s][%s] %luns\n", CULIP_RESULT_PREFIX, profile_result.function_name, elapsed_time_us);
 }
 
 // TODO: Make this function non-blocking using `cuLauchHostFunc`

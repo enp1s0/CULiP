@@ -1,6 +1,7 @@
 #ifndef __CUDALIBPROFILER_UTILS_HPP__
 #define __CUDALIBPROFILER_UTILS_HPP__
 #include <time.h>
+#include "params.hpp"
 
 #ifdef CULIBPROFILER_ENABLE_DEBUG_PRINT
 #define CULIBPROFILER_DEBUG_PRINT(f) (f)
