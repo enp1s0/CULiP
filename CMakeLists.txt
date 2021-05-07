@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.18)
-project(culibprofiler LANGUAGES CXX CUDA)
+project(culip LANGUAGES CXX CUDA)
 
 find_package(CUDA 10.0 REQUIRED)
 find_package(CUDAToolkit REQUIRED)
@@ -70,3 +70,13 @@ endforeach()
 
 add_executable(CULiP_aggregator ${SRCDIR}/aggregator.cpp ${SRCDIR}/params.hpp)
 target_include_directories(CULiP_aggregator PRIVATE ${INCDIR})
+set_target_properties(CULiP_aggregator PROPERTIES RUNTIME CULiP_aggregator)
+
+##########################################################################
+# Installing
+##########################################################################
+install(TARGETS culip_cublas CULiP_aggregator
+	LIBRARY DESTINATION lib
+	PUBLIC_HEADER DESTINATION include/CULiP
+	RUNTIME DESTINATION bin
+	)
