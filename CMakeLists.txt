@@ -26,6 +26,7 @@ foreach(library cublas)
 		${SRCDIR}/${library}.cu
 		${SRCDIR}/utils.cu
 		${SRCDIR}/utils.hpp
+		${SRCDIR}/params.hpp
 		${HEADERS}
 		)
 
@@ -62,3 +63,10 @@ foreach(test cublas)
 		CUDA::${test}
 		)
 endforeach()
+
+##########################################################################
+# Aggregator
+##########################################################################
+
+add_executable(CULiP_aggregator ${SRCDIR}/aggregator.cpp ${SRCDIR}/params.hpp)
+target_include_directories(CULiP_aggregator PRIVATE ${INCDIR})
