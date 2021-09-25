@@ -13,7 +13,7 @@ enum CULiP_cublas_control_t {
 	CULiP_cublasHgemmBatched,
 	CULiP_cublasCgemmBatched,
 	CULiP_cublasZgemmBatched,
-	CULiP_cublasGemmExBatched,
+	CULiP_cublasGemmBatchedEx,
 	CULiP_cublas_enum_length
 };
 
