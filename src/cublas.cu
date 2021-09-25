@@ -77,42 +77,52 @@ extern "C" const char* CULiP_get_cublasComputeType_t_string(const cublasComputeT
 }
 
 // -------------------------------------------------
-// cuBLAS functions
+// GEMM
 // -------------------------------------------------
 
 // SGEMM
 #define CULIP_FUNC_NAME cublasSgemm
+#define CULIP_FUNC_ENUM_NAME CULiP_cublasSgemm
 #define CULIP_TYPE float
 #include "cublas.gemm.template"
 #undef CULIP_FUNC_NAME
+#undef CULIP_FUNC_ENUM_NAME
 #undef CULIP_TYPE
 
 // DGEMM
 #define CULIP_FUNC_NAME cublasDgemm
+#define CULIP_FUNC_ENUM_NAME CULiP_cublasDgemm
 #define CULIP_TYPE double
 #include "cublas.gemm.template"
 #undef CULIP_FUNC_NAME
+#undef CULIP_FUNC_ENUM_NAME
 #undef CULIP_TYPE
 
 // HGEMM
 #define CULIP_FUNC_NAME cublasHgemm
+#define CULIP_FUNC_ENUM_NAME CULiP_cublasHgemm
 #define CULIP_TYPE half
 #include "cublas.gemm.template"
 #undef CULIP_FUNC_NAME
+#undef CULIP_FUNC_ENUM_NAME
 #undef CULIP_TYPE
 
 // CGEMM
 #define CULIP_FUNC_NAME cublasCgemm
+#define CULIP_FUNC_ENUM_NAME CULiP_cublasCgemm
 #define CULIP_TYPE cuComplex
 #include "cublas.gemm.template"
 #undef CULIP_FUNC_NAME
+#undef CULIP_FUNC_ENUM_NAME
 #undef CULIP_TYPE
 
 // ZGEMM
 #define CULIP_FUNC_NAME cublasZgemm
+#define CULIP_FUNC_ENUM_NAME CULiP_cublasZgemm
 #define CULIP_TYPE cuDoubleComplex
 #include "cublas.gemm.template"
 #undef CULIP_FUNC_NAME
+#undef CULIP_FUNC_ENUM_NAME
 #undef CULIP_TYPE
 
 cublasStatus_t cublasGemmEx(cublasHandle_t handle, cublasOperation_t transa,
@@ -145,6 +155,110 @@ cublasStatus_t cublasGemmEx(cublasHandle_t handle, cublasOperation_t transa,
 
 	// Call the function
 	const cublasStatus_t result = (*cublas_lib_func)(handle, transa, transb, m, n, k, alpha, A, Atype, lda, B, Btype, ldb, beta, C, Ctype, ldc, computeType, algo);
+	CULIBPROFILER_DEBUG_PRINT(printf("[CULiP Debug][%s] executed\n", __func__));
+
+	if (profiling_flag) {
+		// Record end rimestamp
+		CULiP_launch_function(cuda_stream, &CULiP_record_timestamp, (void*)&profile_result.end_timestamp);
+
+		// Print result
+		CULiP_launch_function(cuda_stream, &CULiP_print_profile_result, (void*)&profile_result);
+	}
+
+	return result;
+}
+
+// -------------------------------------------------
+// GEMM_BATCHED
+// -------------------------------------------------
+
+// SGEMM
+#define CULIP_FUNC_NAME cublasSgemmBatched
+#define CULIP_FUNC_ENUM_NAME CULiP_cublasSgemmBatched
+#define CULIP_TYPE float
+#include "cublas.gemm_batched.template"
+#undef CULIP_FUNC_NAME
+#undef CULIP_FUNC_ENUM_NAME
+#undef CULIP_TYPE
+
+// DGEMM
+#define CULIP_FUNC_NAME cublasDgemmBatched
+#define CULIP_FUNC_ENUM_NAME CULiP_cublasDgemmBatched
+#define CULIP_TYPE double
+#include "cublas.gemm_batched.template"
+#undef CULIP_FUNC_NAME
+#undef CULIP_FUNC_ENUM_NAME
+#undef CULIP_TYPE
+
+// HGEMM
+#define CULIP_FUNC_NAME cublasHgemmBatched
+#define CULIP_FUNC_ENUM_NAME CULiP_cublasHgemmBatched
+#define CULIP_TYPE half
+#include "cublas.gemm_batched.template"
+#undef CULIP_FUNC_NAME
+#undef CULIP_FUNC_ENUM_NAME
+#undef CULIP_TYPE
+
+// CGEMM
+#define CULIP_FUNC_NAME cublasCgemmBatched
+#define CULIP_FUNC_ENUM_NAME CULiP_cublasCgemmBatched
+#define CULIP_TYPE cuComplex
+#include "cublas.gemm_batched.template"
+#undef CULIP_FUNC_NAME
+#undef CULIP_FUNC_ENUM_NAME
+#undef CULIP_TYPE
+
+// ZGEMM
+#define CULIP_FUNC_NAME cublasZgemmBatched
+#define CULIP_FUNC_ENUM_NAME CULiP_cublasZgemmBatched
+#define CULIP_TYPE cuDoubleComplex
+#include "cublas.gemm_batched.template"
+#undef CULIP_FUNC_NAME
+#undef CULIP_FUNC_ENUM_NAME
+#undef CULIP_TYPE
+
+cublasStatus_t cublasGemmBatchedEx(cublasHandle_t handle,
+		cublasOperation_t transa,
+		cublasOperation_t transb,
+		int m,
+		int n,
+		int k,
+		const void *alpha,
+		const void *const Aarray[],
+		cudaDataType_t Atype,
+		int lda,
+		const void *const Barray[],
+		cudaDataType_t Btype,
+		int ldb,
+		const void *beta,
+		void *const Carray[],
+		cudaDataType_t Ctype,
+		int ldc,
+		int batchCount,
+		cublasComputeType_t computeType,
+		cublasGemmAlgo_t algo) {
+	const int profiling_flag = (CULiP_profiling_control_array[CULiP_cublasGemmBatchedEx] == 0) && CULiP_is_profiling_enabled(CULIP_CUBLAS_DISABLE_ENV_NAME);
+
+	// Get the function pointer
+	cublasStatus_t (*cublas_lib_func)(cublasHandle_t, cublasOperation_t, cublasOperation_t, int, int, int, const void*, const void* const[], cudaDataType_t, int, const void* const[], cudaDataType_t, int, const void*, void* const[], cudaDataType_t, int, int, cublasComputeType_t, cublasGemmAlgo_t);
+	*(void**)(&cublas_lib_func) = CULiP_get_function_pointer(CULIP_CUBLAS_LIBRARY_NAME, CULIP_CUBLAS_ENV_NAME, __func__, &CULiP_cublas_lib_handle_cache);
+
+	cudaStream_t cuda_stream;
+	struct CULiP_profile_result profile_result;
+
+	if (profiling_flag) {
+		// Get current cuda stream
+		cublasGetStream(handle, &cuda_stream);
+
+		// Profile result structure
+		snprintf(profile_result.function_name, profile_result.function_name_length - 1, "%s-%s-m%d-n%d-k%d", __func__, CULiP_get_cublasComputeType_t_string(computeType), m, n , k);
+
+		// Record start rimestamp
+		CULiP_launch_function(cuda_stream, &CULiP_record_timestamp, (void*)&profile_result.start_timestamp);
+	}
+
+	// Call the function
+	const cublasStatus_t result = (*cublas_lib_func)(handle, transa, transb, m, n, k, alpha, Aarray, Atype, lda, Barray, Btype, ldb, beta, Carray, Ctype, ldc, batchCount, computeType, algo);
 	CULIBPROFILER_DEBUG_PRINT(printf("[CULiP Debug][%s] executed\n", __func__));
 
 	if (profiling_flag) {
