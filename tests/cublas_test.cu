@@ -51,8 +51,8 @@ GEMM_OP_GEMM_EX(CUDA_C_64F, cuDoubleComplex);
 template <class T, class Op>
 cublasStatus_t gemm_batched(cublasHandle_t handle, cublasOperation_t transa,
                            cublasOperation_t transb, int m, int n, int k,
-                           const T *alpha, const T *A[], int lda,
-                           const T *B[], int ldb, const T *beta, T *C[],
+                           const T *alpha, const T **A, int lda,
+                           const T **B, int ldb, const T *beta, T **C,
                            int ldc, int batchCount);
 // -----------------------------------------------------
 // op_gemm
@@ -129,6 +129,58 @@ void gemm_test() {
 	cudaFree(mat_c);
 }
 
+template <class T, class Op>
+void gemm_batched_test() {
+	const int n = 1lu << 7;
+	const int batch_size = 1u << 10;
+	const auto alpha = convert<T>(1);
+	const auto beta  = convert<T>(0);
+
+	T** mat_a_array;
+	T** mat_b_array;
+	T** mat_c_array;
+
+	cudaMallocHost(&mat_a_array, sizeof(T*) * batch_size);
+	cudaMallocHost(&mat_b_array, sizeof(T*) * batch_size);
+	cudaMallocHost(&mat_c_array, sizeof(T*) * batch_size);
+
+	for (unsigned i = 0; i < batch_size; i++) {
+		T* ptr;
+		cudaMalloc(&ptr, sizeof(T) * n * n);
+		mat_a_array[i] = ptr;
+		cudaMalloc(&ptr, sizeof(T) * n * n);
+		mat_b_array[i] = ptr;
+		cudaMalloc(&ptr, sizeof(T) * n * n);
+		mat_c_array[i] = ptr;
+	}
+
+	cublasHandle_t cublas_handle;
+	cublasCreate(&cublas_handle);
+
+	gemm_batched<T, Op>(
+			cublas_handle,
+			CUBLAS_OP_N, CUBLAS_OP_N,
+			n, n, n,
+			&alpha,
+			(const T**)mat_a_array, n,
+			(const T**)mat_b_array, n,
+			&beta,
+			mat_c_array, n,
+			batch_size
+			);
+
+	cublasDestroy(cublas_handle);
+
+	for (unsigned i = 0; i < batch_size; i++) {
+		cudaFree(mat_a_array[i]);
+		cudaFree(mat_b_array[i]);
+		cudaFree(mat_c_array[i]);
+	}
+	cudaFreeHost(mat_a_array);
+	cudaFreeHost(mat_b_array);
+	cudaFreeHost(mat_c_array);
+}
+
 void test_all() {
 	gemm_test<double         , op_gemm  >();
 	gemm_test<float          , op_gemm  >();
@@ -140,6 +192,17 @@ void test_all() {
 	gemm_test<half           , op_gemmEx>();
 	gemm_test<cuComplex      , op_gemmEx>();
 	gemm_test<cuDoubleComplex, op_gemmEx>();
+
+	gemm_batched_test<double         , op_gemm  >();
+	gemm_batched_test<float          , op_gemm  >();
+	gemm_batched_test<half           , op_gemm  >();
+	gemm_batched_test<cuComplex      , op_gemm  >();
+	gemm_batched_test<cuDoubleComplex, op_gemm  >();
+	gemm_batched_test<double         , op_gemmEx>();
+	gemm_batched_test<float          , op_gemmEx>();
+	gemm_batched_test<half           , op_gemmEx>();
+	gemm_batched_test<cuComplex      , op_gemmEx>();
+	gemm_batched_test<cuDoubleComplex, op_gemmEx>();
 }
 
 int main(){
