@@ -2,12 +2,18 @@
 #define __CULIP_CUBLAS_HPP__
 
 enum CULiP_cublas_control_t {
-	CULiP_cublasDgemm = 0,
-	CULiP_cublasSgemm = 1,
-	CULiP_cublasHgemm = 2,
-	CULiP_cublasCgemm = 3,
-	CULiP_cublasZgemm = 4,
-	CULiP_cublasGemmEx = 5,
+	CULiP_cublasDgemm,
+	CULiP_cublasSgemm,
+	CULiP_cublasHgemm,
+	CULiP_cublasCgemm,
+	CULiP_cublasZgemm,
+	CULiP_cublasGemmEx,
+	CULiP_cublasDgemmBatched,
+	CULiP_cublasSgemmBatched,
+	CULiP_cublasHgemmBatched,
+	CULiP_cublasCgemmBatched,
+	CULiP_cublasZgemmBatched,
+	CULiP_cublasGemmExBatched,
 	CULiP_cublas_enum_length
 };
 
