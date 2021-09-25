@@ -45,6 +45,51 @@ GEMM_OP_GEMM_EX(CUDA_R_64F, double);
 GEMM_OP_GEMM_EX(CUDA_C_32F, cuComplex);
 GEMM_OP_GEMM_EX(CUDA_C_64F, cuDoubleComplex);
 
+// -------------
+// GemmBatched
+// -------------
+template <class T, class Op>
+cublasStatus_t gemm_batched(cublasHandle_t handle, cublasOperation_t transa,
+                           cublasOperation_t transb, int m, int n, int k,
+                           const T *alpha, const T *A[], int lda,
+                           const T *B[], int ldb, const T *beta, T *C[],
+                           int ldc, int batchCount);
+// -----------------------------------------------------
+// op_gemm
+// -----------------------------------------------------
+#define GEMM_BATCHED_OP_GEMM(short_type, type)\
+template <>\
+cublasStatus_t gemm_batched<type , op_gemm>(cublasHandle_t handle, cublasOperation_t transa,\
+                           cublasOperation_t transb, int m, int n, int k,\
+                           const type *alpha, const type *A[], int lda,\
+                           const type *B[], int ldb, const type *beta, type *C[],\
+                           int ldc, int batchCount) {\
+	return cublas##short_type##gemmBatched(handle, transa, transb, m, n, k, alpha, A, lda, B, ldb, beta, C, ldc, batchCount);\
+}
+GEMM_BATCHED_OP_GEMM(H, half);
+GEMM_BATCHED_OP_GEMM(S, float);
+GEMM_BATCHED_OP_GEMM(D, double);
+GEMM_BATCHED_OP_GEMM(C, cuComplex);
+GEMM_BATCHED_OP_GEMM(Z, cuDoubleComplex);
+// -----------------------------------------------------
+// op_gemmEx
+// -----------------------------------------------------
+#define GEMM_BATCHED_OP_GEMMEX(cuda_data_type, type)\
+template <>\
+cublasStatus_t gemm_batched<type , op_gemmEx>(cublasHandle_t handle, cublasOperation_t transa,\
+                           cublasOperation_t transb, int m, int n, int k,\
+                           const type *alpha, const type *A[], int lda,\
+                           const type *B[], int ldb, const type *beta, type *C[],\
+                           int ldc, int batchCount) {\
+	return cublasGemmBatchedEx(handle, transa, transb, m, n, k, alpha, reinterpret_cast<const void**>(A), cuda_data_type, lda, reinterpret_cast<const void**>(B), cuda_data_type, ldb, beta, reinterpret_cast<void**>(C), cuda_data_type, ldc, batchCount, cuda_data_type, CUBLAS_GEMM_DEFAULT);\
+}
+GEMM_BATCHED_OP_GEMMEX(CUDA_R_16F, half);
+GEMM_BATCHED_OP_GEMMEX(CUDA_R_32F, float);
+GEMM_BATCHED_OP_GEMMEX(CUDA_R_64F, double);
+GEMM_BATCHED_OP_GEMMEX(CUDA_C_32F, cuComplex);
+GEMM_BATCHED_OP_GEMMEX(CUDA_C_64F, cuDoubleComplex);
+
+
 template <class T>
 T convert(const double a) {return static_cast<T>(a);}
 template <> cuComplex       convert<cuComplex      >(const double a) {return make_float2(a, 0);}
