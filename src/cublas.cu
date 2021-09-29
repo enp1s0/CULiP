@@ -76,6 +76,19 @@ extern "C" const char* CULiP_get_cublasComputeType_t_string(const cublasComputeT
 	}
 }
 
+extern "C" const char* CULiP_get_cublasOperation_t_string(const cublasOperation_t op) {
+	switch(op) {
+	case CUBLAS_OP_N:
+		return "N";
+	case CUBLAS_OP_T:
+		return "T";
+	case CUBLAS_OP_C:
+		return "C";
+	default:
+		return "Unknown";
+	}
+}
+
 // -------------------------------------------------
 // GEMM
 // -------------------------------------------------
@@ -84,7 +97,7 @@ extern "C" const char* CULiP_get_cublasComputeType_t_string(const cublasComputeT
 #define CULIP_FUNC_NAME cublasSgemm
 #define CULIP_FUNC_ENUM_NAME CULiP_cublasSgemm
 #define CULIP_TYPE float
-#include "cublas.gemm.template"
+#include "cublas.gemm.template.h"
 #undef CULIP_FUNC_NAME
 #undef CULIP_FUNC_ENUM_NAME
 #undef CULIP_TYPE
@@ -93,7 +106,7 @@ extern "C" const char* CULiP_get_cublasComputeType_t_string(const cublasComputeT
 #define CULIP_FUNC_NAME cublasDgemm
 #define CULIP_FUNC_ENUM_NAME CULiP_cublasDgemm
 #define CULIP_TYPE double
-#include "cublas.gemm.template"
+#include "cublas.gemm.template.h"
 #undef CULIP_FUNC_NAME
 #undef CULIP_FUNC_ENUM_NAME
 #undef CULIP_TYPE
@@ -102,7 +115,7 @@ extern "C" const char* CULiP_get_cublasComputeType_t_string(const cublasComputeT
 #define CULIP_FUNC_NAME cublasHgemm
 #define CULIP_FUNC_ENUM_NAME CULiP_cublasHgemm
 #define CULIP_TYPE half
-#include "cublas.gemm.template"
+#include "cublas.gemm.template.h"
 #undef CULIP_FUNC_NAME
 #undef CULIP_FUNC_ENUM_NAME
 #undef CULIP_TYPE
@@ -111,7 +124,7 @@ extern "C" const char* CULiP_get_cublasComputeType_t_string(const cublasComputeT
 #define CULIP_FUNC_NAME cublasCgemm
 #define CULIP_FUNC_ENUM_NAME CULiP_cublasCgemm
 #define CULIP_TYPE cuComplex
-#include "cublas.gemm.template"
+#include "cublas.gemm.template.h"
 #undef CULIP_FUNC_NAME
 #undef CULIP_FUNC_ENUM_NAME
 #undef CULIP_TYPE
@@ -120,7 +133,7 @@ extern "C" const char* CULiP_get_cublasComputeType_t_string(const cublasComputeT
 #define CULIP_FUNC_NAME cublasZgemm
 #define CULIP_FUNC_ENUM_NAME CULiP_cublasZgemm
 #define CULIP_TYPE cuDoubleComplex
-#include "cublas.gemm.template"
+#include "cublas.gemm.template.h"
 #undef CULIP_FUNC_NAME
 #undef CULIP_FUNC_ENUM_NAME
 #undef CULIP_TYPE
@@ -147,7 +160,7 @@ cublasStatus_t cublasGemmEx(cublasHandle_t handle, cublasOperation_t transa,
 		cublasGetStream(handle, &cuda_stream);
 
 		// Profile result structure
-		snprintf(profile_result.function_name, profile_result.function_name_length - 1, "%s-%s-m%d-n%d-k%d", __func__, CULiP_get_cublasComputeType_t_string(computeType), m, n , k);
+		snprintf(profile_result.function_name, profile_result.function_name_length - 1, "%s-%s%s-%s-m%d-n%d-k%d", __func__, CULiP_get_cublasOperation_t_string(transa), CULiP_get_cublasOperation_t_string(transb), CULiP_get_cublasComputeType_t_string(computeType), m, n , k);
 
 		// Record start rimestamp
 		CULiP_launch_function(cuda_stream, &CULiP_record_timestamp, (void*)&profile_result.start_timestamp);
@@ -176,7 +189,7 @@ cublasStatus_t cublasGemmEx(cublasHandle_t handle, cublasOperation_t transa,
 #define CULIP_FUNC_NAME cublasSgemmBatched
 #define CULIP_FUNC_ENUM_NAME CULiP_cublasSgemmBatched
 #define CULIP_TYPE float
-#include "cublas.gemm_batched.template"
+#include "cublas.gemm_batched.template.h"
 #undef CULIP_FUNC_NAME
 #undef CULIP_FUNC_ENUM_NAME
 #undef CULIP_TYPE
@@ -185,7 +198,7 @@ cublasStatus_t cublasGemmEx(cublasHandle_t handle, cublasOperation_t transa,
 #define CULIP_FUNC_NAME cublasDgemmBatched
 #define CULIP_FUNC_ENUM_NAME CULiP_cublasDgemmBatched
 #define CULIP_TYPE double
-#include "cublas.gemm_batched.template"
+#include "cublas.gemm_batched.template.h"
 #undef CULIP_FUNC_NAME
 #undef CULIP_FUNC_ENUM_NAME
 #undef CULIP_TYPE
@@ -194,7 +207,7 @@ cublasStatus_t cublasGemmEx(cublasHandle_t handle, cublasOperation_t transa,
 #define CULIP_FUNC_NAME cublasHgemmBatched
 #define CULIP_FUNC_ENUM_NAME CULiP_cublasHgemmBatched
 #define CULIP_TYPE half
-#include "cublas.gemm_batched.template"
+#include "cublas.gemm_batched.template.h"
 #undef CULIP_FUNC_NAME
 #undef CULIP_FUNC_ENUM_NAME
 #undef CULIP_TYPE
@@ -203,7 +216,7 @@ cublasStatus_t cublasGemmEx(cublasHandle_t handle, cublasOperation_t transa,
 #define CULIP_FUNC_NAME cublasCgemmBatched
 #define CULIP_FUNC_ENUM_NAME CULiP_cublasCgemmBatched
 #define CULIP_TYPE cuComplex
-#include "cublas.gemm_batched.template"
+#include "cublas.gemm_batched.template.h"
 #undef CULIP_FUNC_NAME
 #undef CULIP_FUNC_ENUM_NAME
 #undef CULIP_TYPE
@@ -212,7 +225,7 @@ cublasStatus_t cublasGemmEx(cublasHandle_t handle, cublasOperation_t transa,
 #define CULIP_FUNC_NAME cublasZgemmBatched
 #define CULIP_FUNC_ENUM_NAME CULiP_cublasZgemmBatched
 #define CULIP_TYPE cuDoubleComplex
-#include "cublas.gemm_batched.template"
+#include "cublas.gemm_batched.template.h"
 #undef CULIP_FUNC_NAME
 #undef CULIP_FUNC_ENUM_NAME
 #undef CULIP_TYPE
@@ -251,7 +264,7 @@ cublasStatus_t cublasGemmBatchedEx(cublasHandle_t handle,
 		cublasGetStream(handle, &cuda_stream);
 
 		// Profile result structure
-		snprintf(profile_result.function_name, profile_result.function_name_length - 1, "%s-%s-m%d-n%d-k%d-batchCount%d", __func__, CULiP_get_cublasComputeType_t_string(computeType), m, n , k, batchCount);
+		snprintf(profile_result.function_name, profile_result.function_name_length - 1, "%s-%s%s-%s-m%d-n%d-k%d-batchCount%d", __func__, CULiP_get_cublasOperation_t_string(transa), CULiP_get_cublasOperation_t_string(transb), CULiP_get_cublasComputeType_t_string(computeType), m, n , k, batchCount);
 
 		// Record start rimestamp
 		CULiP_launch_function(cuda_stream, &CULiP_record_timestamp, (void*)&profile_result.start_timestamp);
