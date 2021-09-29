@@ -84,7 +84,7 @@ extern "C" const char* CULiP_get_cublasComputeType_t_string(const cublasComputeT
 #define CULIP_FUNC_NAME cublasSgemm
 #define CULIP_FUNC_ENUM_NAME CULiP_cublasSgemm
 #define CULIP_TYPE float
-#include "cublas.gemm.template"
+#include "cublas.gemm.template.h"
 #undef CULIP_FUNC_NAME
 #undef CULIP_FUNC_ENUM_NAME
 #undef CULIP_TYPE
@@ -93,7 +93,7 @@ extern "C" const char* CULiP_get_cublasComputeType_t_string(const cublasComputeT
 #define CULIP_FUNC_NAME cublasDgemm
 #define CULIP_FUNC_ENUM_NAME CULiP_cublasDgemm
 #define CULIP_TYPE double
-#include "cublas.gemm.template"
+#include "cublas.gemm.template.h"
 #undef CULIP_FUNC_NAME
 #undef CULIP_FUNC_ENUM_NAME
 #undef CULIP_TYPE
@@ -102,7 +102,7 @@ extern "C" const char* CULiP_get_cublasComputeType_t_string(const cublasComputeT
 #define CULIP_FUNC_NAME cublasHgemm
 #define CULIP_FUNC_ENUM_NAME CULiP_cublasHgemm
 #define CULIP_TYPE half
-#include "cublas.gemm.template"
+#include "cublas.gemm.template.h"
 #undef CULIP_FUNC_NAME
 #undef CULIP_FUNC_ENUM_NAME
 #undef CULIP_TYPE
@@ -111,7 +111,7 @@ extern "C" const char* CULiP_get_cublasComputeType_t_string(const cublasComputeT
 #define CULIP_FUNC_NAME cublasCgemm
 #define CULIP_FUNC_ENUM_NAME CULiP_cublasCgemm
 #define CULIP_TYPE cuComplex
-#include "cublas.gemm.template"
+#include "cublas.gemm.template.h"
 #undef CULIP_FUNC_NAME
 #undef CULIP_FUNC_ENUM_NAME
 #undef CULIP_TYPE
@@ -120,7 +120,7 @@ extern "C" const char* CULiP_get_cublasComputeType_t_string(const cublasComputeT
 #define CULIP_FUNC_NAME cublasZgemm
 #define CULIP_FUNC_ENUM_NAME CULiP_cublasZgemm
 #define CULIP_TYPE cuDoubleComplex
-#include "cublas.gemm.template"
+#include "cublas.gemm.template.h"
 #undef CULIP_FUNC_NAME
 #undef CULIP_FUNC_ENUM_NAME
 #undef CULIP_TYPE
@@ -176,7 +176,7 @@ cublasStatus_t cublasGemmEx(cublasHandle_t handle, cublasOperation_t transa,
 #define CULIP_FUNC_NAME cublasSgemmBatched
 #define CULIP_FUNC_ENUM_NAME CULiP_cublasSgemmBatched
 #define CULIP_TYPE float
-#include "cublas.gemm_batched.template"
+#include "cublas.gemm_batched.template.h"
 #undef CULIP_FUNC_NAME
 #undef CULIP_FUNC_ENUM_NAME
 #undef CULIP_TYPE
@@ -185,7 +185,7 @@ cublasStatus_t cublasGemmEx(cublasHandle_t handle, cublasOperation_t transa,
 #define CULIP_FUNC_NAME cublasDgemmBatched
 #define CULIP_FUNC_ENUM_NAME CULiP_cublasDgemmBatched
 #define CULIP_TYPE double
-#include "cublas.gemm_batched.template"
+#include "cublas.gemm_batched.template.h"
 #undef CULIP_FUNC_NAME
 #undef CULIP_FUNC_ENUM_NAME
 #undef CULIP_TYPE
@@ -194,7 +194,7 @@ cublasStatus_t cublasGemmEx(cublasHandle_t handle, cublasOperation_t transa,
 #define CULIP_FUNC_NAME cublasHgemmBatched
 #define CULIP_FUNC_ENUM_NAME CULiP_cublasHgemmBatched
 #define CULIP_TYPE half
-#include "cublas.gemm_batched.template"
+#include "cublas.gemm_batched.template.h"
 #undef CULIP_FUNC_NAME
 #undef CULIP_FUNC_ENUM_NAME
 #undef CULIP_TYPE
@@ -203,7 +203,7 @@ cublasStatus_t cublasGemmEx(cublasHandle_t handle, cublasOperation_t transa,
 #define CULIP_FUNC_NAME cublasCgemmBatched
 #define CULIP_FUNC_ENUM_NAME CULiP_cublasCgemmBatched
 #define CULIP_TYPE cuComplex
-#include "cublas.gemm_batched.template"
+#include "cublas.gemm_batched.template.h"
 #undef CULIP_FUNC_NAME
 #undef CULIP_FUNC_ENUM_NAME
 #undef CULIP_TYPE
@@ -212,7 +212,7 @@ cublasStatus_t cublasGemmEx(cublasHandle_t handle, cublasOperation_t transa,
 #define CULIP_FUNC_NAME cublasZgemmBatched
 #define CULIP_FUNC_ENUM_NAME CULiP_cublasZgemmBatched
 #define CULIP_TYPE cuDoubleComplex
-#include "cublas.gemm_batched.template"
+#include "cublas.gemm_batched.template.h"
 #undef CULIP_FUNC_NAME
 #undef CULIP_FUNC_ENUM_NAME
 #undef CULIP_TYPE
