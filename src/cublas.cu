@@ -284,4 +284,44 @@ cublasStatus_t cublasGemmBatchedEx(cublasHandle_t handle,
 
 	return result;
 }
+
+// -------------------------------------------------
+// GEMV
+// -------------------------------------------------
+
+// SGEMV
+#define CULIP_FUNC_NAME cublasSgemv
+#define CULIP_FUNC_ENUM_NAME CULiP_cublasSgemv
+#define CULIP_TYPE float
+#include "cublas.gemv.template.h"
+#undef CULIP_FUNC_NAME
+#undef CULIP_FUNC_ENUM_NAME
+#undef CULIP_TYPE
+
+// DGEMV
+#define CULIP_FUNC_NAME cublasDgemv
+#define CULIP_FUNC_ENUM_NAME CULiP_cublasDgemv
+#define CULIP_TYPE double
+#include "cublas.gemv.template.h"
+#undef CULIP_FUNC_NAME
+#undef CULIP_FUNC_ENUM_NAME
+#undef CULIP_TYPE
+
+// CGEMV
+#define CULIP_FUNC_NAME cublasCgemv
+#define CULIP_FUNC_ENUM_NAME CULiP_cublasCgemv
+#define CULIP_TYPE cuComplex
+#include "cublas.gemv.template.h"
+#undef CULIP_FUNC_NAME
+#undef CULIP_FUNC_ENUM_NAME
+#undef CULIP_TYPE
+
+// ZGEMV
+#define CULIP_FUNC_NAME cublasZgemv
+#define CULIP_FUNC_ENUM_NAME CULiP_cublasZgemv
+#define CULIP_TYPE cuDoubleComplex
+#include "cublas.gemv.template.h"
+#undef CULIP_FUNC_NAME
+#undef CULIP_FUNC_ENUM_NAME
+#undef CULIP_TYPE
 } // extern "C"

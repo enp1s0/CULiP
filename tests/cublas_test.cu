@@ -30,6 +30,9 @@ GEMM_OP_GEMM(D, double);
 GEMM_OP_GEMM(C, cuComplex);
 GEMM_OP_GEMM(Z, cuDoubleComplex);
 
+// -----------------------------------------------------
+// op_gemmEx
+// -----------------------------------------------------
 #define GEMM_OP_GEMM_EX(cuda_data_type, type)\
 template <>\
 cublasStatus_t gemm<type , op_gemmEx>(cublasHandle_t handle, cublasOperation_t transa,\
@@ -88,6 +91,29 @@ GEMM_BATCHED_OP_GEMMEX(CUDA_R_32F, float);
 GEMM_BATCHED_OP_GEMMEX(CUDA_R_64F, double);
 GEMM_BATCHED_OP_GEMMEX(CUDA_C_32F, cuComplex);
 GEMM_BATCHED_OP_GEMMEX(CUDA_C_64F, cuDoubleComplex);
+
+// -------------
+// Gemv
+// -------------
+template <class T>
+cublasStatus_t gemv(cublasHandle_t handle, cublasOperation_t trans,
+                           int m, int n,
+                           const T *alpha, const T *A, int lda,
+                           const T *x, int incx, const T *beta, T *y,
+                           int incy);
+#define GEMM_OP_GEMV(short_type, type)\
+template <>\
+cublasStatus_t gemv<type>(cublasHandle_t handle, cublasOperation_t trans,\
+                           int m, int n,\
+                           const type *alpha, const type *A, int lda,\
+                           const type *x, int incx, const type *beta, type *y,\
+                           int incy) {\
+	return cublas##short_type##gemv(handle, trans, m, n, alpha, A, lda, x, incx, beta, y, incy);\
+}
+GEMM_OP_GEMV(S, float);
+GEMM_OP_GEMV(D, double);
+GEMM_OP_GEMV(C, cuComplex);
+GEMM_OP_GEMV(Z, cuDoubleComplex);
 
 
 template <class T>
@@ -181,6 +207,40 @@ void gemm_batched_test() {
 	cudaFreeHost(mat_c_array);
 }
 
+template <class T>
+void gemv_test() {
+	const std::size_t n = 1lu << 10;
+	const auto alpha = convert<T>(1);
+	const auto beta  = convert<T>(0);
+
+	T* mat_a;
+	T* vec_x;
+	T* vec_y;
+
+	cudaMalloc(&mat_a, sizeof(T) * n * n);
+	cudaMalloc(&vec_x, sizeof(T) * n);
+	cudaMalloc(&vec_y, sizeof(T) * n);
+
+	cublasHandle_t cublas_handle;
+	cublasCreate(&cublas_handle);
+
+	gemv<T>(
+			cublas_handle,
+			CUBLAS_OP_N,
+			n, n,
+			&alpha,
+			mat_a, n,
+			vec_x, 1,
+			&beta,
+			vec_y, 1
+			);
+
+	cublasDestroy(cublas_handle);
+	cudaFree(mat_a);
+	cudaFree(vec_x);
+	cudaFree(vec_y);
+}
+
 void test_all() {
 	gemm_test<double         , op_gemm  >();
 	gemm_test<float          , op_gemm  >();
@@ -203,6 +263,11 @@ void test_all() {
 	gemm_batched_test<half           , op_gemmEx>();
 	gemm_batched_test<cuComplex      , op_gemmEx>();
 	gemm_batched_test<cuDoubleComplex, op_gemmEx>();
+
+	gemv_test<double         >();
+	gemv_test<float          >();
+	gemv_test<cuComplex      >();
+	gemv_test<cuDoubleComplex>();
 }
 
 int main(){
