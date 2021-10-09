@@ -14,11 +14,11 @@ enum CULiP_cublas_control_t {
 	CULiP_cublasCgemmBatched,
 	CULiP_cublasZgemmBatched,
 	CULiP_cublasGemmBatchedEx,
-	CULiP_cublas_enum_length,
 	CULiP_cublasDgemv,
 	CULiP_cublasSgemv,
 	CULiP_cublasCgemv,
 	CULiP_cublasZgemv,
+	CULiP_cublas_enum_length
 };
 
 extern "C" void CULiP_profile_cublas_enable(const CULiP_cublas_control_t target_function);
