@@ -324,4 +324,44 @@ cublasStatus_t cublasGemmBatchedEx(cublasHandle_t handle,
 #undef CULIP_FUNC_NAME
 #undef CULIP_FUNC_ENUM_NAME
 #undef CULIP_TYPE
+
+// -------------------------------------------------
+// GBMV
+// -------------------------------------------------
+
+// SGBMV
+#define CULIP_FUNC_NAME cublasSgbmv
+#define CULIP_FUNC_ENUM_NAME CULiP_cublasSgbmv
+#define CULIP_TYPE float
+#include "cublas.gbmv.template.h"
+#undef CULIP_FUNC_NAME
+#undef CULIP_FUNC_ENUM_NAME
+#undef CULIP_TYPE
+
+// DGBMV
+#define CULIP_FUNC_NAME cublasDgbmv
+#define CULIP_FUNC_ENUM_NAME CULiP_cublasDgbmv
+#define CULIP_TYPE double
+#include "cublas.gbmv.template.h"
+#undef CULIP_FUNC_NAME
+#undef CULIP_FUNC_ENUM_NAME
+#undef CULIP_TYPE
+
+// CGBMV
+#define CULIP_FUNC_NAME cublasCgbmv
+#define CULIP_FUNC_ENUM_NAME CULiP_cublasCgbmv
+#define CULIP_TYPE cuComplex
+#include "cublas.gbmv.template.h"
+#undef CULIP_FUNC_NAME
+#undef CULIP_FUNC_ENUM_NAME
+#undef CULIP_TYPE
+
+// ZGBMV
+#define CULIP_FUNC_NAME cublasZgbmv
+#define CULIP_FUNC_ENUM_NAME CULiP_cublasZgbmv
+#define CULIP_TYPE cuDoubleComplex
+#include "cublas.gbmv.template.h"
+#undef CULIP_FUNC_NAME
+#undef CULIP_FUNC_ENUM_NAME
+#undef CULIP_TYPE
 } // extern "C"
