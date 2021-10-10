@@ -25,7 +25,7 @@ CULiP is a library for profiling the execution time of CUDA official library fun
 		- `cublasSgemm`
 		- `cublasCgemm`
 		- `cublasZgemm`
-	- GBMV (This function calls GEMV.)
+	- GBMV
 		- `cublasDgbmm`
 		- `cublasSgbmm`
 		- `cublasCgbmm`
