@@ -115,6 +115,29 @@ GEMM_OP_GEMV(D, double);
 GEMM_OP_GEMV(C, cuComplex);
 GEMM_OP_GEMV(Z, cuDoubleComplex);
 
+// -------------
+// Gbmv
+// -------------
+template <class T>
+cublasStatus_t gbmv(cublasHandle_t handle, cublasOperation_t trans,
+                           int m, int n, int kl, int ku,
+                           const T *alpha, const T *A, int lda,
+                           const T *x, int incx, const T *beta, T *y,
+                           int incy);
+#define GEMM_OP_GBMV(short_type, type)\
+template <>\
+cublasStatus_t gbmv<type>(cublasHandle_t handle, cublasOperation_t trans,\
+                           int m, int n, int kl, int ku,\
+                           const type *alpha, const type *A, int lda,\
+                           const type *x, int incx, const type *beta, type *y,\
+                           int incy) {\
+	return cublas##short_type##gbmv(handle, trans, m, n, kl, ku, alpha, A, lda, x, incx, beta, y, incy);\
+}
+GEMM_OP_GBMV(S, float);
+GEMM_OP_GBMV(D, double);
+GEMM_OP_GBMV(C, cuComplex);
+GEMM_OP_GBMV(Z, cuDoubleComplex);
+
 
 template <class T>
 T convert(const double a) {return static_cast<T>(a);}
@@ -241,6 +264,40 @@ void gemv_test() {
 	cudaFree(vec_y);
 }
 
+template <class T>
+void gbmv_test() {
+	const std::size_t n = 1lu << 10;
+	const auto alpha = convert<T>(1);
+	const auto beta  = convert<T>(0);
+
+	T* mat_a;
+	T* vec_x;
+	T* vec_y;
+
+	cudaMalloc(&mat_a, sizeof(T) * n * n);
+	cudaMalloc(&vec_x, sizeof(T) * n);
+	cudaMalloc(&vec_y, sizeof(T) * n);
+
+	cublasHandle_t cublas_handle;
+	cublasCreate(&cublas_handle);
+
+	gbmv<T>(
+			cublas_handle,
+			CUBLAS_OP_N,
+			n, n, n / 10, n / 10,
+			&alpha,
+			mat_a, n,
+			vec_x, 1,
+			&beta,
+			vec_y, 1
+			);
+
+	cublasDestroy(cublas_handle);
+	cudaFree(mat_a);
+	cudaFree(vec_x);
+	cudaFree(vec_y);
+}
+
 void test_all() {
 	gemm_test<double         , op_gemm  >();
 	gemm_test<float          , op_gemm  >();
@@ -268,6 +325,11 @@ void test_all() {
 	gemv_test<float          >();
 	gemv_test<cuComplex      >();
 	gemv_test<cuDoubleComplex>();
+
+	gbmv_test<double         >();
+	gbmv_test<float          >();
+	gbmv_test<cuComplex      >();
+	gbmv_test<cuDoubleComplex>();
 }
 
 int main(){
