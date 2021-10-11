@@ -78,7 +78,7 @@ export CULIP_PROFILING_CUBLAS_DISABLE=0
 unset CULIP_PROFILING_CUBLAS_DISABLE
 ```
 
-### In the case that you can not change set up compiler options
+### In the case that you can not change or set up compiler options
 You can make a symbolic link for libculip_cublas.so named libcublas.so so that CULiP library is loaded instead of real cuBLAS library.
 Then set an environment variable `CULIP_CUBLAS_LIB_PATH` so that CULiP finds the original cuBLAS library.
 
