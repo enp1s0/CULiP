@@ -377,4 +377,40 @@ cublasStatus_t cublasGemmBatchedEx(cublasHandle_t handle,
 #undef CULIP_FUNC_NAME
 #undef CULIP_FUNC_ENUM_NAME
 #undef CULIP_TYPE
+
+// -------------------------------------------------
+// SYRK
+// -------------------------------------------------
+
+#define CULIP_FUNC_NAME cublasSsyrk
+#define CULIP_FUNC_ENUM_NAME CULiP_cublasSsyrk
+#define CULIP_TYPE float
+#include "cublas.syrk.template.h"
+#undef CULIP_FUNC_NAME
+#undef CULIP_FUNC_ENUM_NAME
+#undef CULIP_TYPE
+
+#define CULIP_FUNC_NAME cublasDsyrk
+#define CULIP_FUNC_ENUM_NAME CULiP_cublasDsyrk
+#define CULIP_TYPE double
+#include "cublas.syrk.template.h"
+#undef CULIP_FUNC_NAME
+#undef CULIP_FUNC_ENUM_NAME
+#undef CULIP_TYPE
+
+#define CULIP_FUNC_NAME cublasCsyrk
+#define CULIP_FUNC_ENUM_NAME CULiP_cublasCsyrk
+#define CULIP_TYPE cuComplex
+#include "cublas.syrk.template.h"
+#undef CULIP_FUNC_NAME
+#undef CULIP_FUNC_ENUM_NAME
+#undef CULIP_TYPE
+
+#define CULIP_FUNC_NAME cublasZsyrk
+#define CULIP_FUNC_ENUM_NAME CULiP_cublasZsyrk
+#define CULIP_TYPE cuDoubleComplex
+#include "cublas.syrk.template.h"
+#undef CULIP_FUNC_NAME
+#undef CULIP_FUNC_ENUM_NAME
+#undef CULIP_TYPE
 } // extern "C"
