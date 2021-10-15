@@ -89,6 +89,19 @@ extern "C" const char* CULiP_get_cublasOperation_t_string(const cublasOperation_
 	}
 }
 
+extern "C" const char* CULiP_get_cublasFillMode_t_string(const cublasFillMode_t mode) {
+	switch(mode) {
+	case CUBLAS_FILL_MODE_FULL:
+		return "FULL";
+	case CUBLAS_FILL_MODE_LOWER:
+		return "LOWER";
+	case CUBLAS_FILL_MODE_UPPER:
+		return "UPPER";
+	default:
+		return "Unknown";
+	}
+}
+
 // -------------------------------------------------
 // GEMM
 // -------------------------------------------------
