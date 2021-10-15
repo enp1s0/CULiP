@@ -89,6 +89,19 @@ extern "C" const char* CULiP_get_cublasOperation_t_string(const cublasOperation_
 	}
 }
 
+extern "C" const char* CULiP_get_cublasFillMode_t_string(const cublasFillMode_t mode) {
+	switch(mode) {
+	case CUBLAS_FILL_MODE_FULL:
+		return "FULL";
+	case CUBLAS_FILL_MODE_LOWER:
+		return "LOWER";
+	case CUBLAS_FILL_MODE_UPPER:
+		return "UPPER";
+	default:
+		return "Unknown";
+	}
+}
+
 // -------------------------------------------------
 // GEMM
 // -------------------------------------------------
@@ -361,6 +374,42 @@ cublasStatus_t cublasGemmBatchedEx(cublasHandle_t handle,
 #define CULIP_FUNC_ENUM_NAME CULiP_cublasZgbmv
 #define CULIP_TYPE cuDoubleComplex
 #include "cublas.gbmv.template.h"
+#undef CULIP_FUNC_NAME
+#undef CULIP_FUNC_ENUM_NAME
+#undef CULIP_TYPE
+
+// -------------------------------------------------
+// SYRK
+// -------------------------------------------------
+
+#define CULIP_FUNC_NAME cublasSsyrk
+#define CULIP_FUNC_ENUM_NAME CULiP_cublasSsyrk
+#define CULIP_TYPE float
+#include "cublas.syrk.template.h"
+#undef CULIP_FUNC_NAME
+#undef CULIP_FUNC_ENUM_NAME
+#undef CULIP_TYPE
+
+#define CULIP_FUNC_NAME cublasDsyrk
+#define CULIP_FUNC_ENUM_NAME CULiP_cublasDsyrk
+#define CULIP_TYPE double
+#include "cublas.syrk.template.h"
+#undef CULIP_FUNC_NAME
+#undef CULIP_FUNC_ENUM_NAME
+#undef CULIP_TYPE
+
+#define CULIP_FUNC_NAME cublasCsyrk
+#define CULIP_FUNC_ENUM_NAME CULiP_cublasCsyrk
+#define CULIP_TYPE cuComplex
+#include "cublas.syrk.template.h"
+#undef CULIP_FUNC_NAME
+#undef CULIP_FUNC_ENUM_NAME
+#undef CULIP_TYPE
+
+#define CULIP_FUNC_NAME cublasZsyrk
+#define CULIP_FUNC_ENUM_NAME CULiP_cublasZsyrk
+#define CULIP_TYPE cuDoubleComplex
+#include "cublas.syrk.template.h"
 #undef CULIP_FUNC_NAME
 #undef CULIP_FUNC_ENUM_NAME
 #undef CULIP_TYPE

@@ -138,6 +138,31 @@ GEMM_OP_GBMV(D, double);
 GEMM_OP_GBMV(C, cuComplex);
 GEMM_OP_GBMV(Z, cuDoubleComplex);
 
+// -------------
+// Syrk
+// -------------
+template <class T>
+cublasStatus_t syrk(cublasHandle_t handle,
+		                       cublasFillMode_t uplo, cublasOperation_t trans,
+                           int n, int k,
+                           const T *alpha, const T *A, int lda,
+                           const T *beta , T *C, int ldc
+                           );
+#define GEMM_OP_SYRK(short_type, type)\
+template <>\
+cublasStatus_t syrk<type>(cublasHandle_t handle, cublasFillMode_t uplo,\
+		                       cublasOperation_t trans,\
+                           int n, int k,\
+                           const type *alpha, const type *A, int lda,\
+                           const type *beta, type *C, int ldc\
+                           ) {\
+	return cublas##short_type##syrk(handle, uplo, trans, n, k, alpha, A, lda, beta, C, ldc);\
+}
+GEMM_OP_SYRK(S, float);
+GEMM_OP_SYRK(D, double);
+GEMM_OP_SYRK(C, cuComplex);
+GEMM_OP_SYRK(Z, cuDoubleComplex);
+
 
 template <class T>
 T convert(const double a) {return static_cast<T>(a);}
@@ -298,6 +323,37 @@ void gbmv_test() {
 	cudaFree(vec_y);
 }
 
+template <class T>
+void syrk_test() {
+	const std::size_t n = 1lu << 10;
+	const auto alpha = convert<T>(1);
+	const auto beta  = convert<T>(0);
+
+	T* mat_a;
+	T* mat_c;
+
+	cudaMalloc(&mat_a, sizeof(T) * n * n);
+	cudaMalloc(&mat_c, sizeof(T) * n * n);
+
+	cublasHandle_t cublas_handle;
+	cublasCreate(&cublas_handle);
+
+	syrk<T>(
+			cublas_handle,
+			CUBLAS_FILL_MODE_LOWER,
+			CUBLAS_OP_N,
+			n, n,
+			&alpha,
+			mat_a, n,
+			&beta,
+			mat_c, n
+			);
+
+	cublasDestroy(cublas_handle);
+	cudaFree(mat_a);
+	cudaFree(mat_c);
+}
+
 void test_all() {
 	gemm_test<double         , op_gemm  >();
 	gemm_test<float          , op_gemm  >();
@@ -330,6 +386,11 @@ void test_all() {
 	gbmv_test<float          >();
 	gbmv_test<cuComplex      >();
 	gbmv_test<cuDoubleComplex>();
+
+	syrk_test<double         >();
+	syrk_test<float          >();
+	syrk_test<cuComplex      >();
+	syrk_test<cuDoubleComplex>();
 }
 
 int main(){
