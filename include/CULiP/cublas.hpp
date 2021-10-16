@@ -8,6 +8,8 @@ enum CULiP_cublas_control_t {
 	CULiP_cublasCgemm,
 	CULiP_cublasZgemm,
 	CULiP_cublasGemmEx,
+	CULiP_cublasCgemm3m,
+	CULiP_cublasZgemm3m,
 	CULiP_cublasDgemmBatched,
 	CULiP_cublasSgemmBatched,
 	CULiP_cublasHgemmBatched,
