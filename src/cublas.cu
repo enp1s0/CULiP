@@ -413,4 +413,25 @@ cublasStatus_t cublasGemmBatchedEx(cublasHandle_t handle,
 #undef CULIP_FUNC_NAME
 #undef CULIP_FUNC_ENUM_NAME
 #undef CULIP_TYPE
+
+// -------------------------------------------------
+// GEMM3M
+// -------------------------------------------------
+// CGEMM
+#define CULIP_FUNC_NAME cublasCgemm3m
+#define CULIP_FUNC_ENUM_NAME CULiP_cublasCgemm3m
+#define CULIP_TYPE cuComplex
+#include "cublas.gemm.template.h"
+#undef CULIP_FUNC_NAME
+#undef CULIP_FUNC_ENUM_NAME
+#undef CULIP_TYPE
+
+// ZGEMM
+#define CULIP_FUNC_NAME cublasZgemm3m
+#define CULIP_FUNC_ENUM_NAME CULiP_cublasZgemm3m
+#define CULIP_TYPE cuDoubleComplex
+#include "cublas.gemm.template.h"
+#undef CULIP_FUNC_NAME
+#undef CULIP_FUNC_ENUM_NAME
+#undef CULIP_TYPE
 } // extern "C"
