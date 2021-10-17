@@ -102,6 +102,17 @@ extern "C" const char* CULiP_get_cublasFillMode_t_string(const cublasFillMode_t 
 	}
 }
 
+extern "C" const char* CULiP_get_cublasSideMode_t_string(const cublasSideMode_t mode) {
+	switch(mode) {
+	case CUBLAS_SIDE_LEFT:
+		return "LEFT";
+	case CUBLAS_SIDE_RIGHT:
+		return "RIGHT";
+	default:
+		return "Unknown";
+	}
+}
+
 // -------------------------------------------------
 // GEMM
 // -------------------------------------------------
