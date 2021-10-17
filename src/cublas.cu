@@ -102,6 +102,17 @@ extern "C" const char* CULiP_get_cublasFillMode_t_string(const cublasFillMode_t 
 	}
 }
 
+extern "C" const char* CULiP_get_cublasSideMode_t_string(const cublasSideMode_t mode) {
+	switch(mode) {
+	case CUBLAS_SIDE_LEFT:
+		return "LEFT";
+	case CUBLAS_SIDE_RIGHT:
+		return "RIGHT";
+	default:
+		return "Unknown";
+	}
+}
+
 // -------------------------------------------------
 // GEMM
 // -------------------------------------------------
@@ -431,6 +442,42 @@ cublasStatus_t cublasGemmBatchedEx(cublasHandle_t handle,
 #define CULIP_FUNC_ENUM_NAME CULiP_cublasZgemm3m
 #define CULIP_TYPE cuDoubleComplex
 #include "cublas.gemm.template.h"
+#undef CULIP_FUNC_NAME
+#undef CULIP_FUNC_ENUM_NAME
+#undef CULIP_TYPE
+
+// -------------------------------------------------
+// SYMM
+// -------------------------------------------------
+
+#define CULIP_FUNC_NAME cublasSsymm
+#define CULIP_FUNC_ENUM_NAME CULiP_cublasSsymm
+#define CULIP_TYPE float
+#include "cublas.symm.template.h"
+#undef CULIP_FUNC_NAME
+#undef CULIP_FUNC_ENUM_NAME
+#undef CULIP_TYPE
+
+#define CULIP_FUNC_NAME cublasDsymm
+#define CULIP_FUNC_ENUM_NAME CULiP_cublasDsymm
+#define CULIP_TYPE double
+#include "cublas.symm.template.h"
+#undef CULIP_FUNC_NAME
+#undef CULIP_FUNC_ENUM_NAME
+#undef CULIP_TYPE
+
+#define CULIP_FUNC_NAME cublasCsymm
+#define CULIP_FUNC_ENUM_NAME CULiP_cublasCsymm
+#define CULIP_TYPE cuComplex
+#include "cublas.symm.template.h"
+#undef CULIP_FUNC_NAME
+#undef CULIP_FUNC_ENUM_NAME
+#undef CULIP_TYPE
+
+#define CULIP_FUNC_NAME cublasZsymm
+#define CULIP_FUNC_ENUM_NAME CULiP_cublasZsymm
+#define CULIP_TYPE cuDoubleComplex
+#include "cublas.symm.template.h"
 #undef CULIP_FUNC_NAME
 #undef CULIP_FUNC_ENUM_NAME
 #undef CULIP_TYPE
