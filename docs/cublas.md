@@ -1,0 +1,43 @@
+# Supported cuBLAS functions list
+
+- GEMM
+	- `cublasDgemm`
+	- `cublasSgemm`
+	- `cublasHgemm`
+	- `cublasCgemm`
+	- `cublasZgemm`
+	- `cublasGemmEx`
+	- `cublasDgemmBatched`
+	- `cublasSgemmBatched`
+	- `cublasHgemmBatched`
+	- `cublasCgemmBatched`
+	- `cublasZgemmBatched`
+	- `cublasGemmExBatched`
+- GEMM3M
+	- `cublasHgemm3m`
+	- `cublasCgemm3m`
+- GEMV
+	- `cublasDgemv`
+	- `cublasSgemv`
+	- `cublasCgemv`
+	- `cublasZgemv`
+- GBMV
+	- `cublasDgbmv`
+	- `cublasSgbmv`
+	- `cublasCgbmv`
+	- `cublasZgbmv`
+- SYRK
+	- `cublasDsyrk`
+	- `cublasSsyrk`
+	- `cublasCsyrk`
+	- `cublasZsyrk`
+- SYR2K
+	- `cublasDsyr2k`
+	- `cublasSsyr2k`
+	- `cublasCsyr2k`
+	- `cublasZsyr2k`
+- SYMM
+	- `cublasDsymm`
+	- `cublasSsymm`
+	- `cublasCsymm`
+	- `cublasZsymm`

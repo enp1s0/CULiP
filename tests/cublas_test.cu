@@ -164,6 +164,35 @@ GEMM_OP_SYRK(C, cuComplex);
 GEMM_OP_SYRK(Z, cuDoubleComplex);
 
 // -------------
+// Syr2k
+// -------------
+template <class T>
+cublasStatus_t syr2k(cublasHandle_t handle,
+		                       cublasFillMode_t uplo, cublasOperation_t trans,
+                           int n, int k,
+                           const T *alpha,
+													 const T *A, int lda,
+													 const T *B, int ldb,
+                           const T *beta , T *C, int ldc
+                           );
+#define GEMM_OP_SYR2K(short_type, type)\
+template <>\
+cublasStatus_t syr2k<type>(cublasHandle_t handle, cublasFillMode_t uplo,\
+		                       cublasOperation_t trans,\
+                           int n, int k,\
+                           const type *alpha, \
+													 const type *A, int lda,\
+													 const type *B, int ldb,\
+                           const type *beta, type *C, int ldc\
+                           ) {\
+	return cublas##short_type##syr2k(handle, uplo, trans, n, k, alpha, A, lda, B, ldb, beta, C, ldc);\
+}
+GEMM_OP_SYR2K(S, float);
+GEMM_OP_SYR2K(D, double);
+GEMM_OP_SYR2K(C, cuComplex);
+GEMM_OP_SYR2K(Z, cuDoubleComplex);
+
+// -------------
 // Symm
 // -------------
 template <class T>
@@ -408,6 +437,41 @@ void syrk_test() {
 }
 
 template <class T>
+void syr2k_test() {
+	const std::size_t n = 1lu << 10;
+	const auto alpha = convert<T>(1);
+	const auto beta  = convert<T>(0);
+
+	T* mat_a;
+	T* mat_b;
+	T* mat_c;
+
+	cudaMalloc(&mat_a, sizeof(T) * n * n);
+	cudaMalloc(&mat_b, sizeof(T) * n * n);
+	cudaMalloc(&mat_c, sizeof(T) * n * n);
+
+	cublasHandle_t cublas_handle;
+	cublasCreate(&cublas_handle);
+
+	syr2k<T>(
+			cublas_handle,
+			CUBLAS_FILL_MODE_LOWER,
+			CUBLAS_OP_N,
+			n, n,
+			&alpha,
+			mat_a, n,
+			mat_b, n,
+			&beta,
+			mat_c, n
+			);
+
+	cublasDestroy(cublas_handle);
+	cudaFree(mat_a);
+	cudaFree(mat_b);
+	cudaFree(mat_c);
+}
+
+template <class T>
 void symm_test() {
 	const std::size_t n = 1lu << 10;
 	const auto alpha = convert<T>(1);
@@ -517,6 +581,11 @@ void test_all() {
 	symm_test<float          >();
 	symm_test<cuComplex      >();
 	symm_test<cuDoubleComplex>();
+
+	syr2k_test<double         >();
+	syr2k_test<float          >();
+	syr2k_test<cuComplex      >();
+	syr2k_test<cuDoubleComplex>();
 
 	gemm3m_test<cuComplex      >();
 	gemm3m_test<cuDoubleComplex>();
