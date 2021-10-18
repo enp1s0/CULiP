@@ -6,7 +6,7 @@ CULiP is a library for profiling the execution time of CUDA official library fun
 
 ## Supported libraries and functions
 
-- cuBLAS [functions](./docs/cublas.md)
+- cuBLAS [[functions](./docs/cublas.md)]
 
 ## Dependencies
 - CUDA >= 10.0
