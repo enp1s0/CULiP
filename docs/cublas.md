@@ -36,6 +36,11 @@
 	- `cublasSsyr2k`
 	- `cublasCsyr2k`
 	- `cublasZsyr2k`
+- SYRKX
+	- `cublasDsyrkx`
+	- `cublasSsyrkx`
+	- `cublasCsyrkx`
+	- `cublasZsyrkx`
 - SYMM
 	- `cublasDsymm`
 	- `cublasSsymm`
