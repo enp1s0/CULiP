@@ -462,6 +462,42 @@ cublasStatus_t cublasGemmBatchedEx(cublasHandle_t handle,
 #undef CULIP_TYPE
 
 // -------------------------------------------------
+// SYRKX
+// -------------------------------------------------
+
+#define CULIP_FUNC_NAME cublasSsyrkx
+#define CULIP_FUNC_ENUM_NAME CULiP_cublasSsyrkx
+#define CULIP_TYPE float
+#include "cublas.syr2k.template.h"
+#undef CULIP_FUNC_NAME
+#undef CULIP_FUNC_ENUM_NAME
+#undef CULIP_TYPE
+
+#define CULIP_FUNC_NAME cublasDsyrkx
+#define CULIP_FUNC_ENUM_NAME CULiP_cublasDsyrkx
+#define CULIP_TYPE double
+#include "cublas.syr2k.template.h"
+#undef CULIP_FUNC_NAME
+#undef CULIP_FUNC_ENUM_NAME
+#undef CULIP_TYPE
+
+#define CULIP_FUNC_NAME cublasCsyrkx
+#define CULIP_FUNC_ENUM_NAME CULiP_cublasCsyrkx
+#define CULIP_TYPE cuComplex
+#include "cublas.syr2k.template.h"
+#undef CULIP_FUNC_NAME
+#undef CULIP_FUNC_ENUM_NAME
+#undef CULIP_TYPE
+
+#define CULIP_FUNC_NAME cublasZsyrkx
+#define CULIP_FUNC_ENUM_NAME CULiP_cublasZsyrkx
+#define CULIP_TYPE cuDoubleComplex
+#include "cublas.syr2k.template.h"
+#undef CULIP_FUNC_NAME
+#undef CULIP_FUNC_ENUM_NAME
+#undef CULIP_TYPE
+
+// -------------------------------------------------
 // GEMM3M
 // -------------------------------------------------
 // CGEMM
