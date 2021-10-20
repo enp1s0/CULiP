@@ -40,6 +40,10 @@ enum CULiP_cublas_control_t {
 	CULiP_cublasSsyrkx,
 	CULiP_cublasCsyrkx,
 	CULiP_cublasZsyrkx,
+	CULiP_cublasDtrmm,
+	CULiP_cublasStrmm,
+	CULiP_cublasCtrmm,
+	CULiP_cublasZtrmm,
 	CULiP_cublas_enum_length
 };
 
