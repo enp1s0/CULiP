@@ -113,6 +113,17 @@ extern "C" const char* CULiP_get_cublasSideMode_t_string(const cublasSideMode_t 
 	}
 }
 
+extern "C" const char* CULiP_get_cublasDiagType_t_string(const cublasDiagType_t type) {
+	switch(type) {
+	case CUBLAS_DIAG_NON_UNIT:
+		return "NON_UNIT";
+	case CUBLAS_DIAG_UNIT:
+		return "UNIT";
+	default:
+		return "Unknown";
+	}
+}
+
 // -------------------------------------------------
 // GEMM
 // -------------------------------------------------
@@ -550,6 +561,42 @@ cublasStatus_t cublasGemmBatchedEx(cublasHandle_t handle,
 #define CULIP_FUNC_ENUM_NAME CULiP_cublasZsymm
 #define CULIP_TYPE cuDoubleComplex
 #include "cublas.symm.template.h"
+#undef CULIP_FUNC_NAME
+#undef CULIP_FUNC_ENUM_NAME
+#undef CULIP_TYPE
+
+// -------------------------------------------------
+// TRMM
+// -------------------------------------------------
+
+#define CULIP_FUNC_NAME cublasStrmm
+#define CULIP_FUNC_ENUM_NAME CULiP_cublasStrmm
+#define CULIP_TYPE float
+#include "cublas.trmm.template.h"
+#undef CULIP_FUNC_NAME
+#undef CULIP_FUNC_ENUM_NAME
+#undef CULIP_TYPE
+
+#define CULIP_FUNC_NAME cublasDtrmm
+#define CULIP_FUNC_ENUM_NAME CULiP_cublasDtrmm
+#define CULIP_TYPE double
+#include "cublas.trmm.template.h"
+#undef CULIP_FUNC_NAME
+#undef CULIP_FUNC_ENUM_NAME
+#undef CULIP_TYPE
+
+#define CULIP_FUNC_NAME cublasCtrmm
+#define CULIP_FUNC_ENUM_NAME CULiP_cublasCtrmm
+#define CULIP_TYPE cuComplex
+#include "cublas.trmm.template.h"
+#undef CULIP_FUNC_NAME
+#undef CULIP_FUNC_ENUM_NAME
+#undef CULIP_TYPE
+
+#define CULIP_FUNC_NAME cublasZtrmm
+#define CULIP_FUNC_ENUM_NAME CULiP_cublasZtrmm
+#define CULIP_TYPE cuDoubleComplex
+#include "cublas.trmm.template.h"
 #undef CULIP_FUNC_NAME
 #undef CULIP_FUNC_ENUM_NAME
 #undef CULIP_TYPE
