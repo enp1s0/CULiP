@@ -113,6 +113,17 @@ extern "C" const char* CULiP_get_cublasSideMode_t_string(const cublasSideMode_t 
 	}
 }
 
+extern "C" const char* CULiP_get_cublasDiagType_t_string(const cublasDiagType_t type) {
+	switch(type) {
+	case CUBLAS_DIAG_NON_UNIT:
+		return "NON_UNIT";
+	case CUBLAS_DIAG_UNIT:
+		return "UNIT";
+	default:
+		return "Unknown";
+	}
+}
+
 // -------------------------------------------------
 // GEMM
 // -------------------------------------------------
