@@ -600,4 +600,40 @@ cublasStatus_t cublasGemmBatchedEx(cublasHandle_t handle,
 #undef CULIP_FUNC_NAME
 #undef CULIP_FUNC_ENUM_NAME
 #undef CULIP_TYPE
+
+// -------------------------------------------------
+// TRSM
+// -------------------------------------------------
+
+#define CULIP_FUNC_NAME cublasStrsm
+#define CULIP_FUNC_ENUM_NAME CULiP_cublasStrsm
+#define CULIP_TYPE float
+#include "cublas.trsm.template.h"
+#undef CULIP_FUNC_NAME
+#undef CULIP_FUNC_ENUM_NAME
+#undef CULIP_TYPE
+
+#define CULIP_FUNC_NAME cublasDtrsm
+#define CULIP_FUNC_ENUM_NAME CULiP_cublasDtrsm
+#define CULIP_TYPE double
+#include "cublas.trsm.template.h"
+#undef CULIP_FUNC_NAME
+#undef CULIP_FUNC_ENUM_NAME
+#undef CULIP_TYPE
+
+#define CULIP_FUNC_NAME cublasCtrsm
+#define CULIP_FUNC_ENUM_NAME CULiP_cublasCtrsm
+#define CULIP_TYPE cuComplex
+#include "cublas.trsm.template.h"
+#undef CULIP_FUNC_NAME
+#undef CULIP_FUNC_ENUM_NAME
+#undef CULIP_TYPE
+
+#define CULIP_FUNC_NAME cublasZtrsm
+#define CULIP_FUNC_ENUM_NAME CULiP_cublasZtrsm
+#define CULIP_TYPE cuDoubleComplex
+#include "cublas.trsm.template.h"
+#undef CULIP_FUNC_NAME
+#undef CULIP_FUNC_ENUM_NAME
+#undef CULIP_TYPE
 } // extern "C"
