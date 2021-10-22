@@ -46,6 +46,11 @@
 	- `cublasStrmm`
 	- `cublasCtrmm`
 	- `cublasZtrmm`
+- TRSM
+	- `cublasDtrsm`
+	- `cublasStrsm`
+	- `cublasCtrsm`
+	- `cublasZtrsm`
 - SYMM
 	- `cublasDsymm`
 	- `cublasSsymm`
