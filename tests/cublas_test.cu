@@ -282,6 +282,35 @@ GEMM_OP_TRMM(C, cuComplex);
 GEMM_OP_TRMM(Z, cuDoubleComplex);
 
 // -------------
+// Trsm
+// -------------
+template <class T>
+cublasStatus_t trsm(cublasHandle_t handle,
+                           cublasSideMode_t side, cublasFillMode_t uplo,
+                           cublasOperation_t trans, cublasDiagType_t diag,
+                           int m, int n,
+                           const T *alpha,
+													 const T *A, int lda,
+                           T *B, int ldb
+                           );
+#define GEMM_OP_TRSM(short_type, type)\
+template <>\
+cublasStatus_t trsm<type>(cublasHandle_t handle, \
+                           cublasSideMode_t side, cublasFillMode_t uplo, \
+                           cublasOperation_t trans, cublasDiagType_t diag, \
+                           int m, int n,\
+                           const type *alpha, \
+													 const type *A, int lda,\
+                           type *B, int ldb\
+                           ) {\
+	return cublas##short_type##trsm(handle, side, uplo, trans, diag, m, n, alpha, A, lda, B, ldb);\
+}
+GEMM_OP_TRSM(S, float);
+GEMM_OP_TRSM(D, double);
+GEMM_OP_TRSM(C, cuComplex);
+GEMM_OP_TRSM(Z, cuDoubleComplex);
+
+// -------------
 // Gemm3m
 // -------------
 template <class T>
@@ -634,6 +663,35 @@ void trmm_test() {
 }
 
 template <class T>
+void trsm_test() {
+	const std::size_t n = 1lu << 10;
+	const auto alpha = convert<T>(1);
+
+	T* mat_a;
+	T* mat_b;
+
+	cudaMalloc(&mat_a, sizeof(T) * n * n);
+	cudaMalloc(&mat_b, sizeof(T) * n * n);
+
+	cublasHandle_t cublas_handle;
+	cublasCreate(&cublas_handle);
+
+	trsm<T>(
+			cublas_handle,
+			CUBLAS_SIDE_LEFT, CUBLAS_FILL_MODE_LOWER,
+			CUBLAS_OP_N, CUBLAS_DIAG_NON_UNIT,
+			n, n,
+			&alpha,
+			mat_a, n,
+			mat_b, n
+			);
+
+	cublasDestroy(cublas_handle);
+	cudaFree(mat_a);
+	cudaFree(mat_b);
+}
+
+template <class T>
 void gemm3m_test() {
 	const std::size_t n = 1lu << 10;
 	const auto alpha = convert<T>(1);
@@ -724,6 +782,11 @@ void test_all() {
 	trmm_test<float          >();
 	trmm_test<cuComplex      >();
 	trmm_test<cuDoubleComplex>();
+
+	trsm_test<double         >();
+	trsm_test<float          >();
+	trsm_test<cuComplex      >();
+	trsm_test<cuDoubleComplex>();
 
 	gemm3m_test<cuComplex      >();
 	gemm3m_test<cuDoubleComplex>();
