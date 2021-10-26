@@ -321,6 +321,113 @@ cublasStatus_t cublasGemmBatchedEx(cublasHandle_t handle,
 }
 
 // -------------------------------------------------
+// GEMM_STRIDED_BATCHED
+// -------------------------------------------------
+
+// SGEMM
+#define CULIP_FUNC_NAME cublasSgemmStridedBatched
+#define CULIP_FUNC_ENUM_NAME CULiP_cublasSgemmStridedBatched
+#define CULIP_TYPE float
+#include "cublas.gemm_strided_batched.template.h"
+#undef CULIP_FUNC_NAME
+#undef CULIP_FUNC_ENUM_NAME
+#undef CULIP_TYPE
+
+// DGEMM
+#define CULIP_FUNC_NAME cublasDgemmStridedBatched
+#define CULIP_FUNC_ENUM_NAME CULiP_cublasDgemmStridedBatched
+#define CULIP_TYPE double
+#include "cublas.gemm_strided_batched.template.h"
+#undef CULIP_FUNC_NAME
+#undef CULIP_FUNC_ENUM_NAME
+#undef CULIP_TYPE
+
+// HGEMM
+#define CULIP_FUNC_NAME cublasHgemmStridedBatched
+#define CULIP_FUNC_ENUM_NAME CULiP_cublasHgemmStridedBatched
+#define CULIP_TYPE half
+#include "cublas.gemm_strided_batched.template.h"
+#undef CULIP_FUNC_NAME
+#undef CULIP_FUNC_ENUM_NAME
+#undef CULIP_TYPE
+
+// CGEMM
+#define CULIP_FUNC_NAME cublasCgemmStridedBatched
+#define CULIP_FUNC_ENUM_NAME CULiP_cublasCgemmStridedBatched
+#define CULIP_TYPE cuComplex
+#include "cublas.gemm_strided_batched.template.h"
+#undef CULIP_FUNC_NAME
+#undef CULIP_FUNC_ENUM_NAME
+#undef CULIP_TYPE
+
+// ZGEMM
+#define CULIP_FUNC_NAME cublasZgemmStridedBatched
+#define CULIP_FUNC_ENUM_NAME CULiP_cublasZgemmBatched
+#define CULIP_TYPE cuDoubleComplex
+#include "cublas.gemm_strided_batched.template.h"
+#undef CULIP_FUNC_NAME
+#undef CULIP_FUNC_ENUM_NAME
+#undef CULIP_TYPE
+
+cublasStatus_t cublasGemmStridedBatchedEx(cublasHandle_t handle,
+		cublasOperation_t transa,
+		cublasOperation_t transb,
+		int m,
+		int n,
+		int k,
+		const void *alpha,
+		const void *A,
+		cudaDataType_t Atype,
+		int lda,
+		long long int strideA,
+		const void *const B,
+		cudaDataType_t Btype,
+		int ldb,
+		long long int strideB,
+		const void *beta,
+		void *const C,
+		cudaDataType_t Ctype,
+		int ldc,
+		long long int strideC,
+		int batchCount,
+		cublasComputeType_t computeType,
+		cublasGemmAlgo_t algo) {
+	const int profiling_flag = (CULiP_profiling_control_array[CULiP_cublasGemmBatchedEx] == 0) && CULiP_is_profiling_enabled(CULIP_CUBLAS_DISABLE_ENV_NAME);
+
+	// Get the function pointer
+	cublasStatus_t (*cublas_lib_func)(cublasHandle_t, cublasOperation_t, cublasOperation_t, int, int, int, const void*, const void*, cudaDataType_t, int, long long int, const void*, cudaDataType_t, int, long long int, const void*, void*, cudaDataType_t, int, long long int, int, cublasComputeType_t, cublasGemmAlgo_t);
+	*(void**)(&cublas_lib_func) = CULiP_get_function_pointer(CULIP_CUBLAS_LIBRARY_NAME, CULIP_CUBLAS_ENV_NAME, __func__, &CULiP_cublas_lib_handle_cache);
+
+	cudaStream_t cuda_stream;
+	struct CULiP_profile_result profile_result;
+
+	if (profiling_flag) {
+		// Get current cuda stream
+		cublasGetStream(handle, &cuda_stream);
+
+		// Profile result structure
+		snprintf(profile_result.function_name, profile_result.function_name_length - 1, "%s-%s%s-%s-m%d-n%d-k%d-batchCount%d", __func__, CULiP_get_cublasOperation_t_string(transa), CULiP_get_cublasOperation_t_string(transb), CULiP_get_cublasComputeType_t_string(computeType), m, n , k, batchCount);
+
+		// Record start rimestamp
+		CULiP_launch_function(cuda_stream, &CULiP_record_timestamp, (void*)&profile_result.start_timestamp);
+	}
+
+	// Call the function
+	const cublasStatus_t result = (*cublas_lib_func)(handle, transa, transb, m, n, k, alpha, A, Atype, lda, strideA, B, Btype, ldb, strideB, beta, C, Ctype, ldc, strideC, batchCount, computeType, algo);
+	CULIBPROFILER_DEBUG_PRINT(printf("[CULiP Debug][%s] executed\n", __func__));
+
+	if (profiling_flag) {
+		// Record end rimestamp
+		CULiP_launch_function(cuda_stream, &CULiP_record_timestamp, (void*)&profile_result.end_timestamp);
+
+		// Print result
+		CULiP_launch_function(cuda_stream, &CULiP_print_profile_result, (void*)&profile_result);
+	}
+
+	return result;
+}
+
+// -------------------------------------------------
 // GEMV
 // -------------------------------------------------
 
