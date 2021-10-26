@@ -7,12 +7,20 @@
 	- `cublasCgemm`
 	- `cublasZgemm`
 	- `cublasGemmEx`
+- GEMM BATCHED
 	- `cublasDgemmBatched`
 	- `cublasSgemmBatched`
 	- `cublasHgemmBatched`
 	- `cublasCgemmBatched`
 	- `cublasZgemmBatched`
 	- `cublasGemmExBatched`
+- GEMM STRIDED BATCHED
+	- `cublasDgemmStridedBatched`
+	- `cublasSgemmStridedBatched`
+	- `cublasHgemmStridedBatched`
+	- `cublasCgemmStridedBatched`
+	- `cublasZgemmStridedBatched`
+	- `cublasGemmStridedExBatched`
 - GEMM3M
 	- `cublasHgemm3m`
 	- `cublasCgemm3m`
