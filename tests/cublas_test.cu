@@ -355,6 +355,37 @@ GEMM_OP_TRSM(C, cuComplex);
 GEMM_OP_TRSM(Z, cuDoubleComplex);
 
 // -------------
+// Trsm batched
+// -------------
+template <class T>
+cublasStatus_t trsm_batched(cublasHandle_t handle,
+                           cublasSideMode_t side, cublasFillMode_t uplo,
+                           cublasOperation_t trans, cublasDiagType_t diag,
+                           int m, int n,
+                           const T *alpha,
+													 const T *const A[], int lda,
+                           T * const B[], int ldb,
+													 int batchCount
+                           );
+#define GEMM_OP_TRSM_BATCHED(short_type, type)\
+template <>\
+cublasStatus_t trsm_batched<type>(cublasHandle_t handle, \
+                           cublasSideMode_t side, cublasFillMode_t uplo, \
+                           cublasOperation_t trans, cublasDiagType_t diag, \
+                           int m, int n,\
+                           const type *alpha, \
+													 const type * const A[], int lda,\
+                           type * const B[], int ldb,\
+													 int batchCount\
+                           ) {\
+	return cublas##short_type##trsmBatched(handle, side, uplo, trans, diag, m, n, alpha, A, lda, B, ldb, batchCount);\
+}
+GEMM_OP_TRSM_BATCHED(S, float);
+GEMM_OP_TRSM_BATCHED(D, double);
+GEMM_OP_TRSM_BATCHED(C, cuComplex);
+GEMM_OP_TRSM_BATCHED(Z, cuDoubleComplex);
+
+// -------------
 // Gemm3m
 // -------------
 template <class T>
@@ -772,6 +803,50 @@ void trsm_test() {
 }
 
 template <class T>
+void trsm_batched_test() {
+	const std::size_t n = 1lu << 8;
+	const std::size_t batch_size = 1lu << 5;
+	const auto alpha = convert<T>(1);
+
+	T** mat_a_array;
+	T** mat_b_array;
+
+	cudaMallocHost(&mat_a_array, sizeof(T*) * batch_size);
+	cudaMallocHost(&mat_b_array, sizeof(T*) * batch_size);
+
+	for (unsigned i = 0; i < batch_size; i++) {
+		T* ptr;
+		cudaMalloc(&ptr, sizeof(T) * n * n);
+		mat_a_array[i] = ptr;
+		cudaMalloc(&ptr, sizeof(T) * n * n);
+		mat_b_array[i] = ptr;
+	}
+
+	cublasHandle_t cublas_handle;
+	cublasCreate(&cublas_handle);
+
+	trsm_batched<T>(
+			cublas_handle,
+			CUBLAS_SIDE_LEFT, CUBLAS_FILL_MODE_LOWER,
+			CUBLAS_OP_N, CUBLAS_DIAG_NON_UNIT,
+			n, n,
+			&alpha,
+			mat_a_array, n,
+			mat_b_array, n,
+			batch_size
+			);
+
+	cublasDestroy(cublas_handle);
+
+	for (unsigned i = 0; i < batch_size; i++) {
+		cudaFree(mat_a_array[i]);
+		cudaFree(mat_b_array[i]);
+	}
+	cudaFreeHost(mat_a_array);
+	cudaFreeHost(mat_b_array);
+}
+
+template <class T>
 void gemm3m_test() {
 	const std::size_t n = 1lu << 10;
 	const auto alpha = convert<T>(1);
@@ -878,6 +953,11 @@ void test_all() {
 	trsm_test<float          >();
 	trsm_test<cuComplex      >();
 	trsm_test<cuDoubleComplex>();
+
+	trsm_batched_test<double         >();
+	trsm_batched_test<float          >();
+	trsm_batched_test<cuComplex      >();
+	trsm_batched_test<cuDoubleComplex>();
 
 	gemm3m_test<cuComplex      >();
 	gemm3m_test<cuDoubleComplex>();
