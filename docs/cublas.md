@@ -59,6 +59,11 @@
 	- `cublasStrsm`
 	- `cublasCtrsm`
 	- `cublasZtrsm`
+- TRSM BATCHED
+	- `cublasDtrsmBatched`
+	- `cublasStrsmBatched`
+	- `cublasCtrsmBatched`
+	- `cublasZtrsmBatched`
 - SYMM
 	- `cublasDsymm`
 	- `cublasSsymm`
