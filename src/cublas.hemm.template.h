@@ -18,7 +18,7 @@ cublasStatus_t CULIP_FUNC_NAME(cublasHandle_t handle,
 		cublasGetStream(handle, &cuda_stream);
 
 		// Profile result structure
-		snprintf(profile_result.function_name, profile_result.function_name_length - 1, "%s-%s%s-m%d-n%d", __func__, CULiP_get_cublasSideMode_t_string(side), CULiP_get_cublasFillMode_t_string(uplo), m, n);
+		snprintf(profile_result.function_name, profile_result.function_name_length - 1, "%s-%s-%s-m%d-n%d", __func__, CULiP_get_cublasSideMode_t_string(side), CULiP_get_cublasFillMode_t_string(uplo), m, n);
 
 		// Record start rimestamp
 		CULiP_launch_function(cuda_stream, &CULiP_record_timestamp, (void*)&profile_result.start_timestamp);
