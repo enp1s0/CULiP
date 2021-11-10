@@ -21,6 +21,11 @@
 	- `cublasCgemmStridedBatched`
 	- `cublasZgemmStridedBatched`
 	- `cublasGemmStridedExBatched`
+- SYMM
+	- `cublasDsymm`
+	- `cublasSsymm`
+	- `cublasCsymm`
+	- `cublasZsymm`
 - GEMM3M
 	- `cublasHgemm3m`
 	- `cublasCgemm3m`
@@ -64,8 +69,6 @@
 	- `cublasStrsmBatched`
 	- `cublasCtrsmBatched`
 	- `cublasZtrsmBatched`
-- SYMM
-	- `cublasDsymm`
-	- `cublasSsymm`
-	- `cublasCsymm`
-	- `cublasZsymm`
+- HEMM
+	- `cublasChemm`
+	- `cublasZhemm`
