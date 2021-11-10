@@ -57,6 +57,8 @@ enum CULiP_cublas_control_t {
 	CULiP_cublasStrsmBatched,
 	CULiP_cublasCtrsmBatched,
 	CULiP_cublasZtrsmBatched,
+	CULiP_cublasCherk,
+	CULiP_cublasZherk,
 	CULiP_cublas_enum_length
 };
 
