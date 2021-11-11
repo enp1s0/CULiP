@@ -779,4 +779,24 @@ cublasStatus_t cublasGemmStridedBatchedEx(cublasHandle_t handle,
 #undef CULIP_FUNC_NAME
 #undef CULIP_FUNC_ENUM_NAME
 #undef CULIP_TYPE
+
+// -------------------------------------------------
+// HEMM
+// -------------------------------------------------
+
+#define CULIP_FUNC_NAME cublasChemm
+#define CULIP_FUNC_ENUM_NAME CULiP_cublasChemm
+#define CULIP_TYPE cuComplex
+#include "cublas.hemm.template.h"
+#undef CULIP_FUNC_NAME
+#undef CULIP_FUNC_ENUM_NAME
+#undef CULIP_TYPE
+
+#define CULIP_FUNC_NAME cublasZhemm
+#define CULIP_FUNC_ENUM_NAME CULiP_cublasZhemm
+#define CULIP_TYPE cuDoubleComplex
+#include "cublas.hemm.template.h"
+#undef CULIP_FUNC_NAME
+#undef CULIP_FUNC_ENUM_NAME
+#undef CULIP_TYPE
 } // extern "C"
