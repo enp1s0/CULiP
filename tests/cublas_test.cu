@@ -385,6 +385,29 @@ GEMM_OP_TRSM_BATCHED(D, double);
 GEMM_OP_TRSM_BATCHED(C, cuComplex);
 GEMM_OP_TRSM_BATCHED(Z, cuDoubleComplex);
 
+// -----------------------------------------------------
+// hemm
+// -----------------------------------------------------
+template <class T>
+cublasStatus_t hemm(cublasHandle_t handle,
+                           cublasSideMode_t side, cublasFillMode_t uplo,
+                           int m, int n,
+                           const T *alpha, const T *A, int lda,
+                           const T *B, int ldb, const T *beta, T *C,
+                           int ldc);
+#define GEMM_OP_HEMM(short_type, type)\
+template <>\
+cublasStatus_t hemm<type>(cublasHandle_t handle,\
+                           cublasSideMode_t side, cublasFillMode_t uplo, \
+                           int m, int n, \
+                           const type *alpha, const type *A, int lda,\
+                           const type *B, int ldb, const type *beta, type *C,\
+                           int ldc) {\
+	return cublas##short_type##hemm(handle, side, uplo, m, n, alpha, A, lda, B, ldb, beta, C, ldc);\
+}
+GEMM_OP_HEMM(C, cuComplex);
+GEMM_OP_HEMM(Z, cuDoubleComplex);
+
 // -------------
 // Gemm3m
 // -------------
@@ -847,6 +870,40 @@ void trsm_batched_test() {
 }
 
 template <class T>
+void hemm_test() {
+	const std::size_t n = 1lu << 10;
+	const auto alpha = convert<T>(1);
+	const auto beta = convert<T>(0);
+
+	T* mat_a;
+	T* mat_b;
+	T* mat_c;
+
+	cudaMalloc(&mat_a, sizeof(T) * n * n);
+	cudaMalloc(&mat_b, sizeof(T) * n * n);
+	cudaMalloc(&mat_c, sizeof(T) * n * n);
+
+	cublasHandle_t cublas_handle;
+	cublasCreate(&cublas_handle);
+
+	hemm<T>(
+			cublas_handle,
+			CUBLAS_SIDE_LEFT, CUBLAS_FILL_MODE_LOWER,
+			n, n,
+			&alpha,
+			mat_a, n,
+			mat_b, n,
+			&beta,
+			mat_c, n
+			);
+
+	cublasDestroy(cublas_handle);
+	cudaFree(mat_a);
+	cudaFree(mat_b);
+	cudaFree(mat_c);
+}
+
+template <class T>
 void gemm3m_test() {
 	const std::size_t n = 1lu << 10;
 	const auto alpha = convert<T>(1);
@@ -958,6 +1015,9 @@ void test_all() {
 	trsm_batched_test<float          >();
 	trsm_batched_test<cuComplex      >();
 	trsm_batched_test<cuDoubleComplex>();
+
+	hemm_test<cuComplex      >();
+	hemm_test<cuDoubleComplex>();
 
 	gemm3m_test<cuComplex      >();
 	gemm3m_test<cuDoubleComplex>();
