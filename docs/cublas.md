@@ -72,3 +72,6 @@
 - HEMM
 	- `cublasChemm`
 	- `cublasZhemm`
+- HERK
+	- `cublasCherk`
+	- `cublasZherk`

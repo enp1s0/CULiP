@@ -781,6 +781,29 @@ cublasStatus_t cublasGemmStridedBatchedEx(cublasHandle_t handle,
 #undef CULIP_TYPE
 
 // -------------------------------------------------
+// HERK
+// -------------------------------------------------
+#define CULIP_FUNC_NAME cublasCherk
+#define CULIP_FUNC_ENUM_NAME CULiP_cublasCherk
+#define CULIP_TYPE cuComplex
+#define CULIP_REAL_TYPE float
+#include "cublas.herk.template.h"
+#undef CULIP_FUNC_NAME
+#undef CULIP_FUNC_ENUM_NAME
+#undef CULIP_TYPE
+#undef CULIP_REAL_TYPE
+
+#define CULIP_FUNC_NAME cublasZherk
+#define CULIP_FUNC_ENUM_NAME CULiP_cublasZherk
+#define CULIP_TYPE cuDoubleComplex
+#define CULIP_REAL_TYPE double
+#include "cublas.herk.template.h"
+#undef CULIP_FUNC_NAME
+#undef CULIP_FUNC_ENUM_NAME
+#undef CULIP_TYPE
+#undef CULIP_REAL_TYPE
+
+// -------------------------------------------------
 // HEMM
 // -------------------------------------------------
 
