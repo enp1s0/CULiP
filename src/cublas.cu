@@ -822,4 +822,28 @@ cublasStatus_t cublasGemmStridedBatchedEx(cublasHandle_t handle,
 #undef CULIP_FUNC_NAME
 #undef CULIP_FUNC_ENUM_NAME
 #undef CULIP_TYPE
+
+// -------------------------------------------------
+// HERK
+// -------------------------------------------------
+#define CULIP_FUNC_NAME cublasCher2k
+#define CULIP_FUNC_ENUM_NAME CULiP_cublasCher2k
+#define CULIP_TYPE cuComplex
+#define CULIP_REAL_TYPE float
+#include "cublas.her2k.template.h"
+#undef CULIP_FUNC_NAME
+#undef CULIP_FUNC_ENUM_NAME
+#undef CULIP_TYPE
+#undef CULIP_REAL_TYPE
+
+#define CULIP_FUNC_NAME cublasZher2k
+#define CULIP_FUNC_ENUM_NAME CULiP_cublasZher2k
+#define CULIP_TYPE cuDoubleComplex
+#define CULIP_REAL_TYPE double
+#include "cublas.her2k.template.h"
+#undef CULIP_FUNC_NAME
+#undef CULIP_FUNC_ENUM_NAME
+#undef CULIP_TYPE
+#undef CULIP_REAL_TYPE
+
 } // extern "C"
