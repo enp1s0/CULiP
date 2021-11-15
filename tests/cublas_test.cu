@@ -1145,6 +1145,9 @@ void test_all() {
 	herk_test<cuComplex      >();
 	herk_test<cuDoubleComplex>();
 
+	her2k_test<cuComplex      >();
+	her2k_test<cuDoubleComplex>();
+
 	gemm3m_test<cuComplex      >();
 	gemm3m_test<cuDoubleComplex>();
 }
