@@ -3,6 +3,13 @@
 #include <cublas_v2.h>
 #include <CULiP/cublas.hpp>
 
+template <class T>
+struct get_real_type {
+	using type = void;
+};
+template <> struct get_real_type<cuComplex> {using type = float;};
+template <> struct get_real_type<cuDoubleComplex> {using type = double;};
+
 struct op_gemm;
 struct op_gemmEx;
 
@@ -407,6 +414,29 @@ cublasStatus_t hemm<type>(cublasHandle_t handle,\
 }
 GEMM_OP_HEMM(C, cuComplex);
 GEMM_OP_HEMM(Z, cuDoubleComplex);
+
+// -----------------------------------------------------
+// herk
+// -----------------------------------------------------
+template <class T, class RT>
+cublasStatus_t herk(cublasHandle_t handle,
+                           cublasFillMode_t uplo, cublasOperation_t trans,
+                           int m, int n,
+                           const RT *alpha, const T *A, int lda,
+                           const RT *beta, T *C,
+                           int ldc);
+#define GEMM_OP_HERK(short_type, type, real_type)\
+template <>\
+cublasStatus_t herk<type, real_type>(cublasHandle_t handle,\
+                           cublasFillMode_t uplo, cublasOperation_t trans, \
+                           int m, int n, \
+                           const real_type *alpha, const type *A, int lda,\
+                           const real_type *beta, type *C,\
+                           int ldc) {\
+	return cublas##short_type##herk(handle, uplo, trans, m, n, alpha, A, lda, beta, C, ldc);\
+}
+GEMM_OP_HERK(C, cuComplex, float);
+GEMM_OP_HERK(Z, cuDoubleComplex, double);
 
 // -------------
 // Gemm3m
@@ -904,6 +934,37 @@ void hemm_test() {
 }
 
 template <class T>
+void herk_test() {
+	using real_type = typename get_real_type<T>::type;
+	const std::size_t n = 1lu << 10;
+	const auto alpha = convert<real_type>(1);
+	const auto beta = convert<real_type>(0);
+
+	T* mat_a;
+	T* mat_c;
+
+	cudaMalloc(&mat_a, sizeof(T) * n * n);
+	cudaMalloc(&mat_c, sizeof(T) * n * n);
+
+	cublasHandle_t cublas_handle;
+	cublasCreate(&cublas_handle);
+
+	herk<T>(
+			cublas_handle,
+			CUBLAS_FILL_MODE_LOWER, CUBLAS_OP_N,
+			n, n,
+			&alpha,
+			mat_a, n,
+			&beta,
+			mat_c, n
+			);
+
+	cublasDestroy(cublas_handle);
+	cudaFree(mat_a);
+	cudaFree(mat_c);
+}
+
+template <class T>
 void gemm3m_test() {
 	const std::size_t n = 1lu << 10;
 	const auto alpha = convert<T>(1);
@@ -1018,6 +1079,9 @@ void test_all() {
 
 	hemm_test<cuComplex      >();
 	hemm_test<cuDoubleComplex>();
+
+	herk_test<cuComplex      >();
+	herk_test<cuDoubleComplex>();
 
 	gemm3m_test<cuComplex      >();
 	gemm3m_test<cuDoubleComplex>();
