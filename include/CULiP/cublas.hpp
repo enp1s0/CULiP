@@ -63,6 +63,8 @@ enum CULiP_cublas_control_t {
 	CULiP_cublasZherk,
 	CULiP_cublasCher2k,
 	CULiP_cublasZher2k,
+	CULiP_cublasCherkx,
+	CULiP_cublasZherkx,
 	CULiP_cublas_enum_length
 };
 
