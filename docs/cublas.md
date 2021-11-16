@@ -78,3 +78,6 @@
 - HER2K
 	- `cublasCher2k`
 	- `cublasZher2k`
+- HERKX
+	- `cublasCherkx`
+	- `cublasZherkx`
