@@ -1,5 +1,27 @@
 # Supported cuBLAS functions list
 
+## Level 2
+
+- GEMV
+	- `cublasDgemv`
+	- `cublasSgemv`
+	- `cublasCgemv`
+	- `cublasZgemv`
+- GBMV
+	- `cublasDgbmv`
+	- `cublasSgbmv`
+	- `cublasCgbmv`
+	- `cublasZgbmv`
+- GER
+	- `cublasDger`
+	- `cublasSger`
+	- `cublasCgerc`
+	- `cublasCgeru`
+	- `cublasZgerc`
+	- `cublasZgeru`
+
+## Level 3
+
 - GEMM
 	- `cublasDgemm`
 	- `cublasSgemm`
@@ -29,16 +51,6 @@
 - GEMM3M
 	- `cublasHgemm3m`
 	- `cublasCgemm3m`
-- GEMV
-	- `cublasDgemv`
-	- `cublasSgemv`
-	- `cublasCgemv`
-	- `cublasZgemv`
-- GBMV
-	- `cublasDgbmv`
-	- `cublasSgbmv`
-	- `cublasCgbmv`
-	- `cublasZgbmv`
 - SYRK
 	- `cublasDsyrk`
 	- `cublasSsyrk`

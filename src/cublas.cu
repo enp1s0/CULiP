@@ -508,6 +508,58 @@ cublasStatus_t cublasGemmStridedBatchedEx(cublasHandle_t handle,
 #undef CULIP_TYPE
 
 // -------------------------------------------------
+// GER
+// -------------------------------------------------
+
+#define CULIP_FUNC_NAME cublasSger
+#define CULIP_FUNC_ENUM_NAME CULiP_cublasSger
+#define CULIP_TYPE float
+#include "cublas.ger.template.h"
+#undef CULIP_FUNC_NAME
+#undef CULIP_FUNC_ENUM_NAME
+#undef CULIP_TYPE
+
+#define CULIP_FUNC_NAME cublasDger
+#define CULIP_FUNC_ENUM_NAME CULiP_cublasDger
+#define CULIP_TYPE double
+#include "cublas.ger.template.h"
+#undef CULIP_FUNC_NAME
+#undef CULIP_FUNC_ENUM_NAME
+#undef CULIP_TYPE
+
+#define CULIP_FUNC_NAME cublasCgerc
+#define CULIP_FUNC_ENUM_NAME CULiP_cublasCgerc
+#define CULIP_TYPE cuComplex
+#include "cublas.ger.template.h"
+#undef CULIP_FUNC_NAME
+#undef CULIP_FUNC_ENUM_NAME
+#undef CULIP_TYPE
+
+#define CULIP_FUNC_NAME cublasCgeru
+#define CULIP_FUNC_ENUM_NAME CULiP_cublasCgeru
+#define CULIP_TYPE cuComplex
+#include "cublas.ger.template.h"
+#undef CULIP_FUNC_NAME
+#undef CULIP_FUNC_ENUM_NAME
+#undef CULIP_TYPE
+
+#define CULIP_FUNC_NAME cublasZgerc
+#define CULIP_FUNC_ENUM_NAME CULiP_cublasZgerc
+#define CULIP_TYPE cuDoubleComplex
+#include "cublas.ger.template.h"
+#undef CULIP_FUNC_NAME
+#undef CULIP_FUNC_ENUM_NAME
+#undef CULIP_TYPE
+
+#define CULIP_FUNC_NAME cublasZgeru
+#define CULIP_FUNC_ENUM_NAME CULiP_cublasZgeru
+#define CULIP_TYPE cuDoubleComplex
+#include "cublas.ger.template.h"
+#undef CULIP_FUNC_NAME
+#undef CULIP_FUNC_ENUM_NAME
+#undef CULIP_TYPE
+
+// -------------------------------------------------
 // SYRK
 // -------------------------------------------------
 
