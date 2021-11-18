@@ -2,6 +2,23 @@
 #define __CULIP_CUBLAS_HPP__
 
 enum CULiP_cublas_control_t {
+	// LEVEL 2
+	CULiP_cublasDgemv,
+	CULiP_cublasSgemv,
+	CULiP_cublasCgemv,
+	CULiP_cublasZgemv,
+	CULiP_cublasDgbmv,
+	CULiP_cublasSgbmv,
+	CULiP_cublasCgbmv,
+	CULiP_cublasZgbmv,
+	CULiP_cublasDger,
+	CULiP_cublasSger,
+	CULiP_cublasCgeru,
+	CULiP_cublasCgerc,
+	CULiP_cublasZgeru,
+	CULiP_cublasZgerc,
+
+	// LEVEL 3
 	CULiP_cublasDgemm,
 	CULiP_cublasSgemm,
 	CULiP_cublasHgemm,
@@ -21,14 +38,6 @@ enum CULiP_cublas_control_t {
 	CULiP_cublasCgemmStridedBatched,
 	CULiP_cublasZgemmStridedBatched,
 	CULiP_cublasGemmBatchedEx,
-	CULiP_cublasDgemv,
-	CULiP_cublasSgemv,
-	CULiP_cublasCgemv,
-	CULiP_cublasZgemv,
-	CULiP_cublasDgbmv,
-	CULiP_cublasSgbmv,
-	CULiP_cublasCgbmv,
-	CULiP_cublasZgbmv,
 	CULiP_cublasDsyrk,
 	CULiP_cublasSsyrk,
 	CULiP_cublasCsyrk,
