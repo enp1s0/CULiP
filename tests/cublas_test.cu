@@ -190,6 +190,63 @@ GEMM_OP_GBMV(C, cuComplex);
 GEMM_OP_GBMV(Z, cuDoubleComplex);
 
 // -------------
+// Ger
+// -------------
+template <class T>
+cublasStatus_t ger(cublasHandle_t handle,
+                           int m, int n,
+                           const T *alpha,
+                           const T *x, int incx, const T *y,
+                           int incy, T *A, int lda);
+#define GEMM_OP_GER(short_type, type)\
+template <>\
+cublasStatus_t ger<type>(cublasHandle_t handle,\
+                           int m, int n,\
+                           const type *alpha, \
+                           const type *x, int incx, const type *y,\
+                           int incy, type* A, int lda) {\
+	return cublas##short_type##ger(handle, m, n, alpha, x, incx, y, incy, A, lda);\
+}
+GEMM_OP_GER(S, float);
+GEMM_OP_GER(D, double);
+
+template <class T>
+cublasStatus_t gerc(cublasHandle_t handle,
+                           int m, int n,
+                           const T *alpha,
+                           const T *x, int incx, const T *y,
+                           int incy, T *A, int lda);
+#define GEMM_OP_GERC(short_type, type)\
+template <>\
+cublasStatus_t gerc<type>(cublasHandle_t handle,\
+                           int m, int n,\
+                           const type *alpha, \
+                           const type *x, int incx, const type *y,\
+                           int incy, type* A, int lda) {\
+	return cublas##short_type##gerc(handle, m, n, alpha, x, incx, y, incy, A, lda);\
+}
+GEMM_OP_GERC(C, cuComplex);
+GEMM_OP_GERC(Z, cuDoubleComplex);
+
+template <class T>
+cublasStatus_t geru(cublasHandle_t handle,
+                           int m, int n,
+                           const T *alpha,
+                           const T *x, int incx, const T *y,
+                           int incy, T *A, int lda);
+#define GEMM_OP_GERU(short_type, type)\
+template <>\
+cublasStatus_t geru<type>(cublasHandle_t handle,\
+                           int m, int n,\
+                           const type *alpha, \
+                           const type *x, int incx, const type *y,\
+                           int incy, type* A, int lda) {\
+	return cublas##short_type##geru(handle, m, n, alpha, x, incx, y, incy, A, lda);\
+}
+GEMM_OP_GERU(C, cuComplex);
+GEMM_OP_GERU(Z, cuDoubleComplex);
+
+// -------------
 // Syrk
 // -------------
 template <class T>
@@ -713,6 +770,99 @@ void gbmv_test() {
 }
 
 template <class T>
+void ger_test() {
+	const std::size_t n = 1lu << 10;
+	const auto alpha = convert<T>(1);
+
+	T* mat_a;
+	T* vec_x;
+	T* vec_y;
+
+	cudaMalloc(&mat_a, sizeof(T) * n * n);
+	cudaMalloc(&vec_x, sizeof(T) * n);
+	cudaMalloc(&vec_y, sizeof(T) * n);
+
+	cublasHandle_t cublas_handle;
+	cublasCreate(&cublas_handle);
+
+	ger<T>(
+			cublas_handle,
+			n, n,
+			&alpha,
+			vec_x, 1,
+			vec_y, 1,
+			mat_a, n
+			);
+
+	cublasDestroy(cublas_handle);
+	cudaFree(mat_a);
+	cudaFree(vec_x);
+	cudaFree(vec_y);
+}
+
+template <class T>
+void gerc_test() {
+	const std::size_t n = 1lu << 10;
+	const auto alpha = convert<T>(1);
+
+	T* mat_a;
+	T* vec_x;
+	T* vec_y;
+
+	cudaMalloc(&mat_a, sizeof(T) * n * n);
+	cudaMalloc(&vec_x, sizeof(T) * n);
+	cudaMalloc(&vec_y, sizeof(T) * n);
+
+	cublasHandle_t cublas_handle;
+	cublasCreate(&cublas_handle);
+
+	gerc<T>(
+			cublas_handle,
+			n, n,
+			&alpha,
+			vec_x, 1,
+			vec_y, 1,
+			mat_a, n
+			);
+
+	cublasDestroy(cublas_handle);
+	cudaFree(mat_a);
+	cudaFree(vec_x);
+	cudaFree(vec_y);
+}
+
+template <class T>
+void geru_test() {
+	const std::size_t n = 1lu << 10;
+	const auto alpha = convert<T>(1);
+
+	T* mat_a;
+	T* vec_x;
+	T* vec_y;
+
+	cudaMalloc(&mat_a, sizeof(T) * n * n);
+	cudaMalloc(&vec_x, sizeof(T) * n);
+	cudaMalloc(&vec_y, sizeof(T) * n);
+
+	cublasHandle_t cublas_handle;
+	cublasCreate(&cublas_handle);
+
+	geru<T>(
+			cublas_handle,
+			n, n,
+			&alpha,
+			vec_x, 1,
+			vec_y, 1,
+			mat_a, n
+			);
+
+	cublasDestroy(cublas_handle);
+	cudaFree(mat_a);
+	cudaFree(vec_x);
+	cudaFree(vec_y);
+}
+
+template <class T>
 void syrk_test() {
 	const std::size_t n = 1lu << 10;
 	const auto alpha = convert<T>(1);
@@ -1123,6 +1273,23 @@ void gemm3m_test() {
 }
 
 void test_all() {
+	gemv_test<double         >();
+	gemv_test<float          >();
+	gemv_test<cuComplex      >();
+	gemv_test<cuDoubleComplex>();
+
+	gbmv_test<double         >();
+	gbmv_test<float          >();
+	gbmv_test<cuComplex      >();
+	gbmv_test<cuDoubleComplex>();
+
+	ger_test<double         >();
+	ger_test<float          >();
+	gerc_test<cuComplex      >();
+	gerc_test<cuDoubleComplex>();
+	geru_test<cuComplex      >();
+	geru_test<cuDoubleComplex>();
+
 	gemm_test<double         , op_gemm  >();
 	gemm_test<float          , op_gemm  >();
 	gemm_test<half           , op_gemm  >();
@@ -1155,16 +1322,6 @@ void test_all() {
 	gemm_strided_batched_test<half           , op_gemmEx>();
 	gemm_strided_batched_test<cuComplex      , op_gemmEx>();
 	gemm_strided_batched_test<cuDoubleComplex, op_gemmEx>();
-
-	gemv_test<double         >();
-	gemv_test<float          >();
-	gemv_test<cuComplex      >();
-	gemv_test<cuDoubleComplex>();
-
-	gbmv_test<double         >();
-	gbmv_test<float          >();
-	gbmv_test<cuComplex      >();
-	gbmv_test<cuDoubleComplex>();
 
 	syrk_test<double         >();
 	syrk_test<float          >();
