@@ -800,7 +800,7 @@ void sbmv_test() {
 	T* vec_x;
 	T* vec_y;
 
-	cudaMalloc(&mat_a, sizeof(T) * n * n);
+	cudaMalloc(&mat_a, sizeof(T) * n * (n + 1));
 	cudaMalloc(&vec_x, sizeof(T) * n);
 	cudaMalloc(&vec_y, sizeof(T) * n);
 
@@ -812,7 +812,7 @@ void sbmv_test() {
 			CUBLAS_FILL_MODE_UPPER,
 			n, n,
 			&alpha,
-			mat_a, n,
+			mat_a, n + 1,
 			vec_x, 1,
 			&beta,
 			vec_y, 1
