@@ -247,6 +247,27 @@ GEMM_OP_GERU(C, cuComplex);
 GEMM_OP_GERU(Z, cuDoubleComplex);
 
 // -------------
+// Sbmv
+// -------------
+template <class T>
+cublasStatus_t sbmv(cublasHandle_t handle, cublasFillMode_t uplo,
+                           int m, int n,
+                           const T *alpha, const T *A, int lda,
+                           const T *x, int incx, const T *beta, T *y,
+                           int incy);
+#define GEMM_OP_SBMV(short_type, type)\
+template <>\
+cublasStatus_t sbmv<type>(cublasHandle_t handle, cublasFillMode_t uplo,\
+                           int m, int n,\
+                           const type *alpha, const type *A, int lda,\
+                           const type *x, int incx, const type *beta, type *y,\
+                           int incy) {\
+	return cublas##short_type##sbmv(handle, uplo, m, n, alpha, A, lda, x, incx, beta, y, incy);\
+}
+GEMM_OP_SBMV(S, float);
+GEMM_OP_SBMV(D, double);
+
+// -------------
 // Syrk
 // -------------
 template <class T>
@@ -758,6 +779,40 @@ void gbmv_test() {
 			n, n, n / 10, n / 10,
 			&alpha,
 			mat_a, n,
+			vec_x, 1,
+			&beta,
+			vec_y, 1
+			);
+
+	cublasDestroy(cublas_handle);
+	cudaFree(mat_a);
+	cudaFree(vec_x);
+	cudaFree(vec_y);
+}
+
+template <class T>
+void sbmv_test() {
+	const std::size_t n = 1lu << 10;
+	const auto alpha = convert<T>(1);
+	const auto beta  = convert<T>(0);
+
+	T* mat_a;
+	T* vec_x;
+	T* vec_y;
+
+	cudaMalloc(&mat_a, sizeof(T) * n * (n + 1));
+	cudaMalloc(&vec_x, sizeof(T) * n);
+	cudaMalloc(&vec_y, sizeof(T) * n);
+
+	cublasHandle_t cublas_handle;
+	cublasCreate(&cublas_handle);
+
+	sbmv<T>(
+			cublas_handle,
+			CUBLAS_FILL_MODE_UPPER,
+			n, n,
+			&alpha,
+			mat_a, n + 1,
 			vec_x, 1,
 			&beta,
 			vec_y, 1
@@ -1289,6 +1344,9 @@ void test_all() {
 	gerc_test<cuDoubleComplex>();
 	geru_test<cuComplex      >();
 	geru_test<cuDoubleComplex>();
+
+	sbmv_test<double         >();
+	sbmv_test<float          >();
 
 	gemm_test<double         , op_gemm  >();
 	gemm_test<float          , op_gemm  >();

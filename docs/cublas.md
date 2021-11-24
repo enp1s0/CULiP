@@ -19,6 +19,9 @@
 	- `cublasCgeru`
 	- `cublasZgerc`
 	- `cublasZgeru`
+- GBMV
+	- `cublasDsbmv`
+	- `cublasSsbmv`
 
 ## Level 3
 
