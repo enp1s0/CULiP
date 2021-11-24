@@ -560,6 +560,26 @@ cublasStatus_t cublasGemmStridedBatchedEx(cublasHandle_t handle,
 #undef CULIP_TYPE
 
 // -------------------------------------------------
+// SBMV
+// -------------------------------------------------
+
+#define CULIP_FUNC_NAME cublasSsbmv
+#define CULIP_FUNC_ENUM_NAME CULiP_cublasSsbmv
+#define CULIP_TYPE float
+#include "cublas.sbmv.template.h"
+#undef CULIP_FUNC_NAME
+#undef CULIP_FUNC_ENUM_NAME
+#undef CULIP_TYPE
+
+#define CULIP_FUNC_NAME cublasDsbmv
+#define CULIP_FUNC_ENUM_NAME CULiP_cublasDsbmv
+#define CULIP_TYPE double
+#include "cublas.sbmv.template.h"
+#undef CULIP_FUNC_NAME
+#undef CULIP_FUNC_ENUM_NAME
+#undef CULIP_TYPE
+
+// -------------------------------------------------
 // SYRK
 // -------------------------------------------------
 
