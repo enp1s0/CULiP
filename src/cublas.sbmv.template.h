@@ -1,5 +1,5 @@
 cublasStatus_t CULIP_FUNC_NAME(cublasHandle_t handle,
-                           cublasFillMode_t uplo, int m, int n,
+                           cublasFillMode_t uplo, int n, int k,
                            const CULIP_TYPE *alpha, const CULIP_TYPE *A, int lda,
                            const CULIP_TYPE *x, int incx, const CULIP_TYPE *beta, CULIP_TYPE *y,
                            int incy) {
@@ -17,14 +17,14 @@ cublasStatus_t CULIP_FUNC_NAME(cublasHandle_t handle,
 		cublasGetStream(handle, &cuda_stream);
 
 		// Profile result structure
-		snprintf(profile_result.function_name, profile_result.function_name_length - 1, "%s-%s-m%d-n%d", __func__, CULiP_get_cublasFillMode_t_string(uplo), m, n);
+		snprintf(profile_result.function_name, profile_result.function_name_length - 1, "%s-%s-n%d-k%d", __func__, CULiP_get_cublasFillMode_t_string(uplo), n, k);
 
 		// Record start rimestamp
 		CULiP_launch_function(cuda_stream, &CULiP_record_timestamp, (void*)&profile_result.start_timestamp);
 	}
 
 	// Call the function
-	const cublasStatus_t result = (*cublas_lib_func)(handle, uplo, m, n, alpha, A, lda, x, incx, beta, y, incy);
+	const cublasStatus_t result = (*cublas_lib_func)(handle, uplo, n, k, alpha, A, lda, x, incx, beta, y, incy);
 	CULIBPROFILER_DEBUG_PRINT(printf("[CULiP Debug][%s] executed\n", __func__));
 
 	if (profiling_flag) {
