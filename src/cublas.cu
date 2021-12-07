@@ -580,6 +580,26 @@ cublasStatus_t cublasGemmStridedBatchedEx(cublasHandle_t handle,
 #undef CULIP_TYPE
 
 // -------------------------------------------------
+// SPMV
+// -------------------------------------------------
+
+#define CULIP_FUNC_NAME cublasSspmv
+#define CULIP_FUNC_ENUM_NAME CULiP_cublasSspmv
+#define CULIP_TYPE float
+#include "cublas.spmv.template.h"
+#undef CULIP_FUNC_NAME
+#undef CULIP_FUNC_ENUM_NAME
+#undef CULIP_TYPE
+
+#define CULIP_FUNC_NAME cublasDspmv
+#define CULIP_FUNC_ENUM_NAME CULiP_cublasDspmv
+#define CULIP_TYPE double
+#include "cublas.spmv.template.h"
+#undef CULIP_FUNC_NAME
+#undef CULIP_FUNC_ENUM_NAME
+#undef CULIP_TYPE
+
+// -------------------------------------------------
 // SYRK
 // -------------------------------------------------
 
