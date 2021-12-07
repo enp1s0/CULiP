@@ -19,9 +19,12 @@
 	- `cublasCgeru`
 	- `cublasZgerc`
 	- `cublasZgeru`
-- GBMV
+- SBMV
 	- `cublasDsbmv`
 	- `cublasSsbmv`
+- SPMV
+	- `cublasDspmv`
+	- `cublasSspmv`
 
 ## Level 3
 

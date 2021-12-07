@@ -19,6 +19,8 @@ enum CULiP_cublas_control_t {
 	CULiP_cublasZgerc,
 	CULiP_cublasDsbmv,
 	CULiP_cublasSsbmv,
+	CULiP_cublasDspmv,
+	CULiP_cublasSspmv,
 
 	// LEVEL 3
 	CULiP_cublasDgemm,
