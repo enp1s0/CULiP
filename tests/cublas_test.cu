@@ -268,6 +268,27 @@ GEMM_OP_SBMV(S, float);
 GEMM_OP_SBMV(D, double);
 
 // -------------
+// Spmv
+// -------------
+template <class T>
+cublasStatus_t spmv(cublasHandle_t handle, cublasFillMode_t uplo,
+                           int m,
+                           const T *alpha, const T *A,
+                           const T *x, int incx, const T *beta, T *y,
+                           int incy);
+#define GEMM_OP_SPMV(short_type, type)\
+template <>\
+cublasStatus_t spmv<type>(cublasHandle_t handle, cublasFillMode_t uplo,\
+                           int m,\
+                           const type *alpha, const type *A,\
+                           const type *x, int incx, const type *beta, type *y,\
+                           int incy) {\
+	return cublas##short_type##spmv(handle, uplo, m, alpha, A, x, incx, beta, y, incy);\
+}
+GEMM_OP_SPMV(S, float);
+GEMM_OP_SPMV(D, double);
+
+// -------------
 // Syrk
 // -------------
 template <class T>
@@ -825,6 +846,40 @@ void sbmv_test() {
 }
 
 template <class T>
+void spmv_test() {
+	const std::size_t n = 1lu << 10;
+	const auto alpha = convert<T>(1);
+	const auto beta  = convert<T>(0);
+
+	T* mat_a;
+	T* vec_x;
+	T* vec_y;
+
+	cudaMalloc(&mat_a, sizeof(T) * n * (n + 1) / 2);
+	cudaMalloc(&vec_x, sizeof(T) * n);
+	cudaMalloc(&vec_y, sizeof(T) * n);
+
+	cublasHandle_t cublas_handle;
+	cublasCreate(&cublas_handle);
+
+	spmv<T>(
+			cublas_handle,
+			CUBLAS_FILL_MODE_UPPER,
+			n,
+			&alpha,
+			mat_a,
+			vec_x, 1,
+			&beta,
+			vec_y, 1
+			);
+
+	cublasDestroy(cublas_handle);
+	cudaFree(mat_a);
+	cudaFree(vec_x);
+	cudaFree(vec_y);
+}
+
+template <class T>
 void ger_test() {
 	const std::size_t n = 1lu << 10;
 	const auto alpha = convert<T>(1);
@@ -1347,6 +1402,9 @@ void test_all() {
 
 	sbmv_test<double         >();
 	sbmv_test<float          >();
+
+	spmv_test<double         >();
+	spmv_test<float          >();
 
 	gemm_test<double         , op_gemm  >();
 	gemm_test<float          , op_gemm  >();
