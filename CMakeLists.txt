@@ -65,17 +65,17 @@ foreach(test cublas)
 endforeach()
 
 ##########################################################################
-# Aggregator
+# Analyzer
 ##########################################################################
 
-add_executable(CULiP_aggregator ${SRCDIR}/aggregator.cpp ${SRCDIR}/params.hpp)
-target_include_directories(CULiP_aggregator PRIVATE ${INCDIR})
-set_target_properties(CULiP_aggregator PROPERTIES RUNTIME CULiP_aggregator)
+add_executable(CULiP_analyzer ${SRCDIR}/analyzer.cpp ${SRCDIR}/params.hpp)
+target_include_directories(CULiP_analyzer PRIVATE ${INCDIR})
+set_target_properties(CULiP_analyzer PROPERTIES RUNTIME CULiP_analyzer)
 
 ##########################################################################
 # Installing
 ##########################################################################
-install(TARGETS culip_cublas CULiP_aggregator
+install(TARGETS culip_cublas CULiP_analyzer
 	LIBRARY DESTINATION lib
 	PUBLIC_HEADER DESTINATION include/CULiP
 	RUNTIME DESTINATION bin
