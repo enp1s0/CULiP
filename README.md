@@ -81,16 +81,16 @@ CULiP_profiling_cublas_enable(CULiP_cublasSgemm);
 
 <img alt='culip_how_it_works' src='./docs/CULiP.svg'>
 
-## Aggregator
+## Analyzer
 
-CULiP also provides result aggregator `CULiP_aggregator`.
+CULiP also provides result analyzer `CULiP_analyzer`.
 
 ```bash
 ./foo.bar > result.log
-cat result.log | CULiP_aggregator
+cat result.log | CULiP_analyzer
 ```
 
-Aggregation result:
+Analyzing result:
 ```
 #####################################
 #       CULiP Profiling Result      #
