@@ -195,7 +195,12 @@ cublasStatus_t cublasGemmEx(cublasHandle_t handle, cublasOperation_t transa,
 		cublasGetStream(handle, &cuda_stream);
 
 		// Profile result structure
-		snprintf(profile_result.function_name, profile_result.function_name_length - 1, "%s-%s%s-%s-m%d-n%d-k%d", __func__, CULiP_get_cublasOperation_t_string(transa), CULiP_get_cublasOperation_t_string(transb), CULiP_get_cublasComputeType_t_string(computeType), m, n , k);
+		snprintf(profile_result.function_name, profile_result.function_name_length - 1, "%s-%s%s-%s-%s-%s-%s-m%d-n%d-k%d", __func__,
+				CULiP_get_cublasOperation_t_string(transa), CULiP_get_cublasOperation_t_string(transb),
+				CULiP_get_cublasComputeType_t_string((cublasComputeType_t)Atype),
+				CULiP_get_cublasComputeType_t_string((cublasComputeType_t)Btype),
+				CULiP_get_cublasComputeType_t_string((cublasComputeType_t)Ctype),
+				CULiP_get_cublasComputeType_t_string(computeType), m, n , k);
 
 		// Record start rimestamp
 		CULiP_launch_function(cuda_stream, &CULiP_record_timestamp, (void*)&profile_result.start_timestamp);
@@ -299,7 +304,12 @@ cublasStatus_t cublasGemmBatchedEx(cublasHandle_t handle,
 		cublasGetStream(handle, &cuda_stream);
 
 		// Profile result structure
-		snprintf(profile_result.function_name, profile_result.function_name_length - 1, "%s-%s%s-%s-m%d-n%d-k%d-batchCount%d", __func__, CULiP_get_cublasOperation_t_string(transa), CULiP_get_cublasOperation_t_string(transb), CULiP_get_cublasComputeType_t_string(computeType), m, n , k, batchCount);
+		snprintf(profile_result.function_name, profile_result.function_name_length - 1, "%s-%s%s-%s-%s-%s-%s-m%d-n%d-k%d-batchCount%d", __func__,
+				CULiP_get_cublasOperation_t_string(transa), CULiP_get_cublasOperation_t_string(transb),
+				CULiP_get_cublasComputeType_t_string((cublasComputeType_t)Atype),
+				CULiP_get_cublasComputeType_t_string((cublasComputeType_t)Btype),
+				CULiP_get_cublasComputeType_t_string((cublasComputeType_t)Ctype),
+				CULiP_get_cublasComputeType_t_string(computeType), m, n , k, batchCount);
 
 		// Record start rimestamp
 		CULiP_launch_function(cuda_stream, &CULiP_record_timestamp, (void*)&profile_result.start_timestamp);
