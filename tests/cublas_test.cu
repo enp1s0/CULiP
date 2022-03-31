@@ -1492,12 +1492,12 @@ void test_all() {
 
 int main(){
 	std::printf("Without profiling\n");
-	CULiP_profile_cublas_disable_all();
+	CULiP_disable_cublas_all_profiling();
 	test_all();
 	std::printf("-------\n");
 
 	std::printf("With profiling\n");
-	CULiP_profile_cublas_enable_all();
+	CULiP_enable_cublas_all_profiling();
 	test_all();
 	std::printf("-------\n");
 }
