@@ -81,8 +81,8 @@ enum CULiP_cublas_control_t {
 	CULiP_cublas_enum_length
 };
 
-extern "C" void CULiP_profile_cublas_enable(const CULiP_cublas_control_t target_function);
-extern "C" void CULiP_profile_cublas_disable(const CULiP_cublas_control_t target_function);
-extern "C" void CULiP_profile_cublas_enable_all();
-extern "C" void CULiP_profile_cublas_disable_all();
+extern "C" void CULiP_enable_cublas_profiling(const CULiP_cublas_control_t target_function);
+extern "C" void CULiP_disable_cublas_profiling(const CULiP_cublas_control_t target_function);
+extern "C" void CULiP_enable_cublas_all_profiling();
+extern "C" void CULiP_disable_cublas_all_profiling();
 #endif

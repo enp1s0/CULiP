@@ -21,18 +21,18 @@ void* CULiP_cublas_lib_handle_cache = NULL;
 int CULiP_profiling_control_array[CULiP_cublas_enum_length] = {0};
 
 // Controler setter
-void CULiP_profile_cublas_enable(const CULiP_cublas_control_t target_function) {
+void CULiP_enable_cublas_profiling(const CULiP_cublas_control_t target_function) {
 	CULiP_profiling_control_array[target_function] = 0;
 }
-void CULiP_profile_cublas_disable(const CULiP_cublas_control_t target_function) {
+void CULiP_disable_cublas_profiling(const CULiP_cublas_control_t target_function) {
 	CULiP_profiling_control_array[target_function] = 1;
 }
-void CULiP_profile_cublas_enable_all() {
+void CULiP_enable_cublas_all_profiling() {
 	for (unsigned target_function = 0; target_function < CULiP_cublas_enum_length; target_function++) {
 		CULiP_profiling_control_array[target_function] = 0;
 	}
 }
-void CULiP_profile_cublas_disable_all() {
+void CULiP_disable_cublas_all_profiling() {
 	for (unsigned target_function = 0; target_function < CULiP_cublas_enum_length; target_function++) {
 		CULiP_profiling_control_array[target_function] = 1;
 	}
