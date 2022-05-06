@@ -29,9 +29,9 @@ make
 make install
 ```
 
-3. Link the CULiP libraries **before linking libcublas and so on**
+3. Set an environmental variable
 ```
-nvcc main.cu -L/path/to/install/CULiP/lib -lculip_cublas -lcublas -o foo.bar
+export LD_PRELOAD=/path/to/install/CULiP/lib/libculip_cublas.so:$LD_PRELOAD
 ```
 
 4. Execute the application
