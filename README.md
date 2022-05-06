@@ -31,7 +31,7 @@ make install
 
 3. Set an environmental variable
 ```
-export LD_PRELOAD=/path/to/install/CULiP/lib/libculip_cublas.so
+export LD_PRELOAD=/path/to/install/CULiP/lib/libculip_cublas.so:$LD_PRELOAD
 ```
 
 4. Execute the application
