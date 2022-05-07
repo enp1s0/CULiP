@@ -33,6 +33,9 @@ foreach(library cublas)
 	target_include_directories(${lib_name} PUBLIC ${INCDIR})
 	target_link_libraries(${lib_name} PRIVATE
 		cuda
+		cublas_static
+		cublasLt_static
+		culibos
 		)
 
 	set_target_properties(${lib_name} PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
