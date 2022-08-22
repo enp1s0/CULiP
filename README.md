@@ -125,5 +125,24 @@ Analyzing result:
 ...
 ```
 
+### CSV output
+```bash
+cat result.log | CULiP_analyzer csv
+```
+
+CSV results are printed after the result above.
+
+e.g.
+```csv
+// ----------- CSV output ----------
+func,params,count,sum,avg,max,min
+cublasCgemmStridedBatched,NN-m128-n128-k128-batchCount1024,1,44.995,44.995,44.995,44.995
+cublasZgemmBatched,NN-m128-n128-k128-batchCount1024,1,38.964,38.964,38.964,38.964
+cublasDgemmStridedBatched,NN-m128-n128-k128-batchCount1024,1,32.694,32.694,32.694,32.694
+cublasZher2k_v2,LOWER-N-n1024-k1024,1,20.308,20.308,20.308,20.308
+cublasZgemm_v2,NN-m1024-n1024-k1024,1,20.253,20.253,20.253,20.253
+cublasZsyr2k_v2,LOWER-N-n1024-k1024,1,19.637,19.637,19.637,19.637
+```
+
 ## License
 MIT
