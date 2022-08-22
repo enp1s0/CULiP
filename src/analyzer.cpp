@@ -79,7 +79,12 @@ std::vector<aggregation_t> get_detail_aggregation(
 	return std::vector<aggregation_t>{};
 }
 
-int main() {
+int main(int argc, char** argv) {
+	bool csv_output = false;
+	if (argc >= 2 && std::string(argv[1]) == "csv") {
+		csv_output = true;
+	}
+
 	std::printf(
 		"#####################################\n"
 		"#       CULiP Profiling Result      #\n"
@@ -154,7 +159,6 @@ int main() {
 		std::printf("  %*s %8s %21s %12s %12s %12s\n", static_cast<int>(max_detail_name_length), "params", "count", "sum", "avg", "max", "min");
 
 		for (const auto& da : detail_aggregation) {
-
 			// category time
 			std::printf("  %*s %8lu %10.3fms(%6.2f%%) %10.3fms %10.3fms %10.3fms\n",
 						static_cast<int>(max_detail_name_length),
@@ -165,6 +169,29 @@ int main() {
 						da.time_sum * 1e-6 / da.count,
 						da.time_max * 1e-6,
 						da.time_min * 1e-6);
+		}
+	}
+
+	if (csv_output) {
+		std::printf("// ----------- CSV output ----------\n");
+		std::printf("func,params,count,sum,avg,max,min\n");
+		for (const auto& category_aggregation : category_aggregation_list) {
+			const auto category_name = category_aggregation.entry_name;
+
+			auto detail_aggregation = get_detail_aggregation(detail_aggregation_list, category_name);
+			std::sort(detail_aggregation.begin(), detail_aggregation.end(), compare_aggregation_t);
+
+			for (const auto& da : detail_aggregation) {
+				// category time
+				std::printf("%s,%s,%lu,%.3f,%.3f,%.3f,%.3f\n",
+										category_name.c_str(),
+										da.entry_name.c_str(),
+										da.count,
+										da.time_sum * 1e-6,
+										da.time_sum * 1e-6 / da.count,
+										da.time_max * 1e-6,
+										da.time_min * 1e-6);
+			}
 		}
 	}
 }
