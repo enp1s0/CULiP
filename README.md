@@ -55,6 +55,12 @@ export CULIP_DISABLE_CUBLAS_PROFILING=0
 unset CULIP_DISABLE_CUBLAS_PROFILING
 ```
 
+To enable exponent statistics, set an environmental variable `CULIP_ENABLE_EXP_STATS`.
+```bash
+# Enable exponent statistics
+export CULIP_ENABLE_EXP_STATS=1
+```
+
 ## Profiling control API
 
 CULiP provides profiling control API.
