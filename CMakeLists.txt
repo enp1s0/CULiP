@@ -3,6 +3,7 @@ project(culip LANGUAGES CXX CUDA)
 
 find_package(CUDA 10.0 REQUIRED)
 find_package(CUDAToolkit REQUIRED)
+find_package(Git REQUIRED)
 
 # CUDA/CXX
 foreach(lang CXX CUDA)
@@ -20,13 +21,23 @@ set(SRCDIR src)
 
 file(GLOB HEADERS "${INCDIR}/CULiP/*.hpp")
 
+if (NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/src/cuda-exponent-distribution-statistics/Makefile)
+	execute_process(COMMAND ${GIT_EXECUTABLE} submodule update --init --recursive -- ${dir}
+    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+    COMMAND_ERROR_IS_FATAL ANY)
+endif()
+
+
 foreach(library cublas)
-	SET(lib_name culip_${library})
+	set(lib_name culip_${library})
+	set(exp_lib_home ${CMAKE_CURRENT_SOURCE_DIR}/src/cuda-exponent-distribution-statistics)
+	include_directories(${lib_name} PRIVATE ${exp_lib_home}/include ${exp_lib_home}/src/cutf/include)
 	add_library(${lib_name} SHARED
 		${SRCDIR}/${library}.cu
 		${SRCDIR}/utils.cu
 		${SRCDIR}/utils.hpp
 		${SRCDIR}/params.hpp
+		${CMAKE_CURRENT_SOURCE_DIR}/src/cuda-exponent-distribution-statistics/src/main.cu
 		${HEADERS}
 		)
 
