@@ -21,6 +21,7 @@ extern "C" void CULiP_print_profile_result(void *profile_result_ptr) {
 	    ((long)profile_result.end_timestamp.tv_nsec -
 	     (long)profile_result.start_timestamp.tv_nsec);
 	printf("[%s][%s] %luns\n", CULIP_RESULT_PREFIX, profile_result.function_name, elapsed_time_us);
+	fflush(stdout);
 }
 
 extern "C" void CULiP_print_exp_stats_result(void *exp_stats_result_ptr) {
@@ -28,6 +29,7 @@ extern "C" void CULiP_print_exp_stats_result(void *exp_stats_result_ptr) {
 	    *((CULiP_exp_stats *)exp_stats_result_ptr);
 
 	printf("[%s] %s: %s\n", CULIP_EXP_STATS_PREFIX, exp_stats_result.name, mtk::cu_exp_statistics::to_json(exp_stats_result.stats).c_str());
+	fflush(stdout);
 }
 
 // TODO: Make this function non-blocking using `cuLauchHostFunc`
@@ -68,13 +70,13 @@ extern "C" void* CULiP_get_function_pointer(const char* const library_name, cons
 }
 
 // Profiling status
-extern "C" int CULiP_is_profiling_enabled(const char* env_name) {
+extern "C" int CULiP_is_profiling_enabled(const char* env_name, const bool disable_if_set) {
 	const char* value = getenv(env_name);
 	if (value == NULL) {
-		return 1;
+		return disable_if_set;
 	}
 	if (strcmp(value, "0") == 0) {
-		return 0;
+		return disable_if_set;
 	}
-	return 1;
+	return !disable_if_set;
 }

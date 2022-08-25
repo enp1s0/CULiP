@@ -42,5 +42,5 @@ extern "C" void CULiP_launch_function(cudaStream_t cuda_stream, void (*fn)(void*
 extern "C" void* CULiP_get_function_pointer(const char* const library_name, const char* const env_name, const char* const function_name, void** CULiP_haldle_cache);
 
 // Profiling status
-extern "C" int CULiP_is_profiling_enabled(const char* env_name);
+extern "C" int CULiP_is_profiling_enabled(const char* env_name, const bool disable_if_set = true);
 #endif

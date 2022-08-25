@@ -5,23 +5,6 @@ cublasStatus_t CULIP_FUNC_NAME(cublasHandle_t handle, cublasOperation_t transa,
                            int ldc) {
 	const int profiling_flag = (CULiP_profiling_control_array[CULIP_FUNC_ENUM_NAME] == 0) && CULiP_is_profiling_enabled(CULIP_CUBLAS_DISABLE_ENV_NAME);
 
-	const int exp_stats_flag = CULiP_is_profiling_enabled(CULIP_CUBLAS_DISABLE_ENV_NAME);
-	//const int exp_stats_flag = (CULiP_profiling_control_array[CULIP_EXP_STATS_ENABLE_ENV_NAME] != 0) && CULiP_is_profiling_enabled(CULIP_CUBLAS_DISABLE_ENV_NAME);
-	if (exp_stats_flag) {
-		cudaStream_t cuda_stream;
-		cublasGetStream(handle, &cuda_stream);
-		CULiP_exp_stats a_stats;
-		CULiP_exp_stats b_stats;
-		snprintf(a_stats.name, a_stats.name_length - 1, "A");
-		snprintf(b_stats.name, b_stats.name_length - 1, "B");
-		a_stats.stats = mtk::cu_exp_statistics::take_matrix_statistics(A, (transa == CUBLAS_OP_N ? m : k), (transb == CUBLAS_OP_N ? k : m), lda, cuda_stream);
-		b_stats.stats = mtk::cu_exp_statistics::take_matrix_statistics(B, (transa == CUBLAS_OP_N ? k : n), (transb == CUBLAS_OP_N ? n : k), ldb, cuda_stream);
-		mtk::cu_exp_statistics::to_json(a_stats.stats);
-		mtk::cu_exp_statistics::to_json(b_stats.stats);
-		CULiP_launch_function(cuda_stream, &CULiP_print_exp_stats_result, (void*)&a_stats);
-		CULiP_launch_function(cuda_stream, &CULiP_print_exp_stats_result, (void*)&b_stats);
-	}
-
 	// Get the function pointer
 	cublasStatus_t (*cublas_lib_func)(cublasHandle_t, cublasOperation_t, cublasOperation_t, int, int, int, const CULIP_TYPE*, const CULIP_TYPE*, int, const CULIP_TYPE*, int, const CULIP_TYPE*, CULIP_TYPE*, int);
 	*(void**)(&cublas_lib_func) = CULiP_get_function_pointer(CULIP_CUBLAS_LIBRARY_NAME, CULIP_CUBLAS_ENV_NAME, __func__, &CULiP_cublas_lib_handle_cache);
@@ -50,6 +33,22 @@ cublasStatus_t CULIP_FUNC_NAME(cublasHandle_t handle, cublasOperation_t transa,
 
 		// Print result
 		CULiP_launch_function(cuda_stream, &CULiP_print_profile_result, (void*)&profile_result);
+	}
+
+	const int exp_stats_flag = (CULiP_profiling_control_array[CULIP_FUNC_ENUM_NAME] == 0) && CULiP_is_profiling_enabled(CULIP_EXP_STATS_ENABLE_ENV_NAME, false);
+	if (exp_stats_flag) {
+		cudaStream_t cuda_stream;
+		cublasGetStream(handle, &cuda_stream);
+		CULiP_exp_stats a_stats;
+		CULiP_exp_stats b_stats;
+		snprintf(a_stats.name, a_stats.name_length - 1, "A");
+		snprintf(b_stats.name, b_stats.name_length - 1, "B");
+		a_stats.stats = mtk::cu_exp_statistics::take_matrix_statistics(A, (transa == CUBLAS_OP_N ? m : k), (transb == CUBLAS_OP_N ? k : m), lda, cuda_stream);
+		b_stats.stats = mtk::cu_exp_statistics::take_matrix_statistics(B, (transa == CUBLAS_OP_N ? k : n), (transb == CUBLAS_OP_N ? n : k), ldb, cuda_stream);
+		mtk::cu_exp_statistics::to_json(a_stats.stats);
+		mtk::cu_exp_statistics::to_json(b_stats.stats);
+		CULiP_launch_function(cuda_stream, &CULiP_print_exp_stats_result, (void*)&a_stats);
+		CULiP_launch_function(cuda_stream, &CULiP_print_exp_stats_result, (void*)&b_stats);
 	}
 
 	return result;
