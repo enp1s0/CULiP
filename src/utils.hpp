@@ -39,7 +39,7 @@ extern "C" void CULiP_print_exp_stats_result(void* exp_stats_result_ptr);
 extern "C" void CULiP_launch_function(cudaStream_t cuda_stream, void (*fn)(void*), void* const arg);
 
 // Function loader
-extern "C" void* CULiP_get_function_pointer(const char* const library_name, const char* const env_name, const char* const function_name, void** CULiP_haldle_cache);
+extern "C" void* CULiP_get_function_pointer(const char* const library_name, const char* const env_name, const char* const function_name, void** CULiP_handle_cache);
 
 // Profiling status
 extern "C" int CULiP_is_profiling_enabled(const char* env_name, const bool disable_if_set = true);
