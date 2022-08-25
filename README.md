@@ -47,12 +47,12 @@ Then the execution time is printed on stdout.
 To disable profiling at runtime, define an environment variable `CULIP_PROFILING_CUBLAS_DISABLE`.
 ```bash
 # Disable cuBLAS profiling
-export CULIP_PROFILING_CUBLAS_DISABLE=1
+export CULIP_DISABLE_CUBLAS_PROFILING=1
 
 # Enable cuBLAS profiling
-export CULIP_PROFILING_CUBLAS_DISABLE=0
+export CULIP_DISABLE_CUBLAS_PROFILING=0
 # or
-unset CULIP_PROFILING_CUBLAS_DISABLE
+unset CULIP_DISABLE_CUBLAS_PROFILING
 ```
 
 ## Profiling control API
