@@ -1,5 +1,7 @@
 # Supported cuBLAS functions list
 
+- "(*)" : the exponent distribution stats is available
+
 ## Level 2
 
 - GEMV
@@ -28,7 +30,7 @@
 
 ## Level 3
 
-- GEMM
+- GEMM (*)
 	- `cublasDgemm`
 	- `cublasSgemm`
 	- `cublasHgemm`
@@ -42,7 +44,7 @@
 	- `cublasCgemmBatched`
 	- `cublasZgemmBatched`
 	- `cublasGemmExBatched`
-- GEMM STRIDED BATCHED
+- GEMM STRIDED BATCHED (*)
 	- `cublasDgemmStridedBatched`
 	- `cublasSgemmStridedBatched`
 	- `cublasHgemmStridedBatched`

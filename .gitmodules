@@ -1,0 +1,3 @@
+[submodule "src/cuda-exponent-distribution-statistics"]
+	path = src/cuda-exponent-distribution-statistics
+	url = https://github.com/enp1s0/cuda-exponent-distribution-statistics
