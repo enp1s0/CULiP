@@ -5,11 +5,13 @@
 #include <stdio.h>
 #include <string.h>
 #include <CULiP/cublas.hpp>
+#include <cu_exp_statistics.hpp>
 #include "utils.hpp"
 
 #define CULIP_CUBLAS_LIBRARY_NAME       "libcublas.so"
 #define CULIP_CUBLAS_ENV_NAME           "CULIP_CUBLAS_LIB_PATH"
-#define CULIP_CUBLAS_DISABLE_ENV_NAME   "CULIP_PROFILING_CUBLAS_DISABLE"
+#define CULIP_CUBLAS_DISABLE_ENV_NAME   "CULIP_DISABLE_CUBLAS_PROFILING"
+#define CULIP_EXP_STATS_ENABLE_ENV_NAME "CULIP_ENABLE_EXP_STATS"
 
 extern "C" {
 // dlopen cache

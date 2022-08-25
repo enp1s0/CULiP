@@ -1,6 +1,7 @@
 #ifndef __CUDALIBPROFILER_UTILS_HPP__
 #define __CUDALIBPROFILER_UTILS_HPP__
 #include <time.h>
+#include <cu_exp_statistics.hpp>
 #include "params.hpp"
 
 #ifdef CULIBPROFILER_ENABLE_DEBUG_PRINT
@@ -23,7 +24,16 @@ struct CULiP_profile_result {
 	struct timespec end_timestamp;
 };
 
+struct CULiP_exp_stats {
+	// name
+	enum {name_length = 32};
+	char name[name_length] = {0};
+
+	mtk::cu_exp_statistics::result_t stats;
+};
+
 extern "C" void CULiP_print_profile_result(void* profile_result_ptr);
+extern "C" void CULiP_print_exp_stats_result(void* exp_stats_result_ptr);
 
 // Call a given function on a given stream
 extern "C" void CULiP_launch_function(cudaStream_t cuda_stream, void (*fn)(void*), void* const arg);

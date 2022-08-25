@@ -23,6 +23,13 @@ extern "C" void CULiP_print_profile_result(void *profile_result_ptr) {
 	printf("[%s][%s] %luns\n", CULIP_RESULT_PREFIX, profile_result.function_name, elapsed_time_us);
 }
 
+extern "C" void CULiP_print_exp_stats_result(void *exp_stats_result_ptr) {
+	const CULiP_exp_stats exp_stats_result =
+	    *((CULiP_exp_stats *)exp_stats_result_ptr);
+
+	printf("[%s] %s: %s\n", CULIP_EXP_STATS_PREFIX, exp_stats_result.name, mtk::cu_exp_statistics::to_json(exp_stats_result.stats).c_str());
+}
+
 // TODO: Make this function non-blocking using `cuLauchHostFunc`
 extern "C" void CULiP_launch_function(cudaStream_t cuda_stream, void (*fn)(void*), void* const arg) {
 	cudaStreamSynchronize(cuda_stream);
