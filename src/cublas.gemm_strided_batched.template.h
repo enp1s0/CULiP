@@ -57,8 +57,8 @@ cublasStatus_t CULIP_FUNC_NAME (cublasHandle_t handle,
 		snprintf(a_stats.name, a_stats.name_length - 1, "A");
 		snprintf(b_stats.name, b_stats.name_length - 1, "B");
 		for (std::uint32_t i = 0; i < batchCount; i++) {
-			a_stats.stats += mtk::cu_exp_statistics::take_matrix_statistics(A + i * strideA, (transa == CUBLAS_OP_N ? m : k), (transb == CUBLAS_OP_N ? k : m), lda, cuda_stream);
-			b_stats.stats += mtk::cu_exp_statistics::take_matrix_statistics(B + i * strideB, (transa == CUBLAS_OP_N ? k : n), (transb == CUBLAS_OP_N ? n : k), ldb, cuda_stream);
+			a_stats.stats += mtk::cu_exp_statistics::take_matrix_statistics(A + i * strideA, (transa == CUBLAS_OP_N ? m : k), (transa == CUBLAS_OP_N ? k : m), lda, cuda_stream);
+			b_stats.stats += mtk::cu_exp_statistics::take_matrix_statistics(B + i * strideB, (transb == CUBLAS_OP_N ? k : n), (transb == CUBLAS_OP_N ? n : k), ldb, cuda_stream);
 		}
 		mtk::cu_exp_statistics::to_json(a_stats.stats);
 		mtk::cu_exp_statistics::to_json(b_stats.stats);

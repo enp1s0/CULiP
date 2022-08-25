@@ -264,8 +264,8 @@ cublasStatus_t cublasGemmEx(cublasHandle_t handle, cublasOperation_t transa,
 		CULiP_exp_stats b_stats;
 		snprintf(a_stats.name, a_stats.name_length - 1, "A");
 		snprintf(b_stats.name, b_stats.name_length - 1, "B");
-		a_stats.stats = exp_stats(A, (transa == CUBLAS_OP_N ? m : k), (transb == CUBLAS_OP_N ? k : m), lda, cuda_stream, Atype);
-		b_stats.stats = exp_stats(B, (transa == CUBLAS_OP_N ? k : n), (transb == CUBLAS_OP_N ? n : k), ldb, cuda_stream, Btype);
+		a_stats.stats = exp_stats(A, (transa == CUBLAS_OP_N ? m : k), (transa == CUBLAS_OP_N ? k : m), lda, cuda_stream, Atype);
+		b_stats.stats = exp_stats(B, (transb == CUBLAS_OP_N ? k : n), (transb == CUBLAS_OP_N ? n : k), ldb, cuda_stream, Btype);
 		mtk::cu_exp_statistics::to_json(a_stats.stats);
 		mtk::cu_exp_statistics::to_json(b_stats.stats);
 		CULiP_launch_function(cuda_stream, &CULiP_print_exp_stats_result, (void*)&a_stats);
