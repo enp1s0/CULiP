@@ -66,6 +66,5 @@ cublasStatus_t CULIP_FUNC_NAME (cublasHandle_t handle,
 		CULiP_launch_function(cuda_stream, &CULiP_print_exp_stats_result, (void*)&b_stats);
 	}
 
-
 	return result;
 }
