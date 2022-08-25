@@ -13,6 +13,42 @@
 #define CULIP_CUBLAS_DISABLE_ENV_NAME   "CULIP_DISABLE_CUBLAS_PROFILING"
 #define CULIP_EXP_STATS_ENABLE_ENV_NAME "CULIP_ENABLE_EXP_STATS"
 
+namespace {
+mtk::cu_exp_statistics::result_t exp_stats(
+		const void* const ptr,
+		const std::size_t m,
+		const std::size_t n,
+		const std::size_t ld,
+		const cudaStream_t cuda_stream,
+		cudaDataType_t data_t
+		) {
+	mtk::cu_exp_statistics::result_t result;
+	switch (data_t) {
+	case CUDA_R_64F:
+		result = mtk::cu_exp_statistics::take_matrix_statistics(reinterpret_cast<const double*>(ptr), m, n, ld, cuda_stream);
+		break;
+	case CUDA_R_32F:
+		result = mtk::cu_exp_statistics::take_matrix_statistics(reinterpret_cast<const float*>(ptr), m, n, ld, cuda_stream);
+		break;
+	case CUDA_R_16F:
+		result = mtk::cu_exp_statistics::take_matrix_statistics(reinterpret_cast<const half*>(ptr), m, n, ld, cuda_stream);
+		break;
+	case CUDA_C_64F:
+		result = mtk::cu_exp_statistics::take_matrix_statistics(reinterpret_cast<const double2*>(ptr), m, n, ld, cuda_stream);
+		break;
+	case CUDA_C_32F:
+		result = mtk::cu_exp_statistics::take_matrix_statistics(reinterpret_cast<const float2*>(ptr), m, n, ld, cuda_stream);
+		break;
+	case CUDA_C_16F:
+		result = mtk::cu_exp_statistics::take_matrix_statistics(reinterpret_cast<const half2*>(ptr), m, n, ld, cuda_stream);
+		break;
+	default:
+		break;
+	}
+	return result;
+}
+} // unnamed namespace
+
 extern "C" {
 // dlopen cache
 void* CULiP_cublas_lib_handle_cache = NULL;
@@ -218,6 +254,22 @@ cublasStatus_t cublasGemmEx(cublasHandle_t handle, cublasOperation_t transa,
 
 		// Print result
 		CULiP_launch_function(cuda_stream, &CULiP_print_profile_result, (void*)&profile_result);
+	}
+
+	const int exp_stats_flag = (CULiP_profiling_control_array[CULiP_cublasGemmEx] == 0) && CULiP_is_profiling_enabled(CULIP_EXP_STATS_ENABLE_ENV_NAME, false);
+	if (exp_stats_flag) {
+		cudaStream_t cuda_stream;
+		cublasGetStream(handle, &cuda_stream);
+		CULiP_exp_stats a_stats;
+		CULiP_exp_stats b_stats;
+		snprintf(a_stats.name, a_stats.name_length - 1, "A");
+		snprintf(b_stats.name, b_stats.name_length - 1, "B");
+		a_stats.stats = exp_stats(A, (transa == CUBLAS_OP_N ? m : k), (transb == CUBLAS_OP_N ? k : m), lda, cuda_stream, Atype);
+		b_stats.stats = exp_stats(B, (transa == CUBLAS_OP_N ? k : n), (transb == CUBLAS_OP_N ? n : k), ldb, cuda_stream, Btype);
+		mtk::cu_exp_statistics::to_json(a_stats.stats);
+		mtk::cu_exp_statistics::to_json(b_stats.stats);
+		CULiP_launch_function(cuda_stream, &CULiP_print_exp_stats_result, (void*)&a_stats);
+		CULiP_launch_function(cuda_stream, &CULiP_print_exp_stats_result, (void*)&b_stats);
 	}
 
 	return result;
