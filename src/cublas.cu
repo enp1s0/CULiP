@@ -6,12 +6,14 @@
 #include <string.h>
 #include <CULiP/cublas.hpp>
 #include <cu_exp_statistics.hpp>
+#include <cu_cutoff.hpp>
 #include "utils.hpp"
 
 #define CULIP_CUBLAS_LIBRARY_NAME       "libcublas.so"
 #define CULIP_CUBLAS_ENV_NAME           "CULIP_CUBLAS_LIB_PATH"
 #define CULIP_CUBLAS_DISABLE_ENV_NAME   "CULIP_DISABLE_CUBLAS_PROFILING"
 #define CULIP_EXP_STATS_ENABLE_ENV_NAME "CULIP_ENABLE_EXP_STATS"
+#define CULIP_CUTOFF_THRESHOLD_ENV_NAME "CULIP_CUTOFF_THRESHOLD"
 
 namespace {
 mtk::cu_exp_statistics::result_t exp_stats(
