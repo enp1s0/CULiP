@@ -256,6 +256,22 @@ cublasStatus_t cublasGemmEx(cublasHandle_t handle, cublasOperation_t transa,
                             void *C, cudaDataType_t Ctype, int ldc,
                             cublasComputeType_t computeType,
                             cublasGemmAlgo_t algo) {
+	const int cutoff_flag = (CULiP_profiling_control_array[CULiP_cublasGemmEx] == 0) && CULiP_is_profiling_enabled(CULIP_CUTOFF_THRESHOLD_ENV_NAME, false);
+	if (cutoff_flag) {
+		double threshold;
+		try {
+			const auto env_str = getenv(CULIP_CUTOFF_THRESHOLD_ENV_NAME);
+			threshold	= std::stod(env_str);
+
+			cudaStream_t cuda_stream;
+			cublasGetStream(handle, &cuda_stream);
+			cutoff(const_cast<void*>(A), 0, (transa == CUBLAS_OP_N ? m : k), (transa == CUBLAS_OP_N ? k : m), lda, threshold, cuda_stream, Atype);
+			cutoff(const_cast<void*>(B), 0, (transb == CUBLAS_OP_N ? k : n), (transb == CUBLAS_OP_N ? n : k), ldb, threshold, cuda_stream, Btype);
+		} catch(const std::exception& e) {
+			CULIBPROFILER_DEBUG_PRINT(printf("[CULiP Warning] invalid threshold (%s)\n", env_str));
+		}
+	}
+
 	const int profiling_flag = (CULiP_profiling_control_array[CULiP_cublasGemmEx] == 0) && CULiP_is_profiling_enabled(CULIP_CUBLAS_DISABLE_ENV_NAME);
 
 	// Get the function pointer
@@ -307,22 +323,6 @@ cublasStatus_t cublasGemmEx(cublasHandle_t handle, cublasOperation_t transa,
 		mtk::cu_exp_statistics::to_json(b_stats.stats);
 		CULiP_launch_function(cuda_stream, &CULiP_print_exp_stats_result, (void*)&a_stats);
 		CULiP_launch_function(cuda_stream, &CULiP_print_exp_stats_result, (void*)&b_stats);
-	}
-
-	const int cutoff_flag = (CULiP_profiling_control_array[CULiP_cublasGemmEx] == 0) && CULiP_is_profiling_enabled(CULIP_CUTOFF_THRESHOLD_ENV_NAME, false);
-	if (cutoff_flag) {
-		double threshold;
-		try {
-			const auto env_str = getenv(CULIP_CUTOFF_THRESHOLD_ENV_NAME);
-			threshold	= std::stod(env_str);
-
-			cudaStream_t cuda_stream;
-			cublasGetStream(handle, &cuda_stream);
-			cutoff(const_cast<void*>(A), 0, (transa == CUBLAS_OP_N ? m : k), (transa == CUBLAS_OP_N ? k : m), lda, threshold, cuda_stream, Atype);
-			cutoff(const_cast<void*>(B), 0, (transb == CUBLAS_OP_N ? k : n), (transb == CUBLAS_OP_N ? n : k), ldb, threshold, cuda_stream, Btype);
-		} catch(const std::exception& e) {
-			CULIBPROFILER_DEBUG_PRINT(printf("[CULiP Warning] invalid threshold (%s)\n", env_str));
-		}
 	}
 
 	return result;
@@ -509,6 +509,24 @@ cublasStatus_t cublasGemmStridedBatchedEx(cublasHandle_t handle,
 		int batchCount,
 		cublasComputeType_t computeType,
 		cublasGemmAlgo_t algo) {
+	const int cutoff_flag = (CULiP_profiling_control_array[CULiP_cublasGemmStridedBatchedEx] == 0) && CULiP_is_profiling_enabled(CULIP_CUTOFF_THRESHOLD_ENV_NAME, false);
+	if (cutoff_flag) {
+		double threshold;
+		try {
+			const auto env_str = getenv(CULIP_CUTOFF_THRESHOLD_ENV_NAME);
+			threshold	= std::stod(env_str);
+
+			cudaStream_t cuda_stream;
+			cublasGetStream(handle, &cuda_stream);
+			for (std::uint32_t i = 0; i < batchCount; i++) {
+				cutoff(const_cast<void*>(A), i * strideA, (transa == CUBLAS_OP_N ? m : k), (transa == CUBLAS_OP_N ? k : m), lda, threshold, cuda_stream, Atype);
+				cutoff(const_cast<void*>(B), i * strideB, (transb == CUBLAS_OP_N ? k : n), (transb == CUBLAS_OP_N ? n : k), ldb, threshold, cuda_stream, Btype);
+			}
+		} catch(const std::exception& e) {
+			CULIBPROFILER_DEBUG_PRINT(printf("[CULiP Warning] invalid threshold (%s)\n", env_str));
+		}
+	}
+
 	const int profiling_flag = (CULiP_profiling_control_array[CULiP_cublasGemmStridedBatchedEx] == 0) && CULiP_is_profiling_enabled(CULIP_CUBLAS_DISABLE_ENV_NAME);
 
 	// Get the function pointer
@@ -562,24 +580,6 @@ cublasStatus_t cublasGemmStridedBatchedEx(cublasHandle_t handle,
 		mtk::cu_exp_statistics::to_json(b_stats.stats);
 		CULiP_launch_function(cuda_stream, &CULiP_print_exp_stats_result, (void*)&a_stats);
 		CULiP_launch_function(cuda_stream, &CULiP_print_exp_stats_result, (void*)&b_stats);
-	}
-
-	const int cutoff_flag = (CULiP_profiling_control_array[CULiP_cublasGemmStridedBatchedEx] == 0) && CULiP_is_profiling_enabled(CULIP_CUTOFF_THRESHOLD_ENV_NAME, false);
-	if (cutoff_flag) {
-		double threshold;
-		try {
-			const auto env_str = getenv(CULIP_CUTOFF_THRESHOLD_ENV_NAME);
-			threshold	= std::stod(env_str);
-
-			cudaStream_t cuda_stream;
-			cublasGetStream(handle, &cuda_stream);
-			for (std::uint32_t i = 0; i < batchCount; i++) {
-				cutoff(const_cast<void*>(A), i * strideA, (transa == CUBLAS_OP_N ? m : k), (transa == CUBLAS_OP_N ? k : m), lda, threshold, cuda_stream, Atype);
-				cutoff(const_cast<void*>(B), i * strideB, (transb == CUBLAS_OP_N ? k : n), (transb == CUBLAS_OP_N ? n : k), ldb, threshold, cuda_stream, Btype);
-			}
-		} catch(const std::exception& e) {
-			CULIBPROFILER_DEBUG_PRINT(printf("[CULiP Warning] invalid threshold (%s)\n", env_str));
-		}
 	}
 
 	return result;
