@@ -72,15 +72,15 @@ cublasStatus_t CULIP_FUNC_NAME (cublasHandle_t handle,
 		try {
 			const auto env_str = getenv(CULIP_CUTOFF_THRESHOLD_ENV_NAME);
 			threshold	= std::stod(env_str);
+
+			cudaStream_t cuda_stream;
+			cublasGetStream(handle, &cuda_stream);
+			for (std::uint32_t i = 0; i < batchCount; i++) {
+				mtk::cu_cutoff::cutoff_small_abs_values(const_cast<CULIP_TYPE*>(A + i * strideA), (transa == CUBLAS_OP_N ? m : k), (transa == CUBLAS_OP_N ? k : m), lda, threshold, cuda_stream);
+				mtk::cu_cutoff::cutoff_small_abs_values(const_cast<CULIP_TYPE*>(B + i * strideB), (transb == CUBLAS_OP_N ? k : n), (transb == CUBLAS_OP_N ? n : k), ldb, threshold, cuda_stream);
+			}
 		} catch(const std::exception& e) {
 			CULIBPROFILER_DEBUG_PRINT(printf("[CULiP Warning] invalid threshold (%s)\n", env_str));
-		}
-
-		cudaStream_t cuda_stream;
-		cublasGetStream(handle, &cuda_stream);
-		for (std::uint32_t i = 0; i < batchCount; i++) {
-			mtk::cu_cutoff::cutoff_small_abs_values(const_cast<CULIP_TYPE*>(A + i * strideA), (transa == CUBLAS_OP_N ? m : k), (transa == CUBLAS_OP_N ? k : m), lda, threshold, cuda_stream);
-			mtk::cu_cutoff::cutoff_small_abs_values(const_cast<CULIP_TYPE*>(B + i * strideB), (transb == CUBLAS_OP_N ? k : n), (transb == CUBLAS_OP_N ? n : k), ldb, threshold, cuda_stream);
 		}
 	}
 
