@@ -1,3 +1,6 @@
 [submodule "src/cuda-exponent-distribution-statistics"]
 	path = src/cuda-exponent-distribution-statistics
 	url = https://github.com/enp1s0/cuda-exponent-distribution-statistics
+[submodule "src/cuda-cutoff-small-abs-values"]
+	path = src/cuda-cutoff-small-abs-values
+	url = https://github.com/enp1s0/cuda-cutoff-small-abs-values
