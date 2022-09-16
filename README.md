@@ -61,6 +61,12 @@ To enable exponent statistics, set an environmental variable `CULIP_ENABLE_EXP_S
 export CULIP_ENABLE_EXP_STATS=1
 ```
 
+To enable small abs value cutoff, set an environmental variable `CULIP_CUTOFF_THRESHOLD`.
+```bash
+# Enable exponent statistics
+export CULIP_CUTOFF_THRESHOLD=1e-7
+```
+
 ## Profiling control API
 
 CULiP provides profiling control API.
