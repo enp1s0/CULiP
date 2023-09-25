@@ -3,6 +3,9 @@ cublasStatus_t CULIP_FUNC_NAME(cublasHandle_t handle, cublasOperation_t transa,
                            const CULIP_TYPE *alpha, const CULIP_TYPE *A, int lda,
                            const CULIP_TYPE *B, int ldb, const CULIP_TYPE *beta, CULIP_TYPE *C,
                            int ldc) {
+#ifdef __CUDA_ARCH__
+	return CUBLAS_STATUS_NOT_SUPPORTED;
+#else
 	const int cutoff_flag = (CULiP_profiling_control_array[CULIP_FUNC_ENUM_NAME] == 0) && CULiP_is_profiling_enabled(CULIP_CUTOFF_THRESHOLD_ENV_NAME, false);
 	if (cutoff_flag) {
 		double threshold;
@@ -68,4 +71,5 @@ cublasStatus_t CULIP_FUNC_NAME(cublasHandle_t handle, cublasOperation_t transa,
 	}
 
 	return result;
+#endif
 }
