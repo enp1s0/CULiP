@@ -1,4 +1,3 @@
-#include <cublas.h>
 #include <cublas_v2.h>
 #include <iostream>
 #include <stdlib.h>
@@ -256,6 +255,9 @@ cublasStatus_t cublasGemmEx(cublasHandle_t handle, cublasOperation_t transa,
                             void *C, cudaDataType_t Ctype, int ldc,
                             cublasComputeType_t computeType,
                             cublasGemmAlgo_t algo) {
+#ifdef __CUDA_ARCH__
+	return CUBLAS_STATUS_NOT_SUPPORTED;
+#else
 	const int cutoff_flag = (CULiP_profiling_control_array[CULiP_cublasGemmEx] == 0) && CULiP_is_profiling_enabled(CULIP_CUTOFF_THRESHOLD_ENV_NAME, false);
 	if (cutoff_flag) {
 		double threshold;
@@ -326,6 +328,7 @@ cublasStatus_t cublasGemmEx(cublasHandle_t handle, cublasOperation_t transa,
 	}
 
 	return result;
+#endif
 }
 
 // -------------------------------------------------
@@ -397,6 +400,9 @@ cublasStatus_t cublasGemmBatchedEx(cublasHandle_t handle,
 		int batchCount,
 		cublasComputeType_t computeType,
 		cublasGemmAlgo_t algo) {
+#ifdef __CUDA_ARCH__
+	return CUBLAS_STATUS_NOT_SUPPORTED;
+#else
 	const int profiling_flag = (CULiP_profiling_control_array[CULiP_cublasGemmBatchedEx] == 0) && CULiP_is_profiling_enabled(CULIP_CUBLAS_DISABLE_ENV_NAME);
 
 	// Get the function pointer
@@ -435,6 +441,7 @@ cublasStatus_t cublasGemmBatchedEx(cublasHandle_t handle,
 	}
 
 	return result;
+#endif
 }
 
 // -------------------------------------------------
@@ -509,6 +516,9 @@ cublasStatus_t cublasGemmStridedBatchedEx(cublasHandle_t handle,
 		int batchCount,
 		cublasComputeType_t computeType,
 		cublasGemmAlgo_t algo) {
+#ifdef __CUDA_ARCH__
+	return CUBLAS_STATUS_NOT_SUPPORTED;
+#else
 	const int cutoff_flag = (CULiP_profiling_control_array[CULiP_cublasGemmStridedBatchedEx] == 0) && CULiP_is_profiling_enabled(CULIP_CUTOFF_THRESHOLD_ENV_NAME, false);
 	if (cutoff_flag) {
 		double threshold;
@@ -583,6 +593,7 @@ cublasStatus_t cublasGemmStridedBatchedEx(cublasHandle_t handle,
 	}
 
 	return result;
+#endif
 }
 
 // -------------------------------------------------

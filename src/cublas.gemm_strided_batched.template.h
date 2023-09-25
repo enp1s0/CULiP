@@ -16,6 +16,9 @@ cublasStatus_t CULIP_FUNC_NAME (cublasHandle_t handle,
 		int ldc,
 		long long int strideC,
 		int batchCount) {
+#ifdef __CUDA_ARCH__
+	return CUBLAS_STATUS_NOT_SUPPORTED;
+#else
 	const int cutoff_flag = (CULiP_profiling_control_array[CULIP_FUNC_ENUM_NAME] == 0) && CULiP_is_profiling_enabled(CULIP_CUTOFF_THRESHOLD_ENV_NAME, false);
 	if (cutoff_flag) {
 		double threshold;
@@ -85,4 +88,5 @@ cublasStatus_t CULIP_FUNC_NAME (cublasHandle_t handle,
 	}
 
 	return result;
+#endif
 }

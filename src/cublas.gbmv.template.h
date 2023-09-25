@@ -3,6 +3,9 @@ cublasStatus_t CULIP_FUNC_NAME(cublasHandle_t handle,
                            const CULIP_TYPE *alpha, const CULIP_TYPE *A, int lda,
                            const CULIP_TYPE *x, int incx, const CULIP_TYPE *beta, CULIP_TYPE *y,
                            int incy) {
+#ifdef __CUDA_ARCH__
+	return CUBLAS_STATUS_NOT_SUPPORTED;
+#else
 	const int profiling_flag = (CULiP_profiling_control_array[CULIP_FUNC_ENUM_NAME] == 0) && CULiP_is_profiling_enabled(CULIP_CUBLAS_DISABLE_ENV_NAME);
 
 	// Get the function pointer
@@ -36,4 +39,5 @@ cublasStatus_t CULIP_FUNC_NAME(cublasHandle_t handle,
 	}
 
 	return result;
+#endif
 }
