@@ -92,23 +92,23 @@ void* CULiP_cublas_lib_handle_cache = NULL;
 // Control profiling
 // 0         = Profiling
 // Otherwise = Not profiling
-int CULiP_profiling_control_array[CULiP_cublas_enum_length] = {0};
+int CULiP_cublas_profiling_control_array[CULiP_cublas_enum_length] = {0};
 
 // Controler setter
 void CULiP_enable_cublas_profiling(const CULiP_cublas_control_t target_function) {
-	CULiP_profiling_control_array[target_function] = 0;
+	CULiP_cublas_profiling_control_array[target_function] = 0;
 }
 void CULiP_disable_cublas_profiling(const CULiP_cublas_control_t target_function) {
-	CULiP_profiling_control_array[target_function] = 1;
+	CULiP_cublas_profiling_control_array[target_function] = 1;
 }
 void CULiP_enable_cublas_all_profiling() {
 	for (unsigned target_function = 0; target_function < CULiP_cublas_enum_length; target_function++) {
-		CULiP_profiling_control_array[target_function] = 0;
+		CULiP_cublas_profiling_control_array[target_function] = 0;
 	}
 }
 void CULiP_disable_cublas_all_profiling() {
 	for (unsigned target_function = 0; target_function < CULiP_cublas_enum_length; target_function++) {
-		CULiP_profiling_control_array[target_function] = 1;
+		CULiP_cublas_profiling_control_array[target_function] = 1;
 	}
 }
 
@@ -258,7 +258,7 @@ cublasStatus_t cublasGemmEx(cublasHandle_t handle, cublasOperation_t transa,
 #ifdef __CUDA_ARCH__
 	return CUBLAS_STATUS_NOT_SUPPORTED;
 #else
-	const int cutoff_flag = (CULiP_profiling_control_array[CULiP_cublasGemmEx] == 0) && CULiP_is_profiling_enabled(CULIP_CUTOFF_THRESHOLD_ENV_NAME, false);
+	const int cutoff_flag = (CULiP_cublas_profiling_control_array[CULiP_cublasGemmEx] == 0) && CULiP_is_profiling_enabled(CULIP_CUTOFF_THRESHOLD_ENV_NAME, false);
 	if (cutoff_flag) {
 		double threshold;
 		try {
@@ -274,7 +274,7 @@ cublasStatus_t cublasGemmEx(cublasHandle_t handle, cublasOperation_t transa,
 		}
 	}
 
-	const int profiling_flag = (CULiP_profiling_control_array[CULiP_cublasGemmEx] == 0) && CULiP_is_profiling_enabled(CULIP_CUBLAS_DISABLE_ENV_NAME);
+	const int profiling_flag = (CULiP_cublas_profiling_control_array[CULiP_cublasGemmEx] == 0) && CULiP_is_profiling_enabled(CULIP_CUBLAS_DISABLE_ENV_NAME);
 
 	// Get the function pointer
 	cublasStatus_t (*cublas_lib_func)(cublasHandle_t, cublasOperation_t, cublasOperation_t, int, int, int, const void*, const void*, cudaDataType_t, int, const void*, cudaDataType_t, int, const void*, void*, cudaDataType_t, int, cublasComputeType_t, cublasGemmAlgo_t);
@@ -311,7 +311,7 @@ cublasStatus_t cublasGemmEx(cublasHandle_t handle, cublasOperation_t transa,
 		CULiP_launch_function(cuda_stream, &CULiP_print_profile_result, (void*)&profile_result);
 	}
 
-	const int exp_stats_flag = (CULiP_profiling_control_array[CULiP_cublasGemmEx] == 0) && CULiP_is_profiling_enabled(CULIP_EXP_STATS_ENABLE_ENV_NAME, false);
+	const int exp_stats_flag = (CULiP_cublas_profiling_control_array[CULiP_cublasGemmEx] == 0) && CULiP_is_profiling_enabled(CULIP_EXP_STATS_ENABLE_ENV_NAME, false);
 	if (exp_stats_flag) {
 		cudaStream_t cuda_stream;
 		cublasGetStream(handle, &cuda_stream);
@@ -403,7 +403,7 @@ cublasStatus_t cublasGemmBatchedEx(cublasHandle_t handle,
 #ifdef __CUDA_ARCH__
 	return CUBLAS_STATUS_NOT_SUPPORTED;
 #else
-	const int profiling_flag = (CULiP_profiling_control_array[CULiP_cublasGemmBatchedEx] == 0) && CULiP_is_profiling_enabled(CULIP_CUBLAS_DISABLE_ENV_NAME);
+	const int profiling_flag = (CULiP_cublas_profiling_control_array[CULiP_cublasGemmBatchedEx] == 0) && CULiP_is_profiling_enabled(CULIP_CUBLAS_DISABLE_ENV_NAME);
 
 	// Get the function pointer
 	cublasStatus_t (*cublas_lib_func)(cublasHandle_t, cublasOperation_t, cublasOperation_t, int, int, int, const void*, const void* const[], cudaDataType_t, int, const void* const[], cudaDataType_t, int, const void*, void* const[], cudaDataType_t, int, int, cublasComputeType_t, cublasGemmAlgo_t);
@@ -519,7 +519,7 @@ cublasStatus_t cublasGemmStridedBatchedEx(cublasHandle_t handle,
 #ifdef __CUDA_ARCH__
 	return CUBLAS_STATUS_NOT_SUPPORTED;
 #else
-	const int cutoff_flag = (CULiP_profiling_control_array[CULiP_cublasGemmStridedBatchedEx] == 0) && CULiP_is_profiling_enabled(CULIP_CUTOFF_THRESHOLD_ENV_NAME, false);
+	const int cutoff_flag = (CULiP_cublas_profiling_control_array[CULiP_cublasGemmStridedBatchedEx] == 0) && CULiP_is_profiling_enabled(CULIP_CUTOFF_THRESHOLD_ENV_NAME, false);
 	if (cutoff_flag) {
 		double threshold;
 		try {
@@ -537,7 +537,7 @@ cublasStatus_t cublasGemmStridedBatchedEx(cublasHandle_t handle,
 		}
 	}
 
-	const int profiling_flag = (CULiP_profiling_control_array[CULiP_cublasGemmStridedBatchedEx] == 0) && CULiP_is_profiling_enabled(CULIP_CUBLAS_DISABLE_ENV_NAME);
+	const int profiling_flag = (CULiP_cublas_profiling_control_array[CULiP_cublasGemmStridedBatchedEx] == 0) && CULiP_is_profiling_enabled(CULIP_CUBLAS_DISABLE_ENV_NAME);
 
 	// Get the function pointer
 	cublasStatus_t (*cublas_lib_func)(cublasHandle_t, cublasOperation_t, cublasOperation_t, int, int, int, const void*, const void*, cudaDataType_t, int, long long int, const void*, cudaDataType_t, int, long long int, const void*, void*, cudaDataType_t, int, long long int, int, cublasComputeType_t, cublasGemmAlgo_t);
@@ -574,7 +574,7 @@ cublasStatus_t cublasGemmStridedBatchedEx(cublasHandle_t handle,
 		CULiP_launch_function(cuda_stream, &CULiP_print_profile_result, (void*)&profile_result);
 	}
 
-	const int exp_stats_flag = (CULiP_profiling_control_array[CULiP_cublasGemmStridedBatchedEx] == 0) && CULiP_is_profiling_enabled(CULIP_EXP_STATS_ENABLE_ENV_NAME, false);
+	const int exp_stats_flag = (CULiP_cublas_profiling_control_array[CULiP_cublasGemmStridedBatchedEx] == 0) && CULiP_is_profiling_enabled(CULIP_EXP_STATS_ENABLE_ENV_NAME, false);
 	if (exp_stats_flag) {
 		cudaStream_t cuda_stream;
 		cublasGetStream(handle, &cuda_stream);
