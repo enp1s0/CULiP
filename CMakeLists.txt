@@ -33,6 +33,12 @@ if (NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/src/cuda-cutoff-small-abs-values/Make
     COMMAND_ERROR_IS_FATAL ANY)
 endif()
 
+if (NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/src/json/CMakeLists.txt)
+	execute_process(COMMAND ${GIT_EXECUTABLE} submodule update --init --recursive -- ${dir}
+    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+    COMMAND_ERROR_IS_FATAL ANY)
+endif()
+
 
 foreach(library cublas)
 	set(lib_name culip_${library})
@@ -94,6 +100,15 @@ endforeach()
 add_executable(CULiP_analyzer ${SRCDIR}/analyzer.cpp ${SRCDIR}/params.hpp)
 target_include_directories(CULiP_analyzer PRIVATE ${INCDIR})
 set_target_properties(CULiP_analyzer PROPERTIES RUNTIME CULiP_analyzer)
+
+##########################################################################
+# ExpStats Analyzer
+##########################################################################
+
+add_executable(CULiP_exp_stats_analyzer ${SRCDIR}/exp_stats_analyzer.cpp)
+set(jsonlib ${CMAKE_CURRENT_SOURCE_DIR}/src/json)
+include_directories(CULiP_exp_stats_analyzer PRIVATE ${jsonlib}/include)
+target_include_directories(CULiP_exp_stats_analyzer PRIVATE ${INCDIR})
 
 ##########################################################################
 # Installing
