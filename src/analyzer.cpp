@@ -2,8 +2,8 @@
 #include <string>
 #include <regex>
 #include <vector>
-#include <utility>
 #include <algorithm>
+#include <limits>
 #include "params.hpp"
 
 struct aggregation_t {
@@ -24,7 +24,7 @@ struct aggregation_t {
 
 	aggregation_t(
 		const std::string entry_name
-		) : entry_name(entry_name), time_sum(0), time_max(0), time_min(UINT64_MAX), count(0) {}
+		) : entry_name(entry_name), time_sum(0), time_max(0), time_min(std::numeric_limits<std::size_t>::max()), count(0) {}
 };
 
 void add_to_aggregation_list(
