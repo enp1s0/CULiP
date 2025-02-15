@@ -261,8 +261,9 @@ cublasStatus_t cublasGemmEx(cublasHandle_t handle, cublasOperation_t transa,
 	const int cutoff_flag = (CULiP_cublas_profiling_control_array[CULiP_cublasGemmEx] == 0) && CULiP_is_profiling_enabled(CULIP_CUTOFF_THRESHOLD_ENV_NAME, false);
 	if (cutoff_flag) {
 		double threshold;
+    std::string env_str;
 		try {
-			const auto env_str = getenv(CULIP_CUTOFF_THRESHOLD_ENV_NAME);
+			env_str = getenv(CULIP_CUTOFF_THRESHOLD_ENV_NAME);
 			threshold	= std::stod(env_str);
 
 			cudaStream_t cuda_stream;
@@ -522,8 +523,9 @@ cublasStatus_t cublasGemmStridedBatchedEx(cublasHandle_t handle,
 	const int cutoff_flag = (CULiP_cublas_profiling_control_array[CULiP_cublasGemmStridedBatchedEx] == 0) && CULiP_is_profiling_enabled(CULIP_CUTOFF_THRESHOLD_ENV_NAME, false);
 	if (cutoff_flag) {
 		double threshold;
+    std::string env_str;
 		try {
-			const auto env_str = getenv(CULIP_CUTOFF_THRESHOLD_ENV_NAME);
+			env_str = getenv(CULIP_CUTOFF_THRESHOLD_ENV_NAME);
 			threshold	= std::stod(env_str);
 
 			cudaStream_t cuda_stream;
