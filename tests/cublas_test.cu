@@ -49,9 +49,10 @@ GEMM_OP_GEMM(Z, cuDoubleComplex);
       cublasOperation_t transb, int m, int n, int k, const type *alpha,        \
       const type *A, int lda, const type *B, int ldb, const type *beta,        \
       type *C, int ldc) {                                                      \
-    return cublasGemmEx(handle, transa, transb, m, n, k, alpha, A, CUDA_R_32F, \
-                        lda, B, CUDA_R_32F, ldb, beta, C, CUDA_R_32F, ldc,     \
-                        CUDA_R_32F, CUBLAS_GEMM_DEFAULT);                      \
+    return cublasGemmEx(handle, transa, transb, m, n, k, alpha, A,             \
+                        cuda_data_type, lda, B, cuda_data_type, ldb, beta, C,  \
+                        cuda_data_type, ldc, cuda_data_type,                   \
+                        CUBLAS_GEMM_DEFAULT);                                  \
   }
 GEMM_OP_GEMM_EX(CUDA_R_16F, half);
 GEMM_OP_GEMM_EX(CUDA_R_32F, float);
