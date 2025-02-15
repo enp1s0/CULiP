@@ -33,7 +33,7 @@ cublasStatus_t CULIP_FUNC_NAME(cublasHandle_t handle, cublasOperation_t transa,
       }
     } catch (const std::exception &e) {
       CULIBPROFILER_DEBUG_PRINT(
-          printf("[CULiP Warning] invalid threshold (%s)\n", env_str));
+          printf("[CULiP Warning] invalid threshold (%s)\n", env_str.c_str()));
     }
   }
 

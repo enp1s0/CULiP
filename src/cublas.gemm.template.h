@@ -26,7 +26,7 @@ cublasStatus_t CULIP_FUNC_NAME(cublasHandle_t handle, cublasOperation_t transa,
           (transb == CUBLAS_OP_N ? n : k), ldb, threshold, cuda_stream);
     } catch (const std::exception &e) {
       CULIBPROFILER_DEBUG_PRINT(
-          printf("[CULiP Warning] invalid threshold (%s)\n", env_str));
+          printf("[CULiP Warning] invalid threshold (%s)\n", env_str.c_str()));
     }
   }
 

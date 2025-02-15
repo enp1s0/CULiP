@@ -295,7 +295,7 @@ cublasStatus_t cublasGemmEx(cublasHandle_t handle, cublasOperation_t transa,
              Btype);
     } catch (const std::exception &e) {
       CULIBPROFILER_DEBUG_PRINT(
-          printf("[CULiP Warning] invalid threshold (%s)\n", env_str));
+          printf("[CULiP Warning] invalid threshold (%s)\n", env_str.c_str()));
     }
   }
 
@@ -578,7 +578,7 @@ cublasStatus_t cublasGemmStridedBatchedEx(
       }
     } catch (const std::exception &e) {
       CULIBPROFILER_DEBUG_PRINT(
-          printf("[CULiP Warning] invalid threshold (%s)\n", env_str));
+          printf("[CULiP Warning] invalid threshold (%s)\n", env_str.c_str()));
     }
   }
 
