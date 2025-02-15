@@ -1,201 +1,218 @@
+#include "utils.hpp"
+#include <CULiP/cublas.hpp>
+#include <cu_cutoff.hpp>
+#include <cu_exp_statistics.hpp>
 #include <cublas_v2.h>
 #include <iostream>
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
-#include <CULiP/cublas.hpp>
-#include <cu_exp_statistics.hpp>
-#include <cu_cutoff.hpp>
-#include "utils.hpp"
 
-#define CULIP_CUBLAS_LIBRARY_NAME       "libcublas.so"
-#define CULIP_CUBLAS_ENV_NAME           "CULIP_CUBLAS_LIB_PATH"
-#define CULIP_CUBLAS_DISABLE_ENV_NAME   "CULIP_DISABLE_CUBLAS_PROFILING"
+#define CULIP_CUBLAS_LIBRARY_NAME "libcublas.so"
+#define CULIP_CUBLAS_ENV_NAME "CULIP_CUBLAS_LIB_PATH"
+#define CULIP_CUBLAS_DISABLE_ENV_NAME "CULIP_DISABLE_CUBLAS_PROFILING"
 #define CULIP_EXP_STATS_ENABLE_ENV_NAME "CULIP_ENABLE_EXP_STATS"
 #define CULIP_CUTOFF_THRESHOLD_ENV_NAME "CULIP_CUTOFF_THRESHOLD"
 
 namespace {
-mtk::cu_exp_statistics::result_t exp_stats(
-		const void* const ptr,
-		const std::size_t offset,
-		const std::size_t m,
-		const std::size_t n,
-		const std::size_t ld,
-		const cudaStream_t cuda_stream,
-		cudaDataType_t data_t
-		) {
-	mtk::cu_exp_statistics::result_t result;
-	switch (data_t) {
-	case CUDA_R_64F:
-		result = mtk::cu_exp_statistics::take_matrix_statistics(reinterpret_cast<const double*>(ptr) + offset, m, n, ld, cuda_stream);
-		break;
-	case CUDA_R_32F:
-		result = mtk::cu_exp_statistics::take_matrix_statistics(reinterpret_cast<const float*>(ptr) + offset, m, n, ld, cuda_stream);
-		break;
-	case CUDA_R_16F:
-		result = mtk::cu_exp_statistics::take_matrix_statistics(reinterpret_cast<const half*>(ptr) + offset, m, n, ld, cuda_stream);
-		break;
-	case CUDA_C_64F:
-		result = mtk::cu_exp_statistics::take_matrix_statistics(reinterpret_cast<const double2*>(ptr) + offset, m, n, ld, cuda_stream);
-		break;
-	case CUDA_C_32F:
-		result = mtk::cu_exp_statistics::take_matrix_statistics(reinterpret_cast<const float2*>(ptr) + offset, m, n, ld, cuda_stream);
-		break;
-	case CUDA_C_16F:
-		result = mtk::cu_exp_statistics::take_matrix_statistics(reinterpret_cast<const half2*>(ptr) + offset, m, n, ld, cuda_stream);
-		break;
-	default:
-		break;
-	}
-	return result;
+mtk::cu_exp_statistics::result_t
+exp_stats(const void *const ptr, const std::size_t offset, const std::size_t m,
+          const std::size_t n, const std::size_t ld,
+          const cudaStream_t cuda_stream, cudaDataType_t data_t) {
+  mtk::cu_exp_statistics::result_t result;
+  switch (data_t) {
+  case CUDA_R_64F:
+    result = mtk::cu_exp_statistics::take_matrix_statistics(
+        reinterpret_cast<const double *>(ptr) + offset, m, n, ld, cuda_stream);
+    break;
+  case CUDA_R_32F:
+    result = mtk::cu_exp_statistics::take_matrix_statistics(
+        reinterpret_cast<const float *>(ptr) + offset, m, n, ld, cuda_stream);
+    break;
+  case CUDA_R_16F:
+    result = mtk::cu_exp_statistics::take_matrix_statistics(
+        reinterpret_cast<const half *>(ptr) + offset, m, n, ld, cuda_stream);
+    break;
+  case CUDA_C_64F:
+    result = mtk::cu_exp_statistics::take_matrix_statistics(
+        reinterpret_cast<const double2 *>(ptr) + offset, m, n, ld, cuda_stream);
+    break;
+  case CUDA_C_32F:
+    result = mtk::cu_exp_statistics::take_matrix_statistics(
+        reinterpret_cast<const float2 *>(ptr) + offset, m, n, ld, cuda_stream);
+    break;
+  case CUDA_C_16F:
+    result = mtk::cu_exp_statistics::take_matrix_statistics(
+        reinterpret_cast<const half2 *>(ptr) + offset, m, n, ld, cuda_stream);
+    break;
+  default:
+    break;
+  }
+  return result;
 }
 
-void cutoff(
-		void* const ptr,
-		const std::size_t offset,
-		const std::size_t m,
-		const std::size_t n,
-		const std::size_t ld,
-		double threshold,
-		const cudaStream_t cuda_stream,
-		cudaDataType_t data_t
-		) {
-	switch (data_t) {
-	case CUDA_R_64F:
-		mtk::cu_cutoff::cutoff_small_abs_values(reinterpret_cast<double*>(ptr) + offset, m, n, ld, threshold, cuda_stream);
-		break;
-	case CUDA_R_32F:
-		mtk::cu_cutoff::cutoff_small_abs_values(reinterpret_cast<float*>(ptr) + offset, m, n, ld, threshold, cuda_stream);
-		break;
-	case CUDA_R_16F:
-		mtk::cu_cutoff::cutoff_small_abs_values(reinterpret_cast<half*>(ptr) + offset, m, n, ld, threshold, cuda_stream);
-		break;
-	case CUDA_C_64F:
-		mtk::cu_cutoff::cutoff_small_abs_values(reinterpret_cast<double2*>(ptr) + offset, m, n, ld, threshold, cuda_stream);
-		break;
-	case CUDA_C_32F:
-		mtk::cu_cutoff::cutoff_small_abs_values(reinterpret_cast<float2*>(ptr) + offset, m, n, ld, threshold, cuda_stream);
-		break;
-	case CUDA_C_16F:
-		mtk::cu_cutoff::cutoff_small_abs_values(reinterpret_cast<half2*>(ptr) + offset, m, n, ld, threshold, cuda_stream);
-		break;
-	default:
-		break;
-	}
+void cutoff(void *const ptr, const std::size_t offset, const std::size_t m,
+            const std::size_t n, const std::size_t ld, double threshold,
+            const cudaStream_t cuda_stream, cudaDataType_t data_t) {
+  switch (data_t) {
+  case CUDA_R_64F:
+    mtk::cu_cutoff::cutoff_small_abs_values(reinterpret_cast<double *>(ptr) +
+                                                offset,
+                                            m, n, ld, threshold, cuda_stream);
+    break;
+  case CUDA_R_32F:
+    mtk::cu_cutoff::cutoff_small_abs_values(reinterpret_cast<float *>(ptr) +
+                                                offset,
+                                            m, n, ld, threshold, cuda_stream);
+    break;
+  case CUDA_R_16F:
+    mtk::cu_cutoff::cutoff_small_abs_values(reinterpret_cast<half *>(ptr) +
+                                                offset,
+                                            m, n, ld, threshold, cuda_stream);
+    break;
+  case CUDA_C_64F:
+    mtk::cu_cutoff::cutoff_small_abs_values(reinterpret_cast<double2 *>(ptr) +
+                                                offset,
+                                            m, n, ld, threshold, cuda_stream);
+    break;
+  case CUDA_C_32F:
+    mtk::cu_cutoff::cutoff_small_abs_values(reinterpret_cast<float2 *>(ptr) +
+                                                offset,
+                                            m, n, ld, threshold, cuda_stream);
+    break;
+  case CUDA_C_16F:
+    mtk::cu_cutoff::cutoff_small_abs_values(reinterpret_cast<half2 *>(ptr) +
+                                                offset,
+                                            m, n, ld, threshold, cuda_stream);
+    break;
+  default:
+    break;
+  }
 }
 } // unnamed namespace
 
 extern "C" {
 // dlopen cache
-void* CULiP_cublas_lib_handle_cache = NULL;
+void *CULiP_cublas_lib_handle_cache = NULL;
 
 // Control profiling
 // 0         = Profiling
 // Otherwise = Not profiling
 int CULiP_cublas_profiling_control_array[CULiP_cublas_enum_length] = {0};
 
-// Controler setter
-void CULiP_enable_cublas_profiling(const CULiP_cublas_control_t target_function) {
-	CULiP_cublas_profiling_control_array[target_function] = 0;
+// Controller setter
+void CULiP_enable_cublas_profiling(
+    const CULiP_cublas_control_t target_function) {
+  CULiP_cublas_profiling_control_array[target_function] = 0;
 }
-void CULiP_disable_cublas_profiling(const CULiP_cublas_control_t target_function) {
-	CULiP_cublas_profiling_control_array[target_function] = 1;
+void CULiP_disable_cublas_profiling(
+    const CULiP_cublas_control_t target_function) {
+  CULiP_cublas_profiling_control_array[target_function] = 1;
 }
 void CULiP_enable_cublas_all_profiling() {
-	for (unsigned target_function = 0; target_function < CULiP_cublas_enum_length; target_function++) {
-		CULiP_cublas_profiling_control_array[target_function] = 0;
-	}
+  for (unsigned target_function = 0; target_function < CULiP_cublas_enum_length;
+       target_function++) {
+    CULiP_cublas_profiling_control_array[target_function] = 0;
+  }
 }
 void CULiP_disable_cublas_all_profiling() {
-	for (unsigned target_function = 0; target_function < CULiP_cublas_enum_length; target_function++) {
-		CULiP_cublas_profiling_control_array[target_function] = 1;
-	}
+  for (unsigned target_function = 0; target_function < CULiP_cublas_enum_length;
+       target_function++) {
+    CULiP_cublas_profiling_control_array[target_function] = 1;
+  }
 }
 
 // cudaDataType yo string
-#define CULiP_CUBLAS_COMPUTE_T_CASE_STRING(compute_type) case compute_type: return #compute_type
-extern "C" const char* CULiP_get_cublasComputeType_t_string(const cublasComputeType_t compute_type) {
-	switch(compute_type) {
-		CULiP_CUBLAS_COMPUTE_T_CASE_STRING(CUBLAS_COMPUTE_16F);
-		CULiP_CUBLAS_COMPUTE_T_CASE_STRING(CUBLAS_COMPUTE_16F_PEDANTIC);
-		CULiP_CUBLAS_COMPUTE_T_CASE_STRING(CUBLAS_COMPUTE_32F);
-		CULiP_CUBLAS_COMPUTE_T_CASE_STRING(CUBLAS_COMPUTE_32F_FAST_16BF);
-		CULiP_CUBLAS_COMPUTE_T_CASE_STRING(CUBLAS_COMPUTE_32F_FAST_16F);
-		CULiP_CUBLAS_COMPUTE_T_CASE_STRING(CUBLAS_COMPUTE_32F_FAST_TF32);
-		CULiP_CUBLAS_COMPUTE_T_CASE_STRING(CUBLAS_COMPUTE_32F_PEDANTIC);
-		CULiP_CUBLAS_COMPUTE_T_CASE_STRING(CUBLAS_COMPUTE_32I);
-		CULiP_CUBLAS_COMPUTE_T_CASE_STRING(CUBLAS_COMPUTE_32I_PEDANTIC);
-		CULiP_CUBLAS_COMPUTE_T_CASE_STRING(CUBLAS_COMPUTE_64F);
-		CULiP_CUBLAS_COMPUTE_T_CASE_STRING(CUBLAS_COMPUTE_64F_PEDANTIC);
-	default:
-		break;
-	}
-	switch((cudaDataType_t)compute_type) {
-		CULiP_CUBLAS_COMPUTE_T_CASE_STRING(CUDA_C_16BF);
-		CULiP_CUBLAS_COMPUTE_T_CASE_STRING(CUDA_C_16F );
-		CULiP_CUBLAS_COMPUTE_T_CASE_STRING(CUDA_C_32F );
-		CULiP_CUBLAS_COMPUTE_T_CASE_STRING(CUDA_C_32I );
-		CULiP_CUBLAS_COMPUTE_T_CASE_STRING(CUDA_C_64F );
-		CULiP_CUBLAS_COMPUTE_T_CASE_STRING(CUDA_C_8I  );
-		CULiP_CUBLAS_COMPUTE_T_CASE_STRING(CUDA_C_8U  );
-		CULiP_CUBLAS_COMPUTE_T_CASE_STRING(CUDA_R_16BF);
-		CULiP_CUBLAS_COMPUTE_T_CASE_STRING(CUDA_R_16F );
-		CULiP_CUBLAS_COMPUTE_T_CASE_STRING(CUDA_R_32F );
-		CULiP_CUBLAS_COMPUTE_T_CASE_STRING(CUDA_R_32I );
-		CULiP_CUBLAS_COMPUTE_T_CASE_STRING(CUDA_R_64F );
-		CULiP_CUBLAS_COMPUTE_T_CASE_STRING(CUDA_R_8I  );
-		CULiP_CUBLAS_COMPUTE_T_CASE_STRING(CUDA_R_8U  );
-	default:
-		return "Unknown";
-	}
+#define CULiP_CUBLAS_COMPUTE_T_CASE_STRING(compute_type)                       \
+  case compute_type:                                                           \
+    return #compute_type
+extern "C" const char *
+CULiP_get_cublasComputeType_t_string(const cublasComputeType_t compute_type) {
+  switch (compute_type) {
+    CULiP_CUBLAS_COMPUTE_T_CASE_STRING(CUBLAS_COMPUTE_16F);
+    CULiP_CUBLAS_COMPUTE_T_CASE_STRING(CUBLAS_COMPUTE_16F_PEDANTIC);
+    CULiP_CUBLAS_COMPUTE_T_CASE_STRING(CUBLAS_COMPUTE_32F);
+    CULiP_CUBLAS_COMPUTE_T_CASE_STRING(CUBLAS_COMPUTE_32F_FAST_16BF);
+    CULiP_CUBLAS_COMPUTE_T_CASE_STRING(CUBLAS_COMPUTE_32F_FAST_16F);
+    CULiP_CUBLAS_COMPUTE_T_CASE_STRING(CUBLAS_COMPUTE_32F_FAST_TF32);
+    CULiP_CUBLAS_COMPUTE_T_CASE_STRING(CUBLAS_COMPUTE_32F_PEDANTIC);
+    CULiP_CUBLAS_COMPUTE_T_CASE_STRING(CUBLAS_COMPUTE_32I);
+    CULiP_CUBLAS_COMPUTE_T_CASE_STRING(CUBLAS_COMPUTE_32I_PEDANTIC);
+    CULiP_CUBLAS_COMPUTE_T_CASE_STRING(CUBLAS_COMPUTE_64F);
+    CULiP_CUBLAS_COMPUTE_T_CASE_STRING(CUBLAS_COMPUTE_64F_PEDANTIC);
+  default:
+    break;
+  }
+  switch ((cudaDataType_t)compute_type) {
+    CULiP_CUBLAS_COMPUTE_T_CASE_STRING(CUDA_C_16BF);
+    CULiP_CUBLAS_COMPUTE_T_CASE_STRING(CUDA_C_16F);
+    CULiP_CUBLAS_COMPUTE_T_CASE_STRING(CUDA_C_32F);
+    CULiP_CUBLAS_COMPUTE_T_CASE_STRING(CUDA_C_32I);
+    CULiP_CUBLAS_COMPUTE_T_CASE_STRING(CUDA_C_64F);
+    CULiP_CUBLAS_COMPUTE_T_CASE_STRING(CUDA_C_8I);
+    CULiP_CUBLAS_COMPUTE_T_CASE_STRING(CUDA_C_8U);
+    CULiP_CUBLAS_COMPUTE_T_CASE_STRING(CUDA_R_16BF);
+    CULiP_CUBLAS_COMPUTE_T_CASE_STRING(CUDA_R_16F);
+    CULiP_CUBLAS_COMPUTE_T_CASE_STRING(CUDA_R_32F);
+    CULiP_CUBLAS_COMPUTE_T_CASE_STRING(CUDA_R_32I);
+    CULiP_CUBLAS_COMPUTE_T_CASE_STRING(CUDA_R_64F);
+    CULiP_CUBLAS_COMPUTE_T_CASE_STRING(CUDA_R_8I);
+    CULiP_CUBLAS_COMPUTE_T_CASE_STRING(CUDA_R_8U);
+  default:
+    return "Unknown";
+  }
 }
 
-extern "C" const char* CULiP_get_cublasOperation_t_string(const cublasOperation_t op) {
-	switch(op) {
-	case CUBLAS_OP_N:
-		return "N";
-	case CUBLAS_OP_T:
-		return "T";
-	case CUBLAS_OP_C:
-		return "C";
-	default:
-		return "Unknown";
-	}
+extern "C" const char *
+CULiP_get_cublasOperation_t_string(const cublasOperation_t op) {
+  switch (op) {
+  case CUBLAS_OP_N:
+    return "N";
+  case CUBLAS_OP_T:
+    return "T";
+  case CUBLAS_OP_C:
+    return "C";
+  default:
+    return "Unknown";
+  }
 }
 
-extern "C" const char* CULiP_get_cublasFillMode_t_string(const cublasFillMode_t mode) {
-	switch(mode) {
-	case CUBLAS_FILL_MODE_FULL:
-		return "FULL";
-	case CUBLAS_FILL_MODE_LOWER:
-		return "LOWER";
-	case CUBLAS_FILL_MODE_UPPER:
-		return "UPPER";
-	default:
-		return "Unknown";
-	}
+extern "C" const char *
+CULiP_get_cublasFillMode_t_string(const cublasFillMode_t mode) {
+  switch (mode) {
+  case CUBLAS_FILL_MODE_FULL:
+    return "FULL";
+  case CUBLAS_FILL_MODE_LOWER:
+    return "LOWER";
+  case CUBLAS_FILL_MODE_UPPER:
+    return "UPPER";
+  default:
+    return "Unknown";
+  }
 }
 
-extern "C" const char* CULiP_get_cublasSideMode_t_string(const cublasSideMode_t mode) {
-	switch(mode) {
-	case CUBLAS_SIDE_LEFT:
-		return "LEFT";
-	case CUBLAS_SIDE_RIGHT:
-		return "RIGHT";
-	default:
-		return "Unknown";
-	}
+extern "C" const char *
+CULiP_get_cublasSideMode_t_string(const cublasSideMode_t mode) {
+  switch (mode) {
+  case CUBLAS_SIDE_LEFT:
+    return "LEFT";
+  case CUBLAS_SIDE_RIGHT:
+    return "RIGHT";
+  default:
+    return "Unknown";
+  }
 }
 
-extern "C" const char* CULiP_get_cublasDiagType_t_string(const cublasDiagType_t type) {
-	switch(type) {
-	case CUBLAS_DIAG_NON_UNIT:
-		return "NON_UNIT";
-	case CUBLAS_DIAG_UNIT:
-		return "UNIT";
-	default:
-		return "Unknown";
-	}
+extern "C" const char *
+CULiP_get_cublasDiagType_t_string(const cublasDiagType_t type) {
+  switch (type) {
+  case CUBLAS_DIAG_NON_UNIT:
+    return "NON_UNIT";
+  case CUBLAS_DIAG_UNIT:
+    return "UNIT";
+  default:
+    return "Unknown";
+  }
 }
 
 // -------------------------------------------------
@@ -256,79 +273,110 @@ cublasStatus_t cublasGemmEx(cublasHandle_t handle, cublasOperation_t transa,
                             cublasComputeType_t computeType,
                             cublasGemmAlgo_t algo) {
 #ifdef __CUDA_ARCH__
-	return CUBLAS_STATUS_NOT_SUPPORTED;
+  return CUBLAS_STATUS_NOT_SUPPORTED;
 #else
-	const int cutoff_flag = (CULiP_cublas_profiling_control_array[CULiP_cublasGemmEx] == 0) && CULiP_is_profiling_enabled(CULIP_CUTOFF_THRESHOLD_ENV_NAME, false);
-	if (cutoff_flag) {
-		double threshold;
+  const int cutoff_flag =
+      (CULiP_cublas_profiling_control_array[CULiP_cublasGemmEx] == 0) &&
+      CULiP_is_profiling_enabled(CULIP_CUTOFF_THRESHOLD_ENV_NAME, false);
+  if (cutoff_flag) {
+    double threshold;
     std::string env_str;
-		try {
-			env_str = getenv(CULIP_CUTOFF_THRESHOLD_ENV_NAME);
-			threshold	= std::stod(env_str);
+    try {
+      env_str = getenv(CULIP_CUTOFF_THRESHOLD_ENV_NAME);
+      threshold = std::stod(env_str);
 
-			cudaStream_t cuda_stream;
-			cublasGetStream(handle, &cuda_stream);
-			cutoff(const_cast<void*>(A), 0, (transa == CUBLAS_OP_N ? m : k), (transa == CUBLAS_OP_N ? k : m), lda, threshold, cuda_stream, Atype);
-			cutoff(const_cast<void*>(B), 0, (transb == CUBLAS_OP_N ? k : n), (transb == CUBLAS_OP_N ? n : k), ldb, threshold, cuda_stream, Btype);
-		} catch(const std::exception& e) {
-			CULIBPROFILER_DEBUG_PRINT(printf("[CULiP Warning] invalid threshold (%s)\n", env_str));
-		}
-	}
+      cudaStream_t cuda_stream;
+      cublasGetStream(handle, &cuda_stream);
+      cutoff(const_cast<void *>(A), 0, (transa == CUBLAS_OP_N ? m : k),
+             (transa == CUBLAS_OP_N ? k : m), lda, threshold, cuda_stream,
+             Atype);
+      cutoff(const_cast<void *>(B), 0, (transb == CUBLAS_OP_N ? k : n),
+             (transb == CUBLAS_OP_N ? n : k), ldb, threshold, cuda_stream,
+             Btype);
+    } catch (const std::exception &e) {
+      CULIBPROFILER_DEBUG_PRINT(
+          printf("[CULiP Warning] invalid threshold (%s)\n", env_str));
+    }
+  }
 
-	const int profiling_flag = (CULiP_cublas_profiling_control_array[CULiP_cublasGemmEx] == 0) && CULiP_is_profiling_enabled(CULIP_CUBLAS_DISABLE_ENV_NAME);
+  const int profiling_flag =
+      (CULiP_cublas_profiling_control_array[CULiP_cublasGemmEx] == 0) &&
+      CULiP_is_profiling_enabled(CULIP_CUBLAS_DISABLE_ENV_NAME);
 
-	// Get the function pointer
-	cublasStatus_t (*cublas_lib_func)(cublasHandle_t, cublasOperation_t, cublasOperation_t, int, int, int, const void*, const void*, cudaDataType_t, int, const void*, cudaDataType_t, int, const void*, void*, cudaDataType_t, int, cublasComputeType_t, cublasGemmAlgo_t);
-	*(void**)(&cublas_lib_func) = CULiP_get_function_pointer(CULIP_CUBLAS_LIBRARY_NAME, CULIP_CUBLAS_ENV_NAME, __func__, &CULiP_cublas_lib_handle_cache);
+  // Get the function pointer
+  cublasStatus_t (*cublas_lib_func)(
+      cublasHandle_t, cublasOperation_t, cublasOperation_t, int, int, int,
+      const void *, const void *, cudaDataType_t, int, const void *,
+      cudaDataType_t, int, const void *, void *, cudaDataType_t, int,
+      cublasComputeType_t, cublasGemmAlgo_t);
+  *(void **)(&cublas_lib_func) = CULiP_get_function_pointer(
+      CULIP_CUBLAS_LIBRARY_NAME, CULIP_CUBLAS_ENV_NAME, __func__,
+      &CULiP_cublas_lib_handle_cache);
 
-	cudaStream_t cuda_stream;
-	struct CULiP_profile_result profile_result;
+  cudaStream_t cuda_stream;
+  struct CULiP_profile_result profile_result;
 
-	if (profiling_flag) {
-		// Get current cuda stream
-		cublasGetStream(handle, &cuda_stream);
+  if (profiling_flag) {
+    // Get current cuda stream
+    cublasGetStream(handle, &cuda_stream);
 
-		// Profile result structure
-		snprintf(profile_result.function_name, profile_result.function_name_length - 1, "%s-%s%s-%s-%s-%s-%s-m%d-n%d-k%d", __func__,
-				CULiP_get_cublasOperation_t_string(transa), CULiP_get_cublasOperation_t_string(transb),
-				CULiP_get_cublasComputeType_t_string((cublasComputeType_t)Atype),
-				CULiP_get_cublasComputeType_t_string((cublasComputeType_t)Btype),
-				CULiP_get_cublasComputeType_t_string((cublasComputeType_t)Ctype),
-				CULiP_get_cublasComputeType_t_string(computeType), m, n , k);
+    // Profile result structure
+    snprintf(profile_result.function_name,
+             profile_result.function_name_length - 1,
+             "%s-%s%s-%s-%s-%s-%s-m%d-n%d-k%d", __func__,
+             CULiP_get_cublasOperation_t_string(transa),
+             CULiP_get_cublasOperation_t_string(transb),
+             CULiP_get_cublasComputeType_t_string((cublasComputeType_t)Atype),
+             CULiP_get_cublasComputeType_t_string((cublasComputeType_t)Btype),
+             CULiP_get_cublasComputeType_t_string((cublasComputeType_t)Ctype),
+             CULiP_get_cublasComputeType_t_string(computeType), m, n, k);
 
-		// Record start rimestamp
-		CULiP_launch_function(cuda_stream, &CULiP_record_timestamp, (void*)&profile_result.start_timestamp);
-	}
+    // Record start rimestamp
+    CULiP_launch_function(cuda_stream, &CULiP_record_timestamp,
+                          (void *)&profile_result.start_timestamp);
+  }
 
-	// Call the function
-	const cublasStatus_t result = (*cublas_lib_func)(handle, transa, transb, m, n, k, alpha, A, Atype, lda, B, Btype, ldb, beta, C, Ctype, ldc, computeType, algo);
-	CULIBPROFILER_DEBUG_PRINT(printf("[CULiP Debug][%s] executed\n", __func__));
+  // Call the function
+  const cublasStatus_t result =
+      (*cublas_lib_func)(handle, transa, transb, m, n, k, alpha, A, Atype, lda,
+                         B, Btype, ldb, beta, C, Ctype, ldc, computeType, algo);
+  CULIBPROFILER_DEBUG_PRINT(printf("[CULiP Debug][%s] executed\n", __func__));
 
-	if (profiling_flag) {
-		// Record end rimestamp
-		CULiP_launch_function(cuda_stream, &CULiP_record_timestamp, (void*)&profile_result.end_timestamp);
+  if (profiling_flag) {
+    // Record end rimestamp
+    CULiP_launch_function(cuda_stream, &CULiP_record_timestamp,
+                          (void *)&profile_result.end_timestamp);
 
-		// Print result
-		CULiP_launch_function(cuda_stream, &CULiP_print_profile_result, (void*)&profile_result);
-	}
+    // Print result
+    CULiP_launch_function(cuda_stream, &CULiP_print_profile_result,
+                          (void *)&profile_result);
+  }
 
-	const int exp_stats_flag = (CULiP_cublas_profiling_control_array[CULiP_cublasGemmEx] == 0) && CULiP_is_profiling_enabled(CULIP_EXP_STATS_ENABLE_ENV_NAME, false);
-	if (exp_stats_flag) {
-		cudaStream_t cuda_stream;
-		cublasGetStream(handle, &cuda_stream);
-		CULiP_exp_stats a_stats;
-		CULiP_exp_stats b_stats;
-		snprintf(a_stats.name, a_stats.name_length - 1, "A");
-		snprintf(b_stats.name, b_stats.name_length - 1, "B");
-		a_stats.stats = exp_stats(A, 0, (transa == CUBLAS_OP_N ? m : k), (transa == CUBLAS_OP_N ? k : m), lda, cuda_stream, Atype);
-		b_stats.stats = exp_stats(B, 0, (transb == CUBLAS_OP_N ? k : n), (transb == CUBLAS_OP_N ? n : k), ldb, cuda_stream, Btype);
-		mtk::cu_exp_statistics::to_json(a_stats.stats);
-		mtk::cu_exp_statistics::to_json(b_stats.stats);
-		CULiP_launch_function(cuda_stream, &CULiP_print_exp_stats_result, (void*)&a_stats);
-		CULiP_launch_function(cuda_stream, &CULiP_print_exp_stats_result, (void*)&b_stats);
-	}
+  const int exp_stats_flag =
+      (CULiP_cublas_profiling_control_array[CULiP_cublasGemmEx] == 0) &&
+      CULiP_is_profiling_enabled(CULIP_EXP_STATS_ENABLE_ENV_NAME, false);
+  if (exp_stats_flag) {
+    cudaStream_t cuda_stream;
+    cublasGetStream(handle, &cuda_stream);
+    CULiP_exp_stats a_stats;
+    CULiP_exp_stats b_stats;
+    snprintf(a_stats.name, a_stats.name_length - 1, "A");
+    snprintf(b_stats.name, b_stats.name_length - 1, "B");
+    a_stats.stats =
+        exp_stats(A, 0, (transa == CUBLAS_OP_N ? m : k),
+                  (transa == CUBLAS_OP_N ? k : m), lda, cuda_stream, Atype);
+    b_stats.stats =
+        exp_stats(B, 0, (transb == CUBLAS_OP_N ? k : n),
+                  (transb == CUBLAS_OP_N ? n : k), ldb, cuda_stream, Btype);
+    mtk::cu_exp_statistics::to_json(a_stats.stats);
+    mtk::cu_exp_statistics::to_json(b_stats.stats);
+    CULiP_launch_function(cuda_stream, &CULiP_print_exp_stats_result,
+                          (void *)&a_stats);
+    CULiP_launch_function(cuda_stream, &CULiP_print_exp_stats_result,
+                          (void *)&b_stats);
+  }
 
-	return result;
+  return result;
 #endif
 }
 
@@ -381,67 +429,70 @@ cublasStatus_t cublasGemmEx(cublasHandle_t handle, cublasOperation_t transa,
 #undef CULIP_FUNC_ENUM_NAME
 #undef CULIP_TYPE
 
-cublasStatus_t cublasGemmBatchedEx(cublasHandle_t handle,
-		cublasOperation_t transa,
-		cublasOperation_t transb,
-		int m,
-		int n,
-		int k,
-		const void *alpha,
-		const void *const Aarray[],
-		cudaDataType_t Atype,
-		int lda,
-		const void *const Barray[],
-		cudaDataType_t Btype,
-		int ldb,
-		const void *beta,
-		void *const Carray[],
-		cudaDataType_t Ctype,
-		int ldc,
-		int batchCount,
-		cublasComputeType_t computeType,
-		cublasGemmAlgo_t algo) {
+cublasStatus_t cublasGemmBatchedEx(
+    cublasHandle_t handle, cublasOperation_t transa, cublasOperation_t transb,
+    int m, int n, int k, const void *alpha, const void *const Aarray[],
+    cudaDataType_t Atype, int lda, const void *const Barray[],
+    cudaDataType_t Btype, int ldb, const void *beta, void *const Carray[],
+    cudaDataType_t Ctype, int ldc, int batchCount,
+    cublasComputeType_t computeType, cublasGemmAlgo_t algo) {
 #ifdef __CUDA_ARCH__
-	return CUBLAS_STATUS_NOT_SUPPORTED;
+  return CUBLAS_STATUS_NOT_SUPPORTED;
 #else
-	const int profiling_flag = (CULiP_cublas_profiling_control_array[CULiP_cublasGemmBatchedEx] == 0) && CULiP_is_profiling_enabled(CULIP_CUBLAS_DISABLE_ENV_NAME);
+  const int profiling_flag =
+      (CULiP_cublas_profiling_control_array[CULiP_cublasGemmBatchedEx] == 0) &&
+      CULiP_is_profiling_enabled(CULIP_CUBLAS_DISABLE_ENV_NAME);
 
-	// Get the function pointer
-	cublasStatus_t (*cublas_lib_func)(cublasHandle_t, cublasOperation_t, cublasOperation_t, int, int, int, const void*, const void* const[], cudaDataType_t, int, const void* const[], cudaDataType_t, int, const void*, void* const[], cudaDataType_t, int, int, cublasComputeType_t, cublasGemmAlgo_t);
-	*(void**)(&cublas_lib_func) = CULiP_get_function_pointer(CULIP_CUBLAS_LIBRARY_NAME, CULIP_CUBLAS_ENV_NAME, __func__, &CULiP_cublas_lib_handle_cache);
+  // Get the function pointer
+  cublasStatus_t (*cublas_lib_func)(
+      cublasHandle_t, cublasOperation_t, cublasOperation_t, int, int, int,
+      const void *, const void *const[], cudaDataType_t, int,
+      const void *const[], cudaDataType_t, int, const void *, void *const[],
+      cudaDataType_t, int, int, cublasComputeType_t, cublasGemmAlgo_t);
+  *(void **)(&cublas_lib_func) = CULiP_get_function_pointer(
+      CULIP_CUBLAS_LIBRARY_NAME, CULIP_CUBLAS_ENV_NAME, __func__,
+      &CULiP_cublas_lib_handle_cache);
 
-	cudaStream_t cuda_stream;
-	struct CULiP_profile_result profile_result;
+  cudaStream_t cuda_stream;
+  struct CULiP_profile_result profile_result;
 
-	if (profiling_flag) {
-		// Get current cuda stream
-		cublasGetStream(handle, &cuda_stream);
+  if (profiling_flag) {
+    // Get current cuda stream
+    cublasGetStream(handle, &cuda_stream);
 
-		// Profile result structure
-		snprintf(profile_result.function_name, profile_result.function_name_length - 1, "%s-%s%s-%s-%s-%s-%s-m%d-n%d-k%d-batchCount%d", __func__,
-				CULiP_get_cublasOperation_t_string(transa), CULiP_get_cublasOperation_t_string(transb),
-				CULiP_get_cublasComputeType_t_string((cublasComputeType_t)Atype),
-				CULiP_get_cublasComputeType_t_string((cublasComputeType_t)Btype),
-				CULiP_get_cublasComputeType_t_string((cublasComputeType_t)Ctype),
-				CULiP_get_cublasComputeType_t_string(computeType), m, n , k, batchCount);
+    // Profile result structure
+    snprintf(
+        profile_result.function_name, profile_result.function_name_length - 1,
+        "%s-%s%s-%s-%s-%s-%s-m%d-n%d-k%d-batchCount%d", __func__,
+        CULiP_get_cublasOperation_t_string(transa),
+        CULiP_get_cublasOperation_t_string(transb),
+        CULiP_get_cublasComputeType_t_string((cublasComputeType_t)Atype),
+        CULiP_get_cublasComputeType_t_string((cublasComputeType_t)Btype),
+        CULiP_get_cublasComputeType_t_string((cublasComputeType_t)Ctype),
+        CULiP_get_cublasComputeType_t_string(computeType), m, n, k, batchCount);
 
-		// Record start rimestamp
-		CULiP_launch_function(cuda_stream, &CULiP_record_timestamp, (void*)&profile_result.start_timestamp);
-	}
+    // Record start rimestamp
+    CULiP_launch_function(cuda_stream, &CULiP_record_timestamp,
+                          (void *)&profile_result.start_timestamp);
+  }
 
-	// Call the function
-	const cublasStatus_t result = (*cublas_lib_func)(handle, transa, transb, m, n, k, alpha, Aarray, Atype, lda, Barray, Btype, ldb, beta, Carray, Ctype, ldc, batchCount, computeType, algo);
-	CULIBPROFILER_DEBUG_PRINT(printf("[CULiP Debug][%s] executed\n", __func__));
+  // Call the function
+  const cublasStatus_t result = (*cublas_lib_func)(
+      handle, transa, transb, m, n, k, alpha, Aarray, Atype, lda, Barray, Btype,
+      ldb, beta, Carray, Ctype, ldc, batchCount, computeType, algo);
+  CULIBPROFILER_DEBUG_PRINT(printf("[CULiP Debug][%s] executed\n", __func__));
 
-	if (profiling_flag) {
-		// Record end rimestamp
-		CULiP_launch_function(cuda_stream, &CULiP_record_timestamp, (void*)&profile_result.end_timestamp);
+  if (profiling_flag) {
+    // Record end rimestamp
+    CULiP_launch_function(cuda_stream, &CULiP_record_timestamp,
+                          (void *)&profile_result.end_timestamp);
 
-		// Print result
-		CULiP_launch_function(cuda_stream, &CULiP_print_profile_result, (void*)&profile_result);
-	}
+    // Print result
+    CULiP_launch_function(cuda_stream, &CULiP_print_profile_result,
+                          (void *)&profile_result);
+  }
 
-	return result;
+  return result;
 #endif
 }
 
@@ -494,107 +545,127 @@ cublasStatus_t cublasGemmBatchedEx(cublasHandle_t handle,
 #undef CULIP_FUNC_ENUM_NAME
 #undef CULIP_TYPE
 
-cublasStatus_t cublasGemmStridedBatchedEx(cublasHandle_t handle,
-		cublasOperation_t transa,
-		cublasOperation_t transb,
-		int m,
-		int n,
-		int k,
-		const void *alpha,
-		const void *A,
-		cudaDataType_t Atype,
-		int lda,
-		long long int strideA,
-		const void *const B,
-		cudaDataType_t Btype,
-		int ldb,
-		long long int strideB,
-		const void *beta,
-		void *const C,
-		cudaDataType_t Ctype,
-		int ldc,
-		long long int strideC,
-		int batchCount,
-		cublasComputeType_t computeType,
-		cublasGemmAlgo_t algo) {
+cublasStatus_t cublasGemmStridedBatchedEx(
+    cublasHandle_t handle, cublasOperation_t transa, cublasOperation_t transb,
+    int m, int n, int k, const void *alpha, const void *A, cudaDataType_t Atype,
+    int lda, long long int strideA, const void *const B, cudaDataType_t Btype,
+    int ldb, long long int strideB, const void *beta, void *const C,
+    cudaDataType_t Ctype, int ldc, long long int strideC, int batchCount,
+    cublasComputeType_t computeType, cublasGemmAlgo_t algo) {
 #ifdef __CUDA_ARCH__
-	return CUBLAS_STATUS_NOT_SUPPORTED;
+  return CUBLAS_STATUS_NOT_SUPPORTED;
 #else
-	const int cutoff_flag = (CULiP_cublas_profiling_control_array[CULiP_cublasGemmStridedBatchedEx] == 0) && CULiP_is_profiling_enabled(CULIP_CUTOFF_THRESHOLD_ENV_NAME, false);
-	if (cutoff_flag) {
-		double threshold;
+  const int cutoff_flag =
+      (CULiP_cublas_profiling_control_array[CULiP_cublasGemmStridedBatchedEx] ==
+       0) &&
+      CULiP_is_profiling_enabled(CULIP_CUTOFF_THRESHOLD_ENV_NAME, false);
+  if (cutoff_flag) {
+    double threshold;
     std::string env_str;
-		try {
-			env_str = getenv(CULIP_CUTOFF_THRESHOLD_ENV_NAME);
-			threshold	= std::stod(env_str);
+    try {
+      env_str = getenv(CULIP_CUTOFF_THRESHOLD_ENV_NAME);
+      threshold = std::stod(env_str);
 
-			cudaStream_t cuda_stream;
-			cublasGetStream(handle, &cuda_stream);
-			for (std::uint32_t i = 0; i < batchCount; i++) {
-				cutoff(const_cast<void*>(A), i * strideA, (transa == CUBLAS_OP_N ? m : k), (transa == CUBLAS_OP_N ? k : m), lda, threshold, cuda_stream, Atype);
-				cutoff(const_cast<void*>(B), i * strideB, (transb == CUBLAS_OP_N ? k : n), (transb == CUBLAS_OP_N ? n : k), ldb, threshold, cuda_stream, Btype);
-			}
-		} catch(const std::exception& e) {
-			CULIBPROFILER_DEBUG_PRINT(printf("[CULiP Warning] invalid threshold (%s)\n", env_str));
-		}
-	}
+      cudaStream_t cuda_stream;
+      cublasGetStream(handle, &cuda_stream);
+      for (std::uint32_t i = 0; i < batchCount; i++) {
+        cutoff(const_cast<void *>(A), i * strideA,
+               (transa == CUBLAS_OP_N ? m : k), (transa == CUBLAS_OP_N ? k : m),
+               lda, threshold, cuda_stream, Atype);
+        cutoff(const_cast<void *>(B), i * strideB,
+               (transb == CUBLAS_OP_N ? k : n), (transb == CUBLAS_OP_N ? n : k),
+               ldb, threshold, cuda_stream, Btype);
+      }
+    } catch (const std::exception &e) {
+      CULIBPROFILER_DEBUG_PRINT(
+          printf("[CULiP Warning] invalid threshold (%s)\n", env_str));
+    }
+  }
 
-	const int profiling_flag = (CULiP_cublas_profiling_control_array[CULiP_cublasGemmStridedBatchedEx] == 0) && CULiP_is_profiling_enabled(CULIP_CUBLAS_DISABLE_ENV_NAME);
+  const int profiling_flag =
+      (CULiP_cublas_profiling_control_array[CULiP_cublasGemmStridedBatchedEx] ==
+       0) &&
+      CULiP_is_profiling_enabled(CULIP_CUBLAS_DISABLE_ENV_NAME);
 
-	// Get the function pointer
-	cublasStatus_t (*cublas_lib_func)(cublasHandle_t, cublasOperation_t, cublasOperation_t, int, int, int, const void*, const void*, cudaDataType_t, int, long long int, const void*, cudaDataType_t, int, long long int, const void*, void*, cudaDataType_t, int, long long int, int, cublasComputeType_t, cublasGemmAlgo_t);
-	*(void**)(&cublas_lib_func) = CULiP_get_function_pointer(CULIP_CUBLAS_LIBRARY_NAME, CULIP_CUBLAS_ENV_NAME, __func__, &CULiP_cublas_lib_handle_cache);
+  // Get the function pointer
+  cublasStatus_t (*cublas_lib_func)(
+      cublasHandle_t, cublasOperation_t, cublasOperation_t, int, int, int,
+      const void *, const void *, cudaDataType_t, int, long long int,
+      const void *, cudaDataType_t, int, long long int, const void *, void *,
+      cudaDataType_t, int, long long int, int, cublasComputeType_t,
+      cublasGemmAlgo_t);
+  *(void **)(&cublas_lib_func) = CULiP_get_function_pointer(
+      CULIP_CUBLAS_LIBRARY_NAME, CULIP_CUBLAS_ENV_NAME, __func__,
+      &CULiP_cublas_lib_handle_cache);
 
-	cudaStream_t cuda_stream;
-	struct CULiP_profile_result profile_result;
+  cudaStream_t cuda_stream;
+  struct CULiP_profile_result profile_result;
 
-	if (profiling_flag) {
-		// Get current cuda stream
-		cublasGetStream(handle, &cuda_stream);
+  if (profiling_flag) {
+    // Get current cuda stream
+    cublasGetStream(handle, &cuda_stream);
 
-		// Profile result structure
-		snprintf(profile_result.function_name, profile_result.function_name_length - 1, "%s-%s%s-%s-%s-%s-%s-m%d-n%d-k%d-batchCount%d", __func__,
-				CULiP_get_cublasOperation_t_string(transa), CULiP_get_cublasOperation_t_string(transb),
-				CULiP_get_cublasComputeType_t_string((cublasComputeType_t)Atype),
-				CULiP_get_cublasComputeType_t_string((cublasComputeType_t)Btype),
-				CULiP_get_cublasComputeType_t_string((cublasComputeType_t)Ctype),
-				CULiP_get_cublasComputeType_t_string(computeType), m, n , k, batchCount);
+    // Profile result structure
+    snprintf(
+        profile_result.function_name, profile_result.function_name_length - 1,
+        "%s-%s%s-%s-%s-%s-%s-m%d-n%d-k%d-batchCount%d", __func__,
+        CULiP_get_cublasOperation_t_string(transa),
+        CULiP_get_cublasOperation_t_string(transb),
+        CULiP_get_cublasComputeType_t_string((cublasComputeType_t)Atype),
+        CULiP_get_cublasComputeType_t_string((cublasComputeType_t)Btype),
+        CULiP_get_cublasComputeType_t_string((cublasComputeType_t)Ctype),
+        CULiP_get_cublasComputeType_t_string(computeType), m, n, k, batchCount);
 
-		// Record start rimestamp
-		CULiP_launch_function(cuda_stream, &CULiP_record_timestamp, (void*)&profile_result.start_timestamp);
-	}
+    // Record start rimestamp
+    CULiP_launch_function(cuda_stream, &CULiP_record_timestamp,
+                          (void *)&profile_result.start_timestamp);
+  }
 
-	// Call the function
-	const cublasStatus_t result = (*cublas_lib_func)(handle, transa, transb, m, n, k, alpha, A, Atype, lda, strideA, B, Btype, ldb, strideB, beta, C, Ctype, ldc, strideC, batchCount, computeType, algo);
-	CULIBPROFILER_DEBUG_PRINT(printf("[CULiP Debug][%s] executed\n", __func__));
+  // Call the function
+  const cublasStatus_t result =
+      (*cublas_lib_func)(handle, transa, transb, m, n, k, alpha, A, Atype, lda,
+                         strideA, B, Btype, ldb, strideB, beta, C, Ctype, ldc,
+                         strideC, batchCount, computeType, algo);
+  CULIBPROFILER_DEBUG_PRINT(printf("[CULiP Debug][%s] executed\n", __func__));
 
-	if (profiling_flag) {
-		// Record end rimestamp
-		CULiP_launch_function(cuda_stream, &CULiP_record_timestamp, (void*)&profile_result.end_timestamp);
+  if (profiling_flag) {
+    // Record end rimestamp
+    CULiP_launch_function(cuda_stream, &CULiP_record_timestamp,
+                          (void *)&profile_result.end_timestamp);
 
-		// Print result
-		CULiP_launch_function(cuda_stream, &CULiP_print_profile_result, (void*)&profile_result);
-	}
+    // Print result
+    CULiP_launch_function(cuda_stream, &CULiP_print_profile_result,
+                          (void *)&profile_result);
+  }
 
-	const int exp_stats_flag = (CULiP_cublas_profiling_control_array[CULiP_cublasGemmStridedBatchedEx] == 0) && CULiP_is_profiling_enabled(CULIP_EXP_STATS_ENABLE_ENV_NAME, false);
-	if (exp_stats_flag) {
-		cudaStream_t cuda_stream;
-		cublasGetStream(handle, &cuda_stream);
-		CULiP_exp_stats a_stats;
-		CULiP_exp_stats b_stats;
-		snprintf(a_stats.name, a_stats.name_length - 1, "A");
-		snprintf(b_stats.name, b_stats.name_length - 1, "B");
-		for (std::uint32_t i = 0; i < batchCount; i++) {
-			a_stats.stats += exp_stats(A, i * strideA, (transa == CUBLAS_OP_N ? m : k), (transa == CUBLAS_OP_N ? k : m), lda, cuda_stream, Atype);
-			b_stats.stats += exp_stats(B, i * strideB, (transb == CUBLAS_OP_N ? k : n), (transb == CUBLAS_OP_N ? n : k), ldb, cuda_stream, Btype);
-		}
-		mtk::cu_exp_statistics::to_json(a_stats.stats);
-		mtk::cu_exp_statistics::to_json(b_stats.stats);
-		CULiP_launch_function(cuda_stream, &CULiP_print_exp_stats_result, (void*)&a_stats);
-		CULiP_launch_function(cuda_stream, &CULiP_print_exp_stats_result, (void*)&b_stats);
-	}
+  const int exp_stats_flag =
+      (CULiP_cublas_profiling_control_array[CULiP_cublasGemmStridedBatchedEx] ==
+       0) &&
+      CULiP_is_profiling_enabled(CULIP_EXP_STATS_ENABLE_ENV_NAME, false);
+  if (exp_stats_flag) {
+    cudaStream_t cuda_stream;
+    cublasGetStream(handle, &cuda_stream);
+    CULiP_exp_stats a_stats;
+    CULiP_exp_stats b_stats;
+    snprintf(a_stats.name, a_stats.name_length - 1, "A");
+    snprintf(b_stats.name, b_stats.name_length - 1, "B");
+    for (std::uint32_t i = 0; i < batchCount; i++) {
+      a_stats.stats +=
+          exp_stats(A, i * strideA, (transa == CUBLAS_OP_N ? m : k),
+                    (transa == CUBLAS_OP_N ? k : m), lda, cuda_stream, Atype);
+      b_stats.stats +=
+          exp_stats(B, i * strideB, (transb == CUBLAS_OP_N ? k : n),
+                    (transb == CUBLAS_OP_N ? n : k), ldb, cuda_stream, Btype);
+    }
+    mtk::cu_exp_statistics::to_json(a_stats.stats);
+    mtk::cu_exp_statistics::to_json(b_stats.stats);
+    CULiP_launch_function(cuda_stream, &CULiP_print_exp_stats_result,
+                          (void *)&a_stats);
+    CULiP_launch_function(cuda_stream, &CULiP_print_exp_stats_result,
+                          (void *)&b_stats);
+  }
 
-	return result;
+  return result;
 #endif
 }
 
