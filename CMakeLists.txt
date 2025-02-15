@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.18)
 project(culip LANGUAGES CXX CUDA)
 
-find_package(CUDA 10.0 REQUIRED)
+find_package(CUDA 12.0 REQUIRED)
 find_package(CUDAToolkit REQUIRED)
 find_package(Git REQUIRED)
 
@@ -13,7 +13,7 @@ foreach(lang CXX CUDA)
 endforeach()
 
 # CUDA (1/2)
-SET(CMAKE_CUDA_ARCHITECTURES 70 75 80 86 89 90)
+SET(CMAKE_CUDA_ARCHITECTURES 80 86 89 90)
 
 # Directories
 set(INCDIR include)
