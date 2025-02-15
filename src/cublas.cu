@@ -309,9 +309,7 @@ cublasStatus_t cublasGemmEx(cublasHandle_t handle, cublasOperation_t transa,
       const void *, const void *, cudaDataType_t, int, const void *,
       cudaDataType_t, int, const void *, void *, cudaDataType_t, int,
       cublasComputeType_t, cublasGemmAlgo_t);
-  *(void **)(&cublas_lib_func) = CULiP_get_function_pointer(
-      CULIP_CUBLAS_LIBRARY_NAME, CULIP_CUBLAS_ENV_NAME, __func__,
-      &CULiP_cublas_lib_handle_cache);
+  *(void **)(&cublas_lib_func) = CULiP_get_function_pointer(__func__);
 
   cudaStream_t cuda_stream;
   struct CULiP_profile_result profile_result;
@@ -449,9 +447,7 @@ cublasStatus_t cublasGemmBatchedEx(
       const void *, const void *const[], cudaDataType_t, int,
       const void *const[], cudaDataType_t, int, const void *, void *const[],
       cudaDataType_t, int, int, cublasComputeType_t, cublasGemmAlgo_t);
-  *(void **)(&cublas_lib_func) = CULiP_get_function_pointer(
-      CULIP_CUBLAS_LIBRARY_NAME, CULIP_CUBLAS_ENV_NAME, __func__,
-      &CULiP_cublas_lib_handle_cache);
+  *(void **)(&cublas_lib_func) = CULiP_get_function_pointer(__func__);
 
   cudaStream_t cuda_stream;
   struct CULiP_profile_result profile_result;
@@ -594,9 +590,7 @@ cublasStatus_t cublasGemmStridedBatchedEx(
       const void *, cudaDataType_t, int, long long int, const void *, void *,
       cudaDataType_t, int, long long int, int, cublasComputeType_t,
       cublasGemmAlgo_t);
-  *(void **)(&cublas_lib_func) = CULiP_get_function_pointer(
-      CULIP_CUBLAS_LIBRARY_NAME, CULIP_CUBLAS_ENV_NAME, __func__,
-      &CULiP_cublas_lib_handle_cache);
+  *(void **)(&cublas_lib_func) = CULiP_get_function_pointer(__func__);
 
   cudaStream_t cuda_stream;
   struct CULiP_profile_result profile_result;

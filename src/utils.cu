@@ -43,10 +43,7 @@ extern "C" void CULiP_launch_function(cudaStream_t cuda_stream,
 }
 
 // Function loader
-extern "C" void *CULiP_get_function_pointer(const char *const,
-                                            const char *const,
-                                            const char *const function_name,
-                                            void **CULiP_handle_cache) {
+extern "C" void *CULiP_get_function_pointer(const char *const function_name) {
   CULIBPROFILER_DEBUG_PRINT(printf("[CULiP Debug][%s] start\n", function_name));
 
   // Get function pointer

@@ -19,9 +19,7 @@ cublasStatus_t CULIP_FUNC_NAME(cublasHandle_t handle, cublasOperation_t transa,
       const CULIP_TYPE *const, const CULIP_TYPE *const[], int,
       const CULIP_TYPE *const[], int, const CULIP_TYPE *const,
       CULIP_TYPE *const[], int, int);
-  *(void **)(&cublas_lib_func) = CULiP_get_function_pointer(
-      CULIP_CUBLAS_LIBRARY_NAME, CULIP_CUBLAS_ENV_NAME, __func__,
-      &CULiP_cublas_lib_handle_cache);
+  *(void **)(&cublas_lib_func) = CULiP_get_function_pointer(__func__);
 
   cudaStream_t cuda_stream;
   struct CULiP_profile_result profile_result;
